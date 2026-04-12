@@ -1,0 +1,9 @@
+server/.env
+server/node_modules
+*.log
+.DS_Store
+.git.copied-backup
+server/.env.copied-backup
+server/.env.save.copied-backup
+server/.env.dir-backup
+server/server.js.dir-backup

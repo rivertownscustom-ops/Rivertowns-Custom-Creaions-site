@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rivertowns Custom Creaions</title>
+    <link rel="stylesheet" href="zevs-custom-creations.css" />
+  </head>
+  <body>
+    <button id="openCartButton" class="cart-launcher" type="button" aria-controls="cartModal" aria-expanded="false">Cart <span id="cartCount">0</span></button>
+
+    <main class="site-shell">
+      <section class="hero">
+        <div class="hero-copy">
+          <h1>Rivertowns Custom Creaions</h1>
+          <p class="hero-text">
+            A local Rivertowns business founded and run by seven-year-old Zev, selling products from 3D-printed fidgets to custom mugs. Choose your delivery method at checkout: pick up at Slices for $1 or delivery to your house for $5. Order below!
+          </p>
+        </div>
+
+      </section>
+
+      <section id="products" class="products-section">
+        <div class="section-heading">
+          <p class="eyebrow">Products</p>
+        </div>
+
+        <div class="product-grid">
+          <article class="product-card featured selectable-product" id="customMugProduct" role="button" tabindex="0" aria-controls="shop" aria-expanded="false">
+            <span class="product-tag">Now selling</span>
+            <h3>Custom Mug</h3>
+            <p>
+              Upload a photo or design and place it on the mug, then choose your
+              delivery method at checkout.
+            </p>
+            <strong>$20 base price</strong>
+            <span class="product-cta">Click to customize</span>
+          </article>
+
+        </div>
+      </section>
+
+      <section id="shopModal" class="modal is-hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close-modal="true"></div>
+        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="shopTitle">
+          <button id="closeShopModal" class="modal-close" type="button" aria-label="Close mug customizer">Close</button>
+          <section id="shop" class="shop-layout">
+        <section class="customizer-card">
+          <div class="section-heading compact">
+            <p class="eyebrow">Customize</p>
+            <h2 id="shopTitle">Create your mug</h2>
+          </div>
+
+          <form id="orderForm" class="customizer-form">
+            <label>
+              Customer name
+              <input id="customerName" name="customerName" type="text" placeholder="Your name" required />
+            </label>
+
+            <label>
+              Email
+              <input
+                id="contactInfo"
+                name="contactInfo"
+                type="email"
+                placeholder="Email address"
+                required
+              />
+            </label>
+
+            <label>
+              Upload your image
+              <input id="imageUpload" name="imageUpload" type="file" accept="image/*" required />
+            </label>
+
+            <label>
+              Quantity
+              <input id="quantity" name="quantity" type="number" min="1" value="1" required />
+            </label>
+
+            <label>
+              Order notes
+              <textarea
+                id="orderNotes"
+                name="orderNotes"
+                rows="3"
+                placeholder="Color requests, gift note, timing, or anything else"
+              ></textarea>
+            </label>
+
+            <button class="button primary submit-button" type="submit">Add to cart</button>
+          </form>
+        </section>
+
+        <section class="preview-card">
+          <div class="preview-header">
+            <div>
+              <p class="eyebrow">Live preview</p>
+              <h2>Your mug design</h2>
+              <p class="preview-note">Note: not actual design.</p>
+            </div>
+            <div class="price-badge">
+              <span>Total</span>
+              <strong id="totalPrice">$20</strong>
+            </div>
+          </div>
+
+          <div class="mug-stage">
+            <div class="mug-graphic">
+              <img class="mug-photo" src="assets/mug.png" alt="White mug preview" />
+              <div class="mug-image-area">
+                <img id="mugPreviewImage" alt="Uploaded design preview on mug" />
+                <p id="previewPlaceholder">Your uploaded image will appear here.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="summary-strip">
+            <div class="summary-item">
+              <span>Base mug</span>
+              <strong>$20 each</strong>
+            </div>
+            <div class="summary-item">
+              <span>Delivery</span>
+              <strong>Choose at cart</strong>
+            </div>
+            <div class="summary-item">
+              <span>Quantity</span>
+              <strong id="quantityLabel">1</strong>
+            </div>
+          </div>
+
+          <section class="order-summary">
+            <div class="section-heading compact">
+              <p class="eyebrow">Checkout summary</p>
+              <h2>Ready to share or accept orders</h2>
+            </div>
+            <div id="orderSummaryOutput" class="summary-output">
+              Fill out the form and the finished order details will appear here.
+            </div>
+          </section>
+        </section>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <section id="cartModal" class="modal is-hidden" aria-hidden="true">
+      <div class="modal-backdrop" data-close-cart="true"></div>
+      <div class="cart-dialog" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+        <button id="closeCartModal" class="modal-close" type="button" aria-label="Close cart">Close</button>
+        <div class="cart-header">
+          <p class="eyebrow">Cart</p>
+          <h2 id="cartTitle">Your cart</h2>
+        </div>
+        <div id="cartItems" class="cart-items">Your cart is empty.</div>
+        <div class="cart-footer">
+          <div class="cart-delivery-controls">
+            <label>
+              Delivery method
+              <select id="cartDeliveryOption" name="cartDeliveryOption">
+                <option value="slices">Pick up at Slices (+$1)</option>
+                <option value="house">Delivery to house (+$5)</option>
+              </select>
+            </label>
+            <label id="cartAddressField" class="is-hidden">
+              Delivery address
+              <textarea
+                id="cartAddress"
+                name="cartAddress"
+                rows="3"
+                placeholder="Needed only for delivery to house"
+              ></textarea>
+            </label>
+          </div>
+          <div class="cart-total-row">
+            <span>Total</span>
+            <strong id="cartTotal">$0</strong>
+          </div>
+          <button id="payButton" class="button primary cart-pay-button" type="button">Pay</button>
+        </div>
+      </div>
+    </section>
+
+    <script src="zevs-custom-creations.js"></script>
+  </body>
+</html>
