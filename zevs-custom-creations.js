@@ -7,6 +7,7 @@ const BACKEND_BASE_URL =
     ? "http://localhost:3000"
     : "https://zevs-custom-creations-backend.onrender.com";
 
+
 const cart = [];
 
 const customMugProduct = document.getElementById("customMugProduct");
