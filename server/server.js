@@ -100,6 +100,7 @@ function calculateOrder(item, orderDelivery) {
     address: orderDelivery.address,
     notes: String(item.notes || "").trim() || null,
     image_name: String(item.imageName || "").trim() || null,
+    image_data_url: String(item.imageDataUrl || "").trim() || null,
   };
 }
 

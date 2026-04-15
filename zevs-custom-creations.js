@@ -272,6 +272,8 @@ orderForm.addEventListener("submit", (event) => {
     total: getCurrentTotal(),
     address: "",
     notes: orderNotesInput.value.trim(),
+    imageName: imageUpload.files[0].name,
+    imageDataUrl: mugPreviewImage.getAttribute("src") || "",
     previewImageSrc: mugPreviewImage.getAttribute("src") || "",
   };
 
@@ -360,7 +362,8 @@ payButton.addEventListener("click", async () => {
           deliveryFee: getCartDeliveryFee(),
           address: cartAddressInput.value.trim(),
           total: item.total + getCartDeliveryFee(),
-          imageName: imageUpload.files?.[0]?.name || "uploaded-image",
+          imageName: item.imageName || "uploaded-image",
+          imageDataUrl: item.imageDataUrl || "",
         })),
       }),
     });
