@@ -10,6 +10,8 @@ create table if not exists public.orders (
   notes text,
   image_name text,
   image_data_url text,
+  image_storage_path text,
+  image_public_url text,
   payment_status text not null default 'pending',
   stripe_checkout_session_id text,
   stripe_payment_intent_id text,

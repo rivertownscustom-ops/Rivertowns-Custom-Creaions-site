@@ -10,6 +10,7 @@ const BASE_MUG_PRICE = 20;
 const SLICES_PICKUP_FEE = 1;
 const HOUSE_DELIVERY_FEE = 5;
 const PUBLIC_SITE_URL = process.env.PUBLIC_SITE_URL || "http://localhost:8000";
+const IMAGE_BUCKET = process.env.SUPABASE_IMAGE_BUCKET || "mug-images";
 const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY)
   : null;
@@ -100,7 +101,72 @@ function calculateOrder(item, orderDelivery) {
     address: orderDelivery.address,
     notes: String(item.notes || "").trim() || null,
     image_name: String(item.imageName || "").trim() || null,
-    image_data_url: String(item.imageDataUrl || "").trim() || null,
+    image_data_url: null,
+    image_storage_path: null,
+    image_public_url: null,
+  };
+}
+
+function getFileExtension(fileName, mimeType) {
+  const fileExtension = String(fileName || "").split(".").pop();
+
+  if (fileExtension && fileExtension !== fileName) {
+    return fileExtension.replace(/[^a-z0-9]/gi, "").toLowerCase() || "png";
+  }
+
+  if (mimeType === "image/jpeg") {
+    return "jpg";
+  }
+
+  if (mimeType === "image/webp") {
+    return "webp";
+  }
+
+  return "png";
+}
+
+function parseImageDataUrl(dataUrl) {
+  const match = String(dataUrl || "").match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
+
+  if (!match) {
+    return null;
+  }
+
+  return {
+    mimeType: match[1],
+    buffer: Buffer.from(match[2], "base64"),
+  };
+}
+
+async function uploadOrderImage(rawItem, sessionId, itemIndex) {
+  if (!supabase) {
+    return {};
+  }
+
+  const parsedImage = parseImageDataUrl(rawItem.imageDataUrl);
+
+  if (!parsedImage) {
+    return {};
+  }
+
+  const extension = getFileExtension(rawItem.imageName, parsedImage.mimeType);
+  const filePath = `${sessionId}/item-${itemIndex + 1}.${extension}`;
+  const { error } = await supabase.storage
+    .from(IMAGE_BUCKET)
+    .upload(filePath, parsedImage.buffer, {
+      contentType: parsedImage.mimeType,
+      upsert: true,
+    });
+
+  if (error) {
+    throw new Error(`Supabase image upload failed: ${error.message}`);
+  }
+
+  const { data } = supabase.storage.from(IMAGE_BUCKET).getPublicUrl(filePath);
+
+  return {
+    image_storage_path: filePath,
+    image_public_url: data.publicUrl || null,
   };
 }
 
@@ -170,11 +236,18 @@ app.post("/api/create-checkout-session", async (request, response) => {
     });
 
     if (supabase) {
-      const rows = normalizedItems.map((item) => ({
-        ...item,
-        stripe_checkout_session_id: session.id,
-        payment_status: "pending",
-      }));
+      const rows = [];
+
+      for (const [index, item] of normalizedItems.entries()) {
+        const imageFields = await uploadOrderImage(items[index], session.id, index);
+
+        rows.push({
+          ...item,
+          ...imageFields,
+          stripe_checkout_session_id: session.id,
+          payment_status: "pending",
+        });
+      }
 
       const { error } = await supabase.from("orders").insert(rows);
 
