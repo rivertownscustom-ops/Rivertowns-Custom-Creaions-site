@@ -5,7 +5,7 @@ const DEFAULT_SUMMARY_TEXT = "Fill out the form and the finished order details w
 const BACKEND_BASE_URL =
   window.location.hostname === "localhost"
     ? "http://localhost:3000"
-    : "https://zevs-custom-creations-backend.onrender.com";
+    : "https://rivertowns-custom-creations-backend.onrender.com";
 
 
 const cart = [];
