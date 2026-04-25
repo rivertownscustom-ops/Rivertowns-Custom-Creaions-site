@@ -1,5 +1,8 @@
 create table if not exists public.orders (
   id bigint generated always as identity primary key,
+  product_id text,
+  product_name text,
+  unit_price integer,
   customer_name text not null,
   contact_info text not null,
   quantity integer not null,
@@ -15,5 +18,6 @@ create table if not exists public.orders (
   payment_status text not null default 'pending',
   stripe_checkout_session_id text,
   stripe_payment_intent_id text,
+  confirmation_email_sent_at timestamptz,
   created_at timestamptz not null default now()
 );

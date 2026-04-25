@@ -6,11 +6,22 @@ const Stripe = require("stripe");
 const { createClient } = require("@supabase/supabase-js");
 
 const PORT = Number(process.env.PORT || 3000);
-const BASE_MUG_PRICE = 20;
 const SLICES_PICKUP_FEE = 1;
 const HOUSE_DELIVERY_FEE = 5;
 const PUBLIC_SITE_URL = process.env.PUBLIC_SITE_URL || "http://localhost:8000";
 const IMAGE_BUCKET = process.env.SUPABASE_IMAGE_BUCKET || "mug-images";
+const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
+const RESEND_FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "";
+const RESEND_REPLY_TO = process.env.RESEND_REPLY_TO || "";
+
+const PRODUCT_CATALOG = {
+  "sig-mug": { name: "Custom Photo Mug", unitPrice: 20 },
+  "wood-frame": { name: "Wood Frame", unitPrice: 25 },
+  "metal-frame": { name: "Metal Print Frame", unitPrice: 48 },
+  "fridge-magnet": { name: "Fridge Magnets", unitPrice: 10 },
+  "cork-coast": { name: "Custom Coaster", unitPrice: 7 },
+};
+
 const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY)
   : null;
@@ -27,11 +38,16 @@ app.use(
   }),
 );
 
+app.get("/", (_request, response) => {
+  response.type("text/plain").send("Rivertowns Custom Creations backend is running.");
+});
+
 app.get("/api/health", (_request, response) => {
   response.json({
     ok: true,
     stripeConfigured: Boolean(stripe),
     supabaseConfigured: Boolean(supabase),
+    emailConfigured: Boolean(RESEND_API_KEY && RESEND_FROM_EMAIL),
   });
 });
 
@@ -59,48 +75,63 @@ app.post(
 
     if (event.type === "checkout.session.completed" && supabase) {
       const session = event.data.object;
-      const updateData = {
-        payment_status: "paid",
-        stripe_payment_intent_id: session.payment_intent || null,
-      };
-
       await supabase
         .from("orders")
-        .update(updateData)
+        .update({
+          payment_status: "paid",
+          stripe_payment_intent_id: session.payment_intent || null,
+        })
         .eq("stripe_checkout_session_id", session.id);
+
+      try {
+        await sendConfirmationEmailForSession(session);
+      } catch (error) {
+        console.error("Confirmation email failed", error);
+      }
     }
 
     response.json({ received: true });
   },
 );
 
-app.use(express.json({ limit: "10mb" }));
+app.use(express.json({ limit: "25mb" }));
+
+function getProductDefinition(productId) {
+  return PRODUCT_CATALOG[String(productId || "").trim()] || null;
+}
 
 function getOrderDelivery(item) {
   const deliveryOption = item.deliveryLabel === "Delivery to house" ? "house" : "slices";
-  const deliveryFee = deliveryOption === "house" ? HOUSE_DELIVERY_FEE : SLICES_PICKUP_FEE;
-
   return {
     deliveryOption,
-    deliveryFee,
+    deliveryFee: deliveryOption === "house" ? HOUSE_DELIVERY_FEE : SLICES_PICKUP_FEE,
     address: deliveryOption === "house" ? String(item.address || "").trim() || null : null,
   };
 }
 
-function calculateOrder(item, orderDelivery) {
-  const quantity = Math.max(1, Number(item.quantity || 1));
-  const totalAmount = BASE_MUG_PRICE * quantity + orderDelivery.deliveryFee;
+function buildNormalizedOrder(rawItem, orderDelivery, itemIndex) {
+  const product = getProductDefinition(rawItem.productId);
+
+  if (!product) {
+    throw new Error(`Unknown product: ${rawItem.productId || "missing"}`);
+  }
+
+  const quantity = Math.max(1, Number(rawItem.quantity || 1));
+  const itemSubtotal = product.unitPrice * quantity;
 
   return {
-    customer_name: String(item.customerName || "").trim(),
-    contact_info: String(item.contactInfo || "").trim(),
+    product_id: String(rawItem.productId).trim(),
+    product_name: product.name,
+    unit_price: product.unitPrice,
+    customer_name: String(rawItem.customerName || "").trim(),
+    contact_info: String(rawItem.contactInfo || "").trim(),
     quantity,
     delivery_option: orderDelivery.deliveryOption,
-    delivery_fee: orderDelivery.deliveryFee,
-    total_amount: totalAmount,
-    address: orderDelivery.address,
-    notes: String(item.notes || "").trim() || null,
-    image_name: String(item.imageName || "").trim() || null,
+    delivery_fee: itemIndex === 0 ? orderDelivery.deliveryFee : 0,
+    total_amount: itemSubtotal + (itemIndex === 0 ? orderDelivery.deliveryFee : 0),
+    address: itemIndex === 0 ? orderDelivery.address : null,
+    notes: String(rawItem.notes || "").trim() || null,
+    image_name: String(rawItem.imageName || "").trim() || null,
     image_data_url: null,
     image_storage_path: null,
     image_public_url: null,
@@ -150,13 +181,14 @@ async function uploadOrderImage(rawItem, sessionId, itemIndex) {
   }
 
   const extension = getFileExtension(rawItem.imageName, parsedImage.mimeType);
-  const filePath = `${sessionId}/item-${itemIndex + 1}.${extension}`;
-  const { error } = await supabase.storage
-    .from(IMAGE_BUCKET)
-    .upload(filePath, parsedImage.buffer, {
-      contentType: parsedImage.mimeType,
-      upsert: true,
-    });
+  const productSlug = String(rawItem.productId || `item-${itemIndex + 1}`)
+    .replace(/[^a-z0-9-]/gi, "-")
+    .toLowerCase();
+  const filePath = `${sessionId}/${productSlug}-${itemIndex + 1}.${extension}`;
+  const { error } = await supabase.storage.from(IMAGE_BUCKET).upload(filePath, parsedImage.buffer, {
+    contentType: parsedImage.mimeType,
+    upsert: true,
+  });
 
   if (error) {
     throw new Error(`Supabase image upload failed: ${error.message}`);
@@ -168,6 +200,135 @@ async function uploadOrderImage(rawItem, sessionId, itemIndex) {
     image_storage_path: filePath,
     image_public_url: data.publicUrl || null,
   };
+}
+
+function formatCurrencyFromCents(amount) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format((amount || 0) / 100);
+}
+
+function formatDeliveryOption(option) {
+  return option === "house" ? "Delivery to house" : "Pick up at Slices";
+}
+
+function buildOrderEmailHtml(session, orders) {
+  const firstOrder = orders[0];
+  const itemRows = orders
+    .map((order, index) => {
+      const imageLink = order.image_public_url
+        ? `<p><a href="${order.image_public_url}">View uploaded image</a></p>`
+        : "";
+
+      return `
+        <li>
+          <strong>${order.product_name || `Item ${index + 1}`}</strong><br />
+          Quantity: ${order.quantity}<br />
+          ${order.notes ? `Notes: ${order.notes}<br />` : ""}
+          ${imageLink}
+        </li>
+      `;
+    })
+    .join("");
+
+  const addressLine = firstOrder.address
+    ? `<p><strong>Address:</strong> ${firstOrder.address}</p>`
+    : "";
+
+  return `
+    <h1>Thanks for your order!</h1>
+    <p>We received your Rivertowns Custom Creations order.</p>
+    <p><strong>Customer:</strong> ${firstOrder.customer_name}</p>
+    <p><strong>Delivery:</strong> ${formatDeliveryOption(firstOrder.delivery_option)}</p>
+    ${addressLine}
+    <p><strong>Total paid:</strong> ${formatCurrencyFromCents(session.amount_total)}</p>
+    <h2>Items</h2>
+    <ul>${itemRows}</ul>
+  `;
+}
+
+function buildOrderEmailText(session, orders) {
+  const firstOrder = orders[0];
+  const lines = [
+    "Thanks for your order!",
+    "We received your Rivertowns Custom Creations order.",
+    `Customer: ${firstOrder.customer_name}`,
+    `Delivery: ${formatDeliveryOption(firstOrder.delivery_option)}`,
+  ];
+
+  if (firstOrder.address) {
+    lines.push(`Address: ${firstOrder.address}`);
+  }
+
+  lines.push(`Total paid: ${formatCurrencyFromCents(session.amount_total)}`);
+  lines.push("Items:");
+
+  orders.forEach((order) => {
+    lines.push(`${order.product_name}`);
+    lines.push(`Quantity: ${order.quantity}`);
+
+    if (order.notes) {
+      lines.push(`Notes: ${order.notes}`);
+    }
+
+    if (order.image_public_url) {
+      lines.push(`Uploaded image: ${order.image_public_url}`);
+    }
+  });
+
+  return lines.join("\n");
+}
+
+async function sendConfirmationEmailForSession(session) {
+  if (!RESEND_API_KEY || !RESEND_FROM_EMAIL || !supabase) {
+    return;
+  }
+
+  const { data: orders, error } = await supabase
+    .from("orders")
+    .select("*")
+    .eq("stripe_checkout_session_id", session.id)
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    throw new Error(`Supabase order lookup failed: ${error.message}`);
+  }
+
+  if (!orders || orders.length === 0 || orders[0].confirmation_email_sent_at) {
+    return;
+  }
+
+  const toEmail = session.customer_email || orders[0].contact_info;
+
+  if (!toEmail) {
+    return;
+  }
+
+  const emailResponse = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${RESEND_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from: RESEND_FROM_EMAIL,
+      to: [toEmail],
+      reply_to: RESEND_REPLY_TO || undefined,
+      subject: "Your Rivertowns Custom Creations order",
+      html: buildOrderEmailHtml(session, orders),
+      text: buildOrderEmailText(session, orders),
+    }),
+  });
+
+  if (!emailResponse.ok) {
+    throw new Error(`Resend email failed: ${await emailResponse.text()}`);
+  }
+
+  await supabase
+    .from("orders")
+    .update({ confirmation_email_sent_at: new Date().toISOString() })
+    .eq("stripe_checkout_session_id", session.id);
 }
 
 app.post("/api/create-checkout-session", async (request, response) => {
@@ -185,7 +346,7 @@ app.post("/api/create-checkout-session", async (request, response) => {
     }
 
     const orderDelivery = getOrderDelivery(items[0]);
-    const normalizedItems = items.map((item) => calculateOrder(item, orderDelivery));
+    const normalizedItems = items.map((item, index) => buildNormalizedOrder(item, orderDelivery, index));
     const firstOrder = normalizedItems[0];
 
     if (!firstOrder.customer_name || !firstOrder.contact_info) {
@@ -193,31 +354,26 @@ app.post("/api/create-checkout-session", async (request, response) => {
       return;
     }
 
-    const lineItems = [];
-
-    for (const item of normalizedItems) {
-      lineItems.push({
-        price_data: {
-          currency: "usd",
-          product_data: {
-            name: "Custom Mug",
-            description: item.notes || "Custom mug order",
-          },
-          unit_amount: BASE_MUG_PRICE * 100,
+    const lineItems = normalizedItems.map((item) => ({
+      price_data: {
+        currency: "usd",
+        product_data: {
+          name: item.product_name,
+          description: item.notes || `${item.product_name} order`,
         },
-        quantity: item.quantity,
-      });
+        unit_amount: item.unit_price * 100,
+      },
+      quantity: item.quantity,
+    }));
 
-    }
-
-    if (firstOrder.delivery_fee > 0) {
+    if (orderDelivery.deliveryFee > 0) {
       lineItems.push({
         price_data: {
           currency: "usd",
           product_data: {
-            name: firstOrder.delivery_option === "house" ? "Delivery to house" : "Pick up at Slices",
+            name: orderDelivery.deliveryOption === "house" ? "Delivery to house" : "Pick up at Slices",
           },
-          unit_amount: firstOrder.delivery_fee * 100,
+          unit_amount: orderDelivery.deliveryFee * 100,
         },
         quantity: 1,
       });
@@ -237,10 +393,8 @@ app.post("/api/create-checkout-session", async (request, response) => {
 
     if (supabase) {
       const rows = [];
-
       for (const [index, item] of normalizedItems.entries()) {
         const imageFields = await uploadOrderImage(items[index], session.id, index);
-
         rows.push({
           ...item,
           ...imageFields,
@@ -250,7 +404,6 @@ app.post("/api/create-checkout-session", async (request, response) => {
       }
 
       const { error } = await supabase.from("orders").insert(rows);
-
       if (error) {
         throw new Error(`Supabase insert failed: ${error.message}`);
       }

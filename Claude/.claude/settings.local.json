@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:api.anthropic.com)",
+      "Bash(gunzip -c \"/Users/elireuter/.claude/projects/-Users-elireuter-Documents-Claude/0fe0679a-ab75-4df6-8b5b-8e1a8ab0c43b/tool-results/webfetch-1776988762459-vglvh1.bin\")",
+      "Bash(python3 -c ' *)",
+      "Read(//private/tmp/**)",
+      "Bash(mkdir -p rivertowns_extract)",
+      "Bash(tar -xzf \"/Users/elireuter/.claude/projects/-Users-elireuter-Documents-Claude/0fe0679a-ab75-4df6-8b5b-8e1a8ab0c43b/tool-results/webfetch-1776988762459-vglvh1.bin\" -C rivertowns_extract)",
+      "Bash(cp \"/tmp/rivertowns_extract/rivertownscutsom/project/assets/mug-blank.png\" \"/Users/elireuter/Documents/Claude/assets/\")",
+      "Bash(cp \"/tmp/rivertowns_extract/rivertownscutsom/project/assets/mug-family.png\" \"/Users/elireuter/Documents/Claude/assets/\")",
+      "Bash(curl -s \"https://api.anthropic.com/v1/design/h/0rS7Q8JFSHyBcHMVkCPwPQ?open_file=Rivertowns+Custom.html\" -o /tmp/rivertowns2.bin)",
+      "Read(//tmp/**)",
+      "Bash(curl -sI \"https://api.anthropic.com/v1/design/h/0rS7Q8JFSHyBcHMVkCPwPQ?open_file=Rivertowns+Custom.html\")",
+      "Bash(curl -s -X POST \"https://api.anthropic.com/v1/design/h/0rS7Q8JFSHyBcHMVkCPwPQ?open_file=Rivertowns+Custom.html\" -o /tmp/rivertowns2.bin)",
+      "Bash(curl -s -X POST \"https://api.anthropic.com/v1/design/h/0rS7Q8JFSHyBcHMVkCPwPQ\" -H \"Content-Type: application/json\" -d '{\"open_file\":\"Rivertowns Custom.html\"}' -o /tmp/rivertowns2b.bin)",
+      "Bash(curl -s -L -A \"Mozilla/5.0\" \"https://api.anthropic.com/v1/design/h/0rS7Q8JFSHyBcHMVkCPwPQ?open_file=Rivertowns+Custom.html\" -o /tmp/rivertowns2.bin)",
+      "Bash(xxd /tmp/rivertowns2.bin)",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "Bash(cp \"/tmp/rt2/assets/wood-frame-blank.png\" \"/Users/elireuter/Documents/Claude/assets/\")",
+      "Bash(cp \"/tmp/rt2/assets/wood-frame.png\" \"/Users/elireuter/Documents/Claude/assets/\")"
+    ]
+  }
+}

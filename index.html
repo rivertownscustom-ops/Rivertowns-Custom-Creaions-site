@@ -3,184 +3,248 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rivertowns Custom Creaions</title>
+    <title>Rivertowns Custom Creations</title>
     <link rel="stylesheet" href="zevs-custom-creations.css" />
   </head>
   <body>
-    <button id="openCartButton" class="cart-launcher" type="button" aria-controls="cartModal" aria-expanded="false">Cart <span id="cartCount">0</span></button>
+    <nav class="nav">
+      <div class="nav-inner">
+        <div class="logo"><span class="logo-mark"></span>Rivertowns Custom Creations</div>
+        <div class="nav-links">
+          <a href="#shop">Shop</a>
+          <a href="#products">Products</a>
+          <a href="#shipping">Delivery</a>
+        </div>
+        <div class="nav-right">
+          <button class="nav-btn primary" id="openCart" type="button">
+            Cart <span class="cart-count" id="cartCount">0</span>
+          </button>
+        </div>
+      </div>
+    </nav>
 
-    <main class="site-shell">
+    <main>
       <section class="hero">
-        <div class="hero-copy">
-          <h1>Rivertowns Custom Creaions</h1>
-          <p class="hero-text">
-            A local Rivertowns business founded and run by seven-year-old Zev, selling products from 3D-printed fidgets to custom mugs. Choose your delivery method at checkout: pick up at Slices for $1 or delivery to your house for $5. Order below!
-          </p>
-        </div>
-
-      </section>
-
-      <section id="products" class="products-section">
-        <div class="section-heading">
-          <p class="eyebrow">Products</p>
-        </div>
-
-        <div class="product-grid">
-          <article class="product-card featured selectable-product" id="customMugProduct" role="button" tabindex="0" aria-controls="shop" aria-expanded="false">
-            <span class="product-tag">Now selling</span>
-            <h3>Custom Mug</h3>
-            <p>
-              Upload a photo or design and place it on the mug, then choose your
-              delivery method at checkout.
+        <div class="hero-head">
+          <div>
+            <span class="eyebrow">Rivertowns custom shop</span>
+            <h1 class="hero-title">Put your photo or design on <em>more than mugs</em>.</h1>
+          </div>
+          <div>
+            <p class="hero-sub">
+              A local Rivertowns business founded and run by seven-year-old Zev. Upload your artwork, preview it live, then order mugs, frames, magnets, and coasters from one cart.
             </p>
-            <strong>$20 base price</strong>
-            <span class="product-cta">Click to customize</span>
-          </article>
+            <div class="hero-meta">
+              <span class="tag">Pick up at Slices for $1</span>
+              <span class="tag">Delivery to house for $5</span>
+              <span class="tag">Email confirmation after payment</span>
+            </div>
+          </div>
+        </div>
 
+        <div class="hero-grid">
+          <button class="tile a" type="button" data-open="sig-mug">
+            <span class="tile-label">Best seller</span>
+            <div class="ph image-panel"><img src="assets/mug-family.png" alt="Custom mug example" /></div>
+            <div class="tile-cta">
+              <div><h3>Custom Photo Mug</h3><span class="price">$20 · White ceramic</span></div>
+              <span class="tile-go">&rarr;</span>
+            </div>
+          </button>
+
+          <button class="tile" type="button" data-open="wood-frame">
+            <span class="tile-label">New</span>
+            <div class="ph image-panel wood-panel"><img src="assets/wood-frame-hero.png" alt="Wood frame example" /></div>
+            <div class="tile-cta">
+              <div><h3>Wood Frame</h3><span class="price">$25 · 12x16</span></div>
+              <span class="tile-go">&rarr;</span>
+            </div>
+          </button>
+
+          <button class="tile" type="button" data-open="fridge-magnet">
+            <span class="tile-label">Set of 4</span>
+            <div class="ph amber simple-graphic"><span>Magnets</span></div>
+            <div class="tile-cta">
+              <div><h3>Fridge Magnets</h3><span class="price">$10 · Set of 4</span></div>
+              <span class="tile-go">&rarr;</span>
+            </div>
+          </button>
+
+          <button class="tile" type="button" data-open="cork-coast">
+            <span class="tile-label">Fast gift</span>
+            <div class="ph cream simple-graphic"><span>Coaster</span></div>
+            <div class="tile-cta">
+              <div><h3>Custom Coaster</h3><span class="price">$7 each</span></div>
+              <span class="tile-go">&rarr;</span>
+            </div>
+          </button>
         </div>
       </section>
 
-      <section id="shopModal" class="modal is-hidden" aria-hidden="true">
-        <div class="modal-backdrop" data-close-modal="true"></div>
-        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="shopTitle">
-          <button id="closeShopModal" class="modal-close" type="button" aria-label="Close mug customizer">Close</button>
-          <section id="shop" class="shop-layout">
-        <section class="customizer-card">
-          <div class="section-heading compact">
-            <p class="eyebrow">Customize</p>
-            <h2 id="shopTitle">Create your mug</h2>
+      <section class="section" id="products">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Products</span>
+            <h2>Choose what to customize</h2>
           </div>
-
-          <form id="orderForm" class="customizer-form">
-            <label>
-              Customer name
-              <input id="customerName" name="customerName" type="text" placeholder="Your name" required />
-            </label>
-
-            <label>
-              Email
-              <input
-                id="contactInfo"
-                name="contactInfo"
-                type="email"
-                placeholder="Email address"
-                required
-              />
-            </label>
-
-            <label>
-              Upload your image
-              <input id="imageUpload" name="imageUpload" type="file" accept="image/*" required />
-            </label>
-
-            <label>
-              Quantity
-              <input id="quantity" name="quantity" type="number" min="1" value="1" required />
-            </label>
-
-            <label>
-              Order notes
-              <textarea
-                id="orderNotes"
-                name="orderNotes"
-                rows="3"
-                placeholder="Color requests, gift note, timing, or anything else"
-              ></textarea>
-            </label>
-
-            <button class="button primary submit-button" type="submit">Add to cart</button>
-          </form>
-        </section>
-
-        <section class="preview-card">
-          <div class="preview-header">
-            <div>
-              <p class="eyebrow">Live preview</p>
-              <h2>Your mug design</h2>
-              <p class="preview-note">Note: not actual design.</p>
-            </div>
-            <div class="price-badge">
-              <span>Total</span>
-              <strong id="totalPrice">$20</strong>
-            </div>
+          <div class="filters">
+            <button class="chip active" type="button" data-filter="all">All</button>
+            <button class="chip" type="button" data-filter="drinkware">Drinkware</button>
+            <button class="chip" type="button" data-filter="frames">Frames</button>
+            <button class="chip" type="button" data-filter="gifts">Gifts</button>
           </div>
+        </div>
+        <div class="grid" id="productGrid"></div>
+      </section>
 
-          <div class="mug-stage">
-            <div class="mug-graphic">
-              <img class="mug-photo" src="assets/mug.png" alt="White mug preview" />
-              <div class="mug-image-area">
-                <img id="mugPreviewImage" alt="Uploaded design preview on mug" />
-                <p id="previewPlaceholder">Your uploaded image will appear here.</p>
-              </div>
-            </div>
+      <section class="section section-tight" id="shipping">
+        <div class="strip">
+          <div>
+            <h4>Pick up at Slices</h4>
+            <p>$1 per order. Choose it at checkout.</p>
           </div>
-
-          <div class="summary-strip">
-            <div class="summary-item">
-              <span>Base mug</span>
-              <strong>$20 each</strong>
-            </div>
-            <div class="summary-item">
-              <span>Delivery</span>
-              <strong>Choose at cart</strong>
-            </div>
-            <div class="summary-item">
-              <span>Quantity</span>
-              <strong id="quantityLabel">1</strong>
-            </div>
+          <div>
+            <h4>Delivery to house</h4>
+            <p>$5 per order. Address appears only when needed.</p>
           </div>
-
-          <section class="order-summary">
-            <div class="section-heading compact">
-              <p class="eyebrow">Checkout summary</p>
-              <h2>Ready to share or accept orders</h2>
-            </div>
-            <div id="orderSummaryOutput" class="summary-output">
-              Fill out the form and the finished order details will appear here.
-            </div>
-          </section>
-        </section>
-          </section>
+          <div>
+            <h4>Actual uploaded image saved</h4>
+            <p>Your order now stores the real uploaded file in Supabase.</p>
+          </div>
+          <div>
+            <h4>Email confirmation</h4>
+            <p>Sent after Stripe confirms payment.</p>
+          </div>
         </div>
       </section>
     </main>
 
-    <section id="cartModal" class="modal is-hidden" aria-hidden="true">
-      <div class="modal-backdrop" data-close-cart="true"></div>
-      <div class="cart-dialog" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
-        <button id="closeCartModal" class="modal-close" type="button" aria-label="Close cart">Close</button>
-        <div class="cart-header">
-          <p class="eyebrow">Cart</p>
-          <h2 id="cartTitle">Your cart</h2>
-        </div>
-        <div id="cartItems" class="cart-items">Your cart is empty.</div>
-        <div class="cart-footer">
-          <div class="cart-delivery-controls">
-            <label>
-              Delivery method
-              <select id="cartDeliveryOption" name="cartDeliveryOption">
-                <option value="slices">Pick up at Slices (+$1)</option>
-                <option value="house">Delivery to house (+$5)</option>
-              </select>
-            </label>
-            <label id="cartAddressField" class="is-hidden">
-              Delivery address
-              <textarea
-                id="cartAddress"
-                name="cartAddress"
-                rows="3"
-                placeholder="Needed only for delivery to house"
-              ></textarea>
-            </label>
+    <footer>
+      <div>&copy; 2026 Rivertowns Custom Creations</div>
+      <div>Built for custom gifts, mugs, and frames.</div>
+    </footer>
+
+    <div class="overlay" id="overlay"></div>
+
+    <div class="modal customizer" id="customizer" role="dialog" aria-modal="true" aria-hidden="true">
+      <button class="modal-close" type="button" data-close-modal aria-label="Close customizer">&times;</button>
+      <div class="preview">
+        <div class="preview-label"><span class="live-dot"></span> Live preview</div>
+        <div class="preview-stage">
+          <div class="preview-card-shell">
+            <canvas id="productCanvas" width="900" height="700"></canvas>
           </div>
-          <div class="cart-total-row">
-            <span>Total</span>
-            <strong id="cartTotal">$0</strong>
-          </div>
-          <button id="payButton" class="button primary cart-pay-button" type="button">Pay</button>
         </div>
       </div>
-    </section>
+      <div class="customizer-side">
+        <div class="form-pane">
+          <h2 id="custTitle">Customize your product</h2>
+          <p class="sub" id="custSubtitle">Upload artwork and preview it live.</p>
+
+          <div class="field">
+            <label class="ttl" for="fileInput">Your artwork</label>
+            <label class="upload-zone" id="uploadZone" for="fileInput">
+              <span class="main">Drop an image or click to upload</span>
+              <span class="sub2">PNG or JPG</span>
+            </label>
+            <input type="file" id="fileInput" accept="image/*" hidden />
+            <div class="upload-preview" id="uploadPreview">
+              <img id="uploadThumb" alt="Artwork preview" />
+              <span class="name" id="uploadName"></span>
+              <button class="remove-link" id="uploadRemove" type="button">Remove</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="ttl" for="qtyInput">Quantity</label>
+            <div class="qty-row">
+              <div class="qty-box">
+                <button id="qtyDown" type="button" aria-label="Decrease quantity">−</button>
+                <input type="text" id="qtyInput" value="1" readonly />
+                <button id="qtyUp" type="button" aria-label="Increase quantity">+</button>
+              </div>
+              <span class="help">Each product keeps its own quantity in the cart.</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="ttl" for="itemNotes">Order notes</label>
+            <textarea id="itemNotes" rows="3" placeholder="Gift note, color request, or timing"></textarea>
+          </div>
+        </div>
+
+        <div class="form-foot">
+          <div class="price-row">
+            <div class="lbl">Live total</div>
+            <div><span class="amount" id="livePrice">$20</span><span class="unit" id="liveUnit">/ 1 item</span></div>
+          </div>
+          <button class="checkout-btn" id="addToCart" type="button">Add to cart</button>
+        </div>
+      </div>
+    </div>
+
+    <aside class="drawer" id="cartDrawer" aria-label="Cart">
+      <div class="drawer-head">
+        <h2>Your cart</h2>
+        <button class="modal-close static-close" type="button" data-close-cart aria-label="Close cart">&times;</button>
+      </div>
+      <div class="drawer-body" id="cartBody"></div>
+      <div class="drawer-foot">
+        <label class="checkout-label">
+          Delivery method
+          <select id="deliveryOption">
+            <option value="slices">Pick up at Slices (+$1)</option>
+            <option value="house">Delivery to house (+$5)</option>
+          </select>
+        </label>
+        <div class="totals" id="cartTotals"></div>
+        <div class="ship-note" id="shipNote">Pick up at Slices adds $1. Delivery to house adds $5.</div>
+        <button class="checkout-btn" id="openCheckout" type="button" disabled>Checkout</button>
+      </div>
+    </aside>
+
+    <div class="modal checkout" id="checkoutModal" role="dialog" aria-modal="true" aria-hidden="true">
+      <button class="modal-close" type="button" data-close-modal aria-label="Close checkout">&times;</button>
+      <div class="checkout-content">
+        <div class="checkout-body">
+          <h2>Checkout</h2>
+          <p class="sub">We will email your confirmation after payment succeeds.</p>
+          <form id="checkoutForm" novalidate>
+            <div class="form-grid">
+              <label class="input-field full">
+                <span>Email address</span>
+                <input type="email" id="checkoutEmail" placeholder="you@email.com" required />
+              </label>
+              <label class="input-field">
+                <span>First name</span>
+                <input type="text" id="checkoutFirstName" required />
+              </label>
+              <label class="input-field">
+                <span>Last name</span>
+                <input type="text" id="checkoutLastName" required />
+              </label>
+              <label class="input-field full">
+                <span>Delivery method</span>
+                <select id="checkoutDeliveryOption">
+                  <option value="slices">Pick up at Slices (+$1)</option>
+                  <option value="house">Delivery to house (+$5)</option>
+                </select>
+              </label>
+              <label class="input-field full is-hidden" id="addressField">
+                <span>Delivery address</span>
+                <textarea id="checkoutAddress" rows="3" placeholder="123 Riverside Dr"></textarea>
+              </label>
+            </div>
+          </form>
+        </div>
+        <div class="checkout-foot">
+          <div class="checkout-totals" id="checkoutTotals"></div>
+          <button class="checkout-btn" id="placeOrder" type="button">Pay</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"><span class="dot"></span><span id="toastMsg">Added to cart</span></div>
 
     <script src="zevs-custom-creations.js"></script>
   </body>
