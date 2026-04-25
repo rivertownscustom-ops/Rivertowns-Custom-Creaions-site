@@ -209,6 +209,15 @@ function updateCustomizerPrice() {
   qtyInput.value = String(state.quantity);
 }
 
+function updateAddToCartState() {
+  const product = getProduct();
+  const hasArtwork = Boolean(state.artwork);
+  addToCartButton.disabled = !hasArtwork;
+  addToCartButton.textContent = hasArtwork
+    ? `Add ${product.name} to cart`
+    : "Upload artwork to add to cart";
+}
+
 function resetCustomizerState() {
   state.quantity = 1;
   state.artwork = null;
@@ -219,6 +228,7 @@ function resetCustomizerState() {
   fileInput.value = "";
   uploadPreview.classList.remove("shown");
   updateCustomizerPrice();
+  updateAddToCartState();
   drawPreview();
 }
 
@@ -389,6 +399,7 @@ function handleFile(file) {
     uploadThumb.src = reader.result;
     uploadName.textContent = file.name;
     uploadPreview.classList.add("shown");
+    updateAddToCartState();
   });
   reader.readAsDataURL(file);
 }
@@ -399,6 +410,7 @@ function clearArtwork() {
   artworkImage = null;
   fileInput.value = "";
   uploadPreview.classList.remove("shown");
+  updateAddToCartState();
   drawPreview();
 }
 
@@ -763,5 +775,6 @@ woodFrameBlank.onload = drawPreview;
 renderGrid();
 renderCart();
 updateCustomizerPrice();
+updateAddToCartState();
 updateCheckoutDeliveryState();
 drawPreview();
