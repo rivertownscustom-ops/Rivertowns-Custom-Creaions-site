@@ -666,6 +666,11 @@ let state = {
   filter:'all'
 };
 
+const BACKEND_BASE_URL =
+  window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://127.0.0.1:3000'
+    : 'https://rivertowns-custom-creations-backend.onrender.com';
+
 const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 
@@ -1083,9 +1088,34 @@ function renderCheckoutTotals(){
   `;
 }
 
+function buildCheckoutItems(form){
+  const email = form.querySelector('[name="email"]').value.trim();
+  const first = form.querySelector('[name="first"]').value.trim();
+  const last = form.querySelector('[name="last"]').value.trim();
+  const street = form.querySelector('[name="street"]').value.trim();
+  const apt = form.querySelector('[name="apt"]').value.trim();
+  const fullName = [first, last].filter(Boolean).join(' ');
+  const address = [street, apt].filter(Boolean).join(', ');
+
+  return state.cart.map(item => ({
+    productId: item.productId,
+    quantity: item.qty,
+    customerName: fullName,
+    contactInfo: email,
+    notes: null,
+    imageName: item.artworkName || null,
+    imageDataUrl: item.artwork || null,
+    deliveryLabel: 'Delivery to house',
+    address,
+  }));
+}
+
 function wireCheckoutForm(){
   const form = $('#checkoutForm'); if (!form) return;
-  $('#placeOrder').addEventListener('click', () => {
+  const placeOrderBtn = $('#placeOrder');
+  placeOrderBtn.addEventListener('click', async () => {
+    if (state.cart.length === 0){ toast('Your cart is empty'); return; }
+
     let ok = true;
     const required = ['email','first','last','street'];
     required.forEach(name => {
@@ -1098,7 +1128,26 @@ function wireCheckoutForm(){
       if (!valid) ok = false;
     });
     if (!ok){ toast('Please fill in all required fields'); return; }
-    showSuccess(form.querySelector('[name="email"]').value.trim());
+
+    const original = placeOrderBtn.innerHTML;
+    placeOrderBtn.disabled = true;
+    placeOrderBtn.textContent = 'Opening checkout...';
+
+    try {
+      const response = await fetch(`${BACKEND_BASE_URL}/api/create-checkout-session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: buildCheckoutItems(form) })
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || 'Checkout failed.');
+      if (!data.url) throw new Error('Checkout URL missing.');
+      window.location.href = data.url;
+    } catch (error) {
+      toast(error.message || 'Checkout failed.');
+      placeOrderBtn.disabled = false;
+      placeOrderBtn.innerHTML = original;
+    }
   });
   form.querySelectorAll('input').forEach(i => i.addEventListener('input', () => {
     const wrap = i.closest('.input-field'); if (wrap) wrap.classList.remove('error');
