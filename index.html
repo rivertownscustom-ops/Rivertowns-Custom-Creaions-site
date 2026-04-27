@@ -947,26 +947,30 @@ $('#uploadRemove').addEventListener('click', e => {
   drawPreview();
 });
 
-// Add to cart
-$('#addToCart').addEventListener('click', () => {
-  const p = PRODUCTS.find(x=>x.id===state.activeProduct);
+function addItemToCart(product, overrides = {}) {
   const item = {
     lineId: Date.now()+'-'+Math.random().toString(36).slice(2,6),
-    productId: p.id,
-    name: p.name,
-    price: p.price + state.sizeMod,
-    qty: state.qty,
-    color: state.color,
-    sizeLabel: state.sizeLabel,
-    artwork: state.artwork,
-    artworkName: state.artworkName,
-    tint: p.tint,
-    render: p.render
+    productId: product.id,
+    name: product.name,
+    price: (overrides.price ?? product.price + state.sizeMod),
+    qty: (overrides.qty ?? state.qty),
+    color: (overrides.color ?? state.color ?? '#FFFDF7'),
+    sizeLabel: (overrides.sizeLabel ?? state.sizeLabel ?? 'Standard'),
+    artwork: (overrides.artwork ?? state.artwork ?? null),
+    artworkName: (overrides.artworkName ?? state.artworkName ?? null),
+    tint: product.tint,
+    render: product.render
   };
   state.cart.push(item);
   saveCart();
   renderCart();
-  toast(`Added ${p.name} to cart`);
+  toast(`Added ${product.name} to cart`);
+}
+
+// Add to cart
+$('#addToCart').addEventListener('click', () => {
+  const p = PRODUCTS.find(x=>x.id===state.activeProduct);
+  addItemToCart(p);
   closeModal('#customizer');
   setTimeout(openDrawer, 260);
 });
@@ -1055,7 +1059,21 @@ document.addEventListener('click', e => {
   const c = e.target.closest('[data-close]'); if (c){ const m = c.closest('.modal'); if (m) closeModal('#'+m.id); }
   const cc = e.target.closest('[data-close-cart]'); if (cc) closeDrawer();
   const o = e.target.closest('[data-open]'); if (o){ openCustomizer(o.dataset.open); }
-  const q = e.target.closest('[data-quick]'); if (q){ e.stopPropagation(); openCustomizer(q.dataset.quick); }
+  const q = e.target.closest('[data-quick]'); if (q){
+    e.stopPropagation();
+    const p = PRODUCTS.find(x=>x.id===q.dataset.quick);
+    if (p) {
+      addItemToCart(p, {
+        qty: 1,
+        color: (p.colors && p.colors[0]) || '#FFFDF7',
+        sizeLabel: 'Standard',
+        price: p.price,
+        artwork: null,
+        artworkName: null,
+      });
+      setTimeout(openDrawer, 120);
+    }
+  }
 });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape'){
