@@ -982,7 +982,6 @@ $('#addToCart').addEventListener('click', () => {
   const p = PRODUCTS.find(x=>x.id===state.activeProduct);
   addItemToCart(p);
   closeModal('#customizer');
-  setTimeout(openDrawer, 260);
 });
 
 // ---- Cart ----
@@ -1080,7 +1079,6 @@ document.addEventListener('click', e => {
         artwork: null,
         artworkName: null,
       });
-      setTimeout(openDrawer, 120);
     }
     return;
   }
