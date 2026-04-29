@@ -159,6 +159,15 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
 .upload-preview img{width:42px;height:42px;border-radius:6px;object-fit:cover}
 .upload-preview .name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .upload-preview .remove{font-size:12px;color:var(--terracotta);cursor:pointer}
+.crop-controls{display:none;margin-top:12px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#fff;gap:12px}
+.crop-controls.shown{display:grid}
+.crop-controls .help{margin-top:0}
+.crop-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.crop-grid .full{grid-column:1 / -1}
+.crop-range{display:flex;flex-direction:column;gap:6px}
+.crop-range label{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:500;color:var(--ink-2)}
+.crop-range output{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;color:var(--muted)}
+.crop-range input[type=range]{width:100%;accent-color:var(--terracotta)}
 .qty-row{display:flex;align-items:center;gap:14px}
 .qty-box{display:flex;align-items:center;border:1px solid var(--line-2);border-radius:12px;overflow:hidden}
 .qty-box button{width:38px;height:38px;font-size:18px;color:var(--ink-2)}
@@ -490,6 +499,23 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
           <span class="name" id="uploadName"></span>
           <span class="remove" id="uploadRemove">remove</span>
         </div>
+        <div class="crop-controls" id="cropControls">
+          <div class="crop-grid">
+            <div class="crop-range full">
+              <label>Zoom <output id="cropZoomVal">100%</output></label>
+              <input type="range" id="cropZoom" min="80" max="220" step="1" value="100">
+            </div>
+            <div class="crop-range">
+              <label>Left / right <output id="cropXVal">0%</output></label>
+              <input type="range" id="cropX" min="-100" max="100" step="1" value="0">
+            </div>
+            <div class="crop-range">
+              <label>Up / down <output id="cropYVal">0%</output></label>
+              <input type="range" id="cropY" min="-100" max="100" step="1" value="0">
+            </div>
+          </div>
+          <div class="help">Adjust the crop for framed products. The saved file will match the 16 × 12 print area.</div>
+        </div>
       </div>
 
       <div class="field">
@@ -641,7 +667,7 @@ const PRODUCTS = [
   {id:'cork-coast',cat:'coasters',name:'Custom Coaster',price:7,tiers:[{qty:1,price:7},{qty:2,price:12}],colors:['#FFFDF7'],tint:'cream',render:'coaster',tagline:'1 for $7 · 2 for $12'},
   {id:'fridge-magnet',cat:'magnets',name:'Fridge Magnets',price:10,badge:'New',colors:['#FFFDF7'],tint:'amber',render:'frame',tagline:'Set of 4 · 2.5×2.5"'},
   {id:'metal-frame',cat:'frames',name:'Metal Print Frame',price:48,badge:'Premium',colors:['#151311','#C8A770','#FFFDF7'],tint:'forest',render:'frame',tagline:'Brushed aluminum · 8×10'},
-  {id:'wood-frame',cat:'frames',name:'Wood Frame',price:25,colors:['#C9A47A'],tint:'cream',render:'woodframe',image:'assets/wood-frame.png',tagline:'Solid maple · 12×16'},
+  {id:'wood-frame',cat:'frames',name:'Wood Frame',price:25,colors:['#C9A47A'],tint:'cream',render:'woodframe',image:'assets/wood-frame.png',tagline:'Solid maple · 16×12'},
 ];
 
 const SVGS = {
@@ -671,6 +697,8 @@ let state = {
   artwork:null,
   artworkName:null,
   artworkScale:0.7,
+  artworkOffsetX:0,
+  artworkOffsetY:0,
   cart: readCart(),
   filter:'all'
 };
@@ -730,6 +758,76 @@ function drawPreview(){
   return drawMug();
 }
 
+function productNeedsCropControls(product){
+  return Boolean(product && (product.render === 'woodframe' || product.render === 'frame'));
+}
+
+function syncCropControls(){
+  const product = PRODUCTS.find(x=>x.id===state.activeProduct);
+  const wrap = $('#cropControls');
+  if (!wrap) return;
+  const show = productNeedsCropControls(product) && Boolean(state.artwork);
+  wrap.classList.toggle('shown', show);
+  const zoom = $('#cropZoom');
+  const x = $('#cropX');
+  const y = $('#cropY');
+  if (zoom) zoom.value = String(Math.round(state.artworkScale * 100));
+  if (x) x.value = String(Math.round(state.artworkOffsetX * 100));
+  if (y) y.value = String(Math.round(state.artworkOffsetY * 100));
+  const zoomVal = $('#cropZoomVal');
+  const xVal = $('#cropXVal');
+  const yVal = $('#cropYVal');
+  if (zoomVal) zoomVal.textContent = `${Math.round(state.artworkScale * 100)}%`;
+  if (xVal) xVal.textContent = `${Math.round(state.artworkOffsetX * 100)}%`;
+  if (yVal) yVal.textContent = `${Math.round(state.artworkOffsetY * 100)}%`;
+}
+
+function fitArtworkCover(frameW, frameH){
+  if (!artImg) return null;
+  const frameAR = frameW / frameH;
+  const artAR = artImg.width / artImg.height;
+  let baseW;
+  let baseH;
+  if (artAR > frameAR) {
+    baseH = frameH;
+    baseW = frameH * artAR;
+  } else {
+    baseW = frameW;
+    baseH = frameW / artAR;
+  }
+  const scale = Math.max(0.8, state.artworkScale || 1);
+  const drawW = baseW * scale;
+  const drawH = baseH * scale;
+  const slackX = Math.max(0, drawW - frameW);
+  const slackY = Math.max(0, drawH - frameH);
+  const offsetX = (state.artworkOffsetX || 0) * (slackX / 2);
+  const offsetY = (state.artworkOffsetY || 0) * (slackY / 2);
+  return { drawW, drawH, offsetX, offsetY };
+}
+
+function drawArtworkCover(targetX, targetY, targetW, targetH){
+  const fit = fitArtworkCover(targetW, targetH);
+  if (!fit) return;
+  const dx = targetX + (targetW - fit.drawW) / 2 + fit.offsetX;
+  const dy = targetY + (targetH - fit.drawH) / 2 + fit.offsetY;
+  mctx.drawImage(artImg, dx, dy, fit.drawW, fit.drawH);
+}
+
+function exportArtworkForProduct(product){
+  if (!artImg) return state.artwork || null;
+  if (!productNeedsCropControls(product)) return state.artwork || null;
+  const exportCanvas = document.createElement('canvas');
+  exportCanvas.width = 1600;
+  exportCanvas.height = 1200;
+  const ctx = exportCanvas.getContext('2d');
+  const fit = fitArtworkCover(exportCanvas.width, exportCanvas.height);
+  if (!fit) return state.artwork || null;
+  const dx = (exportCanvas.width - fit.drawW) / 2 + fit.offsetX;
+  const dy = (exportCanvas.height - fit.drawH) / 2 + fit.offsetY;
+  ctx.drawImage(artImg, dx, dy, fit.drawW, fit.drawH);
+  return exportCanvas.toDataURL('image/png');
+}
+
 const mugBlankImg = new Image();
 mugBlankImg.src = 'assets/mug-blank.png';
 mugBlankImg.onload = () => drawMug();
@@ -752,10 +850,7 @@ function drawWoodFrame(){
     mctx.save();
     mctx.beginPath(); mctx.rect(frontX, frontY, frontW, frontH); mctx.clip();
     if (artImg){
-      const artAR = artImg.width / artImg.height;
-      let artW = frontW * state.artworkScale, artH = artW / artAR;
-      if (artH < frontH * state.artworkScale){ artH = frontH * state.artworkScale; artW = artH * artAR; }
-      mctx.drawImage(artImg, frontX + frontW/2 - artW/2, frontY + frontH/2 - artH/2, artW, artH);
+      drawArtworkCover(frontX, frontY, frontW, frontH);
     } else {
       mctx.fillStyle = 'rgba(110,80,40,.18)'; mctx.fillRect(frontX, frontY, frontW, frontH);
       mctx.fillStyle = 'rgba(60,40,20,.45)';
@@ -852,9 +947,7 @@ function drawFrame(){
   if (artImg){
     mctx.save();
     mctx.beginPath(); mctx.rect(pad+inner,pad+inner,fw-inner*2,fh-inner*2); mctx.clip();
-    const iw=fw-inner*2, ih=fh-inner*2, ar=artImg.width/artImg.height;
-    let dw=iw,dh=iw/ar; if(dh>ih){dh=ih;dw=ih*ar;}
-    mctx.drawImage(artImg,pad+inner+(iw-dw)/2,pad+inner+(ih-dh)/2,dw,dh);
+    drawArtworkCover(pad + inner, pad + inner, fw - inner * 2, fh - inner * 2);
     mctx.restore();
   }
 }
@@ -884,7 +977,7 @@ function openCustomizer(productId){
   state.color = p.colors[0];
   state.size='md'; state.sizeLabel='Standard'; state.sizeMod=0;
   state.qty=1; state.artwork=null; state.artworkName=null;
-  state.artworkScale=0.7; artImg=null;
+  state.artworkScale=1; state.artworkOffsetX=0; state.artworkOffsetY=0; artImg=null;
 
   $('#cust-title').textContent = `Customize your ${p.name.toLowerCase()}`;
   $('#cust-subtitle').textContent = p.tagline;
@@ -895,6 +988,7 @@ function openCustomizer(productId){
 
   updatePrice();
   drawPreview();
+  syncCropControls();
   openModal('#customizer');
 }
 
@@ -940,11 +1034,12 @@ function handleFile(f){
     state.artwork = ev.target.result;
     state.artworkName = f.name;
     const img = new Image();
-    img.onload = () => { artImg = img; drawPreview(); };
+    img.onload = () => { artImg = img; drawPreview(); syncCropControls(); };
     img.src = ev.target.result;
     $('#uploadThumb').src = ev.target.result;
     $('#uploadName').textContent = f.name;
     $('#uploadPreview').classList.add('shown');
+    syncCropControls();
   };
   reader.readAsDataURL(f);
 }
@@ -953,11 +1048,26 @@ $('#uploadRemove').addEventListener('click', e => {
   state.artwork = null; state.artworkName=null; artImg = null;
   $('#uploadPreview').classList.remove('shown');
   $('#fileInput').value = '';
+  state.artworkScale = 1;
+  state.artworkOffsetX = 0;
+  state.artworkOffsetY = 0;
   drawPreview();
+  syncCropControls();
+});
+
+[['#cropZoom','artworkScale',v => Math.max(0.8, Number(v)/100)], ['#cropX','artworkOffsetX',v => Number(v)/100], ['#cropY','artworkOffsetY',v => Number(v)/100]].forEach(([selector,key,map]) => {
+  const input = $(selector);
+  if (!input) return;
+  input.addEventListener('input', () => {
+    state[key] = map(input.value);
+    syncCropControls();
+    drawPreview();
+  });
 });
 
 function addItemToCart(product, overrides = {}) {
   state.cart = readCart();
+  const finalArtwork = (overrides.artwork ?? state.artwork ?? null);
   const item = {
     lineId: Date.now()+'-'+Math.random().toString(36).slice(2,6),
     productId: product.id,
@@ -966,7 +1076,7 @@ function addItemToCart(product, overrides = {}) {
     qty: (overrides.qty ?? state.qty),
     color: (overrides.color ?? state.color ?? '#FFFDF7'),
     sizeLabel: (overrides.sizeLabel ?? state.sizeLabel ?? 'Standard'),
-    artwork: (overrides.artwork ?? state.artwork ?? null),
+    artwork: finalArtwork,
     artworkName: (overrides.artworkName ?? state.artworkName ?? null),
     tint: product.tint,
     render: product.render
@@ -980,7 +1090,8 @@ function addItemToCart(product, overrides = {}) {
 // Add to cart
 $('#addToCart').addEventListener('click', () => {
   const p = PRODUCTS.find(x=>x.id===state.activeProduct);
-  addItemToCart(p);
+  const finalArtwork = exportArtworkForProduct(p);
+  addItemToCart(p, { artwork: finalArtwork });
   closeModal('#customizer');
 });
 
@@ -1232,7 +1343,8 @@ wireCheckoutForm();
 // Init
 renderGrid();
 renderCart();
-drawMug();
+drawPreview();
+syncCropControls();
 
 // ---- TWEAKS ----
 (function(){
