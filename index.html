@@ -986,7 +986,19 @@ $('#addToCart').addEventListener('click', () => {
 
 // ---- Cart ----
 function saveCart(){
-  localStorage.setItem('rt_cart', JSON.stringify(state.cart));
+  try {
+    localStorage.setItem('rt_cart', JSON.stringify(state.cart));
+  } catch (_error) {
+    try {
+      const lightweightCart = state.cart.map(({ artwork, ...item }) => ({
+        ...item,
+        artwork: null,
+      }));
+      localStorage.setItem('rt_cart', JSON.stringify(lightweightCart));
+    } catch (_nestedError) {
+      // Keep the cart alive in memory even if the browser cannot persist it.
+    }
+  }
   $('#cartCount').textContent = state.cart.reduce((s,i)=>s+i.qty,0);
 }
 
