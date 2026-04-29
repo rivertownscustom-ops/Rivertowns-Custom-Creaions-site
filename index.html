@@ -651,6 +651,15 @@ const SVGS = {
   case:`<svg viewBox="0 0 220 220"><rect x="75" y="30" width="70" height="160" rx="14" fill="#151311" stroke="#0A0908" stroke-width="1.5"/><rect x="82" y="40" width="56" height="140" rx="8" fill="#2A2622"/><circle cx="95" cy="54" r="4" fill="#0A0908"/><circle cx="95" cy="54" r="2" fill="#3B4A6B"/><rect x="110" y="50" width="12" height="8" rx="2" fill="#0A0908"/></svg>`,
 };
 
+function readCart(){
+  try {
+    const parsed = JSON.parse(localStorage.getItem('rt_cart') || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (_error) {
+    return [];
+  }
+}
+
 let state = {
   activeProduct:'sig-mug',
   color:'#FFFFFF',
@@ -662,7 +671,7 @@ let state = {
   artwork:null,
   artworkName:null,
   artworkScale:0.7,
-  cart: JSON.parse(localStorage.getItem('rt_cart')||'[]'),
+  cart: readCart(),
   filter:'all'
 };
 
@@ -948,6 +957,7 @@ $('#uploadRemove').addEventListener('click', e => {
 });
 
 function addItemToCart(product, overrides = {}) {
+  state.cart = readCart();
   const item = {
     lineId: Date.now()+'-'+Math.random().toString(36).slice(2,6),
     productId: product.id,
@@ -1058,7 +1068,6 @@ $('#overlay').addEventListener('click', () => {
 document.addEventListener('click', e => {
   const c = e.target.closest('[data-close]'); if (c){ const m = c.closest('.modal'); if (m) closeModal('#'+m.id); }
   const cc = e.target.closest('[data-close-cart]'); if (cc) closeDrawer();
-  const o = e.target.closest('[data-open]'); if (o){ openCustomizer(o.dataset.open); }
   const q = e.target.closest('[data-quick]'); if (q){
     e.stopPropagation();
     const p = PRODUCTS.find(x=>x.id===q.dataset.quick);
@@ -1073,7 +1082,9 @@ document.addEventListener('click', e => {
       });
       setTimeout(openDrawer, 120);
     }
+    return;
   }
+  const o = e.target.closest('[data-open]'); if (o){ openCustomizer(o.dataset.open); }
 });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape'){
