@@ -745,6 +745,10 @@ function productNeedsCropControls(product){
   return Boolean(product && (product.render === 'woodframe' || product.render === 'frame'));
 }
 
+function getMinArtworkScale(product){
+  return productNeedsCropControls(product) ? 1.08 : 0.8;
+}
+
 function syncCropControls(){
   const product = PRODUCTS.find(x=>x.id===state.activeProduct);
   const show = productNeedsCropControls(product) && Boolean(state.artwork);
@@ -769,7 +773,8 @@ function fitArtworkCover(frameW, frameH){
     baseW = frameW;
     baseH = frameW / artAR;
   }
-  const scale = Math.max(0.8, state.artworkScale || 1);
+  const product = PRODUCTS.find(x=>x.id===state.activeProduct);
+  const scale = Math.max(getMinArtworkScale(product), state.artworkScale || 1);
   const drawW = baseW * scale;
   const drawH = baseH * scale;
   const slackX = Math.max(0, drawW - frameW);
@@ -810,6 +815,19 @@ function getCropRectForProduct(product, width = mugCanvas.width, height = mugCan
   return null;
 }
 
+function getArtworkBoundsForProduct(product){
+  const rect = getCropRectForProduct(product);
+  if (!rect) return null;
+  const fit = fitArtworkCover(rect.w, rect.h);
+  if (!fit) return null;
+  return {
+    x: rect.x + (rect.w - fit.drawW) / 2 + fit.offsetX,
+    y: rect.y + (rect.h - fit.drawH) / 2 + fit.offsetY,
+    w: fit.drawW,
+    h: fit.drawH,
+  };
+}
+
 function syncFrameGuide(){
   const product = PRODUCTS.find(x=>x.id===state.activeProduct);
   const guide = $('#frameGuide');
@@ -818,18 +836,18 @@ function syncFrameGuide(){
     if (guide) guide.classList.remove('visible');
     return;
   }
-  const rect = getCropRectForProduct(product);
-  if (!rect) {
+  const artBounds = getArtworkBoundsForProduct(product);
+  if (!artBounds) {
     guide.classList.remove('visible');
     return;
   }
   const bounds = canvas.getBoundingClientRect();
   const scaleX = bounds.width / mugCanvas.width;
   const scaleY = bounds.height / mugCanvas.height;
-  guide.style.left = `${rect.x * scaleX}px`;
-  guide.style.top = `${rect.y * scaleY}px`;
-  guide.style.width = `${rect.w * scaleX}px`;
-  guide.style.height = `${rect.h * scaleY}px`;
+  guide.style.left = `${artBounds.x * scaleX}px`;
+  guide.style.top = `${artBounds.y * scaleY}px`;
+  guide.style.width = `${artBounds.w * scaleX}px`;
+  guide.style.height = `${artBounds.h * scaleY}px`;
   guide.classList.add('visible');
 }
 
@@ -860,7 +878,8 @@ function applyCropScale(delta){
   const product = PRODUCTS.find(x=>x.id===state.activeProduct);
   const rect = getCropRectForProduct(product);
   if (!rect) return;
-  const nextScale = Math.max(0.8, Math.min(2.4, state.artworkScale + delta));
+  const minScale = getMinArtworkScale(product);
+  const nextScale = Math.max(minScale, Math.min(2.4, state.artworkScale + delta));
   state.artworkScale = nextScale;
   clampArtworkOffsets(rect.w, rect.h);
 }
@@ -1072,7 +1091,7 @@ function openCustomizer(productId){
   state.color = p.colors[0];
   state.size='md'; state.sizeLabel='Standard'; state.sizeMod=0;
   state.qty=1; state.artwork=null; state.artworkName=null;
-  state.artworkScale=1; state.artworkOffsetX=0; state.artworkOffsetY=0; artImg=null;
+  state.artworkScale=getMinArtworkScale(p); state.artworkOffsetX=0; state.artworkOffsetY=0; artImg=null;
 
   $('#cust-title').textContent = `Customize your ${p.name.toLowerCase()}`;
   $('#cust-subtitle').textContent = p.tagline;
@@ -1129,7 +1148,7 @@ function handleFile(f){
     state.artwork = ev.target.result;
     state.artworkName = f.name;
     const img = new Image();
-    img.onload = () => { artImg = img; drawPreview(); syncCropControls(); };
+    img.onload = () => { const product = PRODUCTS.find(x=>x.id===state.activeProduct); artImg = img; state.artworkScale = Math.max(getMinArtworkScale(product), state.artworkScale || 1); drawPreview(); syncCropControls(); };
     img.src = ev.target.result;
     $('#uploadThumb').src = ev.target.result;
     $('#uploadName').textContent = f.name;
@@ -1143,7 +1162,8 @@ $('#uploadRemove').addEventListener('click', e => {
   state.artwork = null; state.artworkName=null; artImg = null;
   $('#uploadPreview').classList.remove('shown');
   $('#fileInput').value = '';
-  state.artworkScale = 1;
+  const product = PRODUCTS.find(x=>x.id===state.activeProduct);
+  state.artworkScale = getMinArtworkScale(product);
   state.artworkOffsetX = 0;
   state.artworkOffsetY = 0;
   drawPreview();
