@@ -822,7 +822,7 @@ function getCropRectForProduct(product, width = mugCanvas.width, height = mugCan
     }
     return {
       x: frame.x + (frame.w - cropW) / 2,
-      y: frame.y + (frame.h - cropH) / 2,
+      y: frame.y + frame.h * 0.10,
       w: cropW,
       h: cropH,
     };
