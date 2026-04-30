@@ -815,19 +815,6 @@ function getCropRectForProduct(product, width = mugCanvas.width, height = mugCan
   return null;
 }
 
-function getArtworkBoundsForProduct(product){
-  const rect = getCropRectForProduct(product);
-  if (!rect) return null;
-  const fit = fitArtworkCover(rect.w, rect.h);
-  if (!fit) return null;
-  return {
-    x: rect.x + (rect.w - fit.drawW) / 2 + fit.offsetX,
-    y: rect.y + (rect.h - fit.drawH) / 2 + fit.offsetY,
-    w: fit.drawW,
-    h: fit.drawH,
-  };
-}
-
 function syncFrameGuide(){
   const product = PRODUCTS.find(x=>x.id===state.activeProduct);
   const guide = $('#frameGuide');
@@ -836,18 +823,18 @@ function syncFrameGuide(){
     if (guide) guide.classList.remove('visible');
     return;
   }
-  const artBounds = getArtworkBoundsForProduct(product);
-  if (!artBounds) {
+  const rect = getCropRectForProduct(product);
+  if (!rect) {
     guide.classList.remove('visible');
     return;
   }
   const bounds = canvas.getBoundingClientRect();
   const scaleX = bounds.width / mugCanvas.width;
   const scaleY = bounds.height / mugCanvas.height;
-  guide.style.left = `${artBounds.x * scaleX}px`;
-  guide.style.top = `${artBounds.y * scaleY}px`;
-  guide.style.width = `${artBounds.w * scaleX}px`;
-  guide.style.height = `${artBounds.h * scaleY}px`;
+  guide.style.left = `${rect.x * scaleX}px`;
+  guide.style.top = `${rect.y * scaleY}px`;
+  guide.style.width = `${rect.w * scaleX}px`;
+  guide.style.height = `${rect.h * scaleY}px`;
   guide.classList.add('visible');
 }
 
