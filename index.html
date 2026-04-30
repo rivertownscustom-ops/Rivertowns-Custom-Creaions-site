@@ -650,7 +650,7 @@ const PRODUCTS = [
   {id:'cork-coast',cat:'coasters',name:'Custom Coaster',price:7,tiers:[{qty:1,price:7},{qty:2,price:12}],colors:['#FFFDF7'],tint:'cream',render:'coaster',tagline:'1 for $7 · 2 for $12'},
   {id:'fridge-magnet',cat:'magnets',name:'Fridge Magnets',price:10,badge:'New',colors:['#FFFDF7'],tint:'amber',render:'frame',tagline:'Set of 4 · 2.5×2.5"'},
   {id:'metal-frame',cat:'frames',name:'Metal Print Frame',price:48,badge:'Premium',colors:['#151311','#C8A770','#FFFDF7'],tint:'forest',render:'frame',tagline:'Brushed aluminum · 8×10'},
-  {id:'wood-frame',cat:'frames',name:'Wood Frame',price:25,colors:['#C9A47A'],tint:'cream',render:'woodframe',image:'assets/wood-frame.png',tagline:'Solid maple · 16×12'},
+  {id:'wood-frame',cat:'frames',name:'Wood Frame',price:25,colors:['#C9A47A'],tint:'cream',render:'woodframe',image:'assets/wood-frame.png',tagline:'Solid maple · 12×16'},
 ];
 
 const SVGS = {
@@ -800,11 +800,19 @@ function getCropRectForProduct(product, width = mugCanvas.width, height = mugCan
     let drawW = width * 0.92, drawH = drawW / imgAR;
     if (drawH > height * 0.92){ drawH = height * 0.92; drawW = drawH * imgAR; }
     const dx = (width - drawW)/2, dy = (height - drawH)/2;
+    const maxW = drawW * 0.62;
+    const maxH = drawH * 0.74;
+    let cropW = maxW;
+    let cropH = cropW * (16 / 12);
+    if (cropH > maxH) {
+      cropH = maxH;
+      cropW = cropH * (12 / 16);
+    }
     return {
-      x: dx + drawW * 0.10,
-      y: dy + drawH * 0.18,
-      w: drawW * 0.80,
-      h: drawH * 0.60,
+      x: dx + (drawW - cropW) / 2,
+      y: dy + (drawH - cropH) / 2,
+      w: cropW,
+      h: cropH,
     };
   }
   if (product.render === 'frame') {
@@ -918,8 +926,13 @@ function exportArtworkForProduct(product){
   if (!artImg) return state.artwork || null;
   if (!productNeedsCropControls(product)) return state.artwork || null;
   const exportCanvas = document.createElement('canvas');
-  exportCanvas.width = 1600;
-  exportCanvas.height = 1200;
+  if (product && product.render === 'woodframe') {
+    exportCanvas.width = 1200;
+    exportCanvas.height = 1600;
+  } else {
+    exportCanvas.width = 1600;
+    exportCanvas.height = 1200;
+  }
   const ctx = exportCanvas.getContext('2d');
   const fit = fitArtworkCover(exportCanvas.width, exportCanvas.height);
   if (!fit) return state.artwork || null;
@@ -946,8 +959,9 @@ function drawWoodFrame(){
     if (drawH > h * 0.92){ drawH = h * 0.92; drawW = drawH * imgAR; }
     const dx = (w - drawW)/2, dy = (h - drawH)/2;
     mctx.drawImage(woodFrameBlankImg, dx, dy, drawW, drawH);
-    const frontX = dx + drawW * 0.10, frontY = dy + drawH * 0.13;
-    const frontW = drawW * 0.80,      frontH = drawH * 0.74;
+    const cropRect = getCropRectForProduct({ render: 'woodframe' }, w, h);
+    if (!cropRect) return;
+    const frontX = cropRect.x, frontY = cropRect.y, frontW = cropRect.w, frontH = cropRect.h;
     mctx.save();
     mctx.beginPath(); mctx.rect(frontX, frontY, frontW, frontH); mctx.clip();
     if (artImg){
