@@ -109,6 +109,10 @@ function getOrderDelivery(item) {
   };
 }
 
+function toCents(amount) {
+  return Math.round(Number(amount || 0) * 100);
+}
+
 function buildNormalizedOrder(rawItem, orderDelivery, itemIndex) {
   const product = getProductDefinition(rawItem.productId);
 
@@ -117,18 +121,20 @@ function buildNormalizedOrder(rawItem, orderDelivery, itemIndex) {
   }
 
   const quantity = Math.max(1, Number(rawItem.quantity || 1));
-  const itemSubtotal = product.unitPrice * quantity;
+  const unitPriceCents = toCents(product.unitPrice);
+  const deliveryFeeCents = itemIndex === 0 ? toCents(orderDelivery.deliveryFee) : 0;
+  const itemSubtotalCents = unitPriceCents * quantity;
 
   return {
     product_id: String(rawItem.productId).trim(),
     product_name: product.name,
-    unit_price: product.unitPrice,
+    unit_price: unitPriceCents,
     customer_name: String(rawItem.customerName || "").trim(),
     contact_info: String(rawItem.contactInfo || "").trim(),
     quantity,
     delivery_option: orderDelivery.deliveryOption,
-    delivery_fee: itemIndex === 0 ? orderDelivery.deliveryFee : 0,
-    total_amount: itemSubtotal + (itemIndex === 0 ? orderDelivery.deliveryFee : 0),
+    delivery_fee: deliveryFeeCents,
+    total_amount: itemSubtotalCents + deliveryFeeCents,
     address: itemIndex === 0 ? orderDelivery.address : null,
     notes: String(rawItem.notes || "").trim() || null,
     image_name: String(rawItem.imageName || "").trim() || null,
@@ -361,19 +367,21 @@ app.post("/api/create-checkout-session", async (request, response) => {
           name: item.product_name,
           description: item.notes || `${item.product_name} order`,
         },
-        unit_amount: item.unit_price * 100,
+        unit_amount: item.unit_price,
       },
       quantity: item.quantity,
     }));
 
-    if (orderDelivery.deliveryFee > 0) {
+    const orderDeliveryFeeCents = toCents(orderDelivery.deliveryFee);
+
+    if (orderDeliveryFeeCents > 0) {
       lineItems.push({
         price_data: {
           currency: "usd",
           product_data: {
             name: orderDelivery.deliveryOption === "house" ? "Delivery to house" : "Pick up at Slices",
           },
-          unit_amount: orderDelivery.deliveryFee * 100,
+          unit_amount: orderDeliveryFeeCents,
         },
         quantity: 1,
       });
