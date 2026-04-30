@@ -792,16 +792,28 @@ function drawArtworkCover(targetX, targetY, targetW, targetH){
   mctx.drawImage(artImg, dx, dy, fit.drawW, fit.drawH);
 }
 
+function getWoodFrameBounds(width = mugCanvas.width, height = mugCanvas.height){
+  const frameAR = 16 / 12;
+  let drawW = width * 0.92;
+  let drawH = drawW / frameAR;
+  if (drawH > height * 0.92) {
+    drawH = height * 0.92;
+    drawW = drawH * frameAR;
+  }
+  return {
+    x: (width - drawW) / 2,
+    y: (height - drawH) / 2,
+    w: drawW,
+    h: drawH,
+  };
+}
+
 function getCropRectForProduct(product, width = mugCanvas.width, height = mugCanvas.height){
   if (!productNeedsCropControls(product)) return null;
   if (product.render === 'woodframe') {
-    if (!woodFrameBlankImg.complete || !woodFrameBlankImg.naturalWidth) return null;
-    const imgAR = woodFrameBlankImg.naturalWidth / woodFrameBlankImg.naturalHeight;
-    let drawW = width * 0.92, drawH = drawW / imgAR;
-    if (drawH > height * 0.92){ drawH = height * 0.92; drawW = drawH * imgAR; }
-    const dx = (width - drawW)/2, dy = (height - drawH)/2;
-    const maxW = drawW * 0.62;
-    const maxH = drawH * 0.74;
+    const frame = getWoodFrameBounds(width, height);
+    const maxW = frame.w * 0.62;
+    const maxH = frame.h * 0.74;
     let cropW = maxW;
     let cropH = cropW * (12 / 16);
     if (cropH > maxH) {
@@ -809,8 +821,8 @@ function getCropRectForProduct(product, width = mugCanvas.width, height = mugCan
       cropW = cropH * (16 / 12);
     }
     return {
-      x: dx + (drawW - cropW) / 2,
-      y: dy + (drawH - cropH) / 2,
+      x: frame.x + (frame.w - cropW) / 2,
+      y: frame.y + (frame.h - cropH) / 2,
       w: cropW,
       h: cropH,
     };
@@ -953,12 +965,9 @@ woodFrameBlankImg.onload = () => { if(state.activeProduct==='wood-frame') drawWo
 function drawWoodFrame(){
   const w = mugCanvas.width, h = mugCanvas.height;
   mctx.clearRect(0,0,w,h);
+  const frame = getWoodFrameBounds(w, h);
   if (woodFrameBlankImg.complete && woodFrameBlankImg.naturalWidth){
-    const imgAR = woodFrameBlankImg.naturalWidth / woodFrameBlankImg.naturalHeight;
-    let drawW = w * 0.92, drawH = drawW / imgAR;
-    if (drawH > h * 0.92){ drawH = h * 0.92; drawW = drawH * imgAR; }
-    const dx = (w - drawW)/2, dy = (h - drawH)/2;
-    mctx.drawImage(woodFrameBlankImg, dx, dy, drawW, drawH);
+    mctx.drawImage(woodFrameBlankImg, frame.x, frame.y, frame.w, frame.h);
     const cropRect = getCropRectForProduct({ render: 'woodframe' }, w, h);
     if (!cropRect) return;
     const frontX = cropRect.x, frontY = cropRect.y, frontW = cropRect.w, frontH = cropRect.h;
