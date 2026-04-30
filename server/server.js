@@ -15,7 +15,7 @@ const RESEND_FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "";
 const RESEND_REPLY_TO = process.env.RESEND_REPLY_TO || "";
 
 const PRODUCT_CATALOG = {
-  "sig-mug": { name: "Custom Photo Mug", unitPrice: 20 },
+  "sig-mug": { name: "Custom Photo Mug", unitPrice: 16.99 },
   "wood-frame": { name: "Wood Frame", unitPrice: 25 },
   "metal-frame": { name: "Metal Print Frame", unitPrice: 48 },
   "fridge-magnet": { name: "Fridge Magnets", unitPrice: 10 },
