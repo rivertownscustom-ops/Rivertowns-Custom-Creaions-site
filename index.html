@@ -159,15 +159,16 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
 .upload-preview img{width:42px;height:42px;border-radius:6px;object-fit:cover}
 .upload-preview .name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .upload-preview .remove{font-size:12px;color:var(--terracotta);cursor:pointer}
-.crop-controls{display:none;margin-top:12px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#fff;gap:12px}
-.crop-controls.shown{display:grid}
-.crop-controls .help{margin-top:0}
-.crop-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.crop-grid .full{grid-column:1 / -1}
-.crop-range{display:flex;flex-direction:column;gap:6px}
-.crop-range label{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:500;color:var(--ink-2)}
-.crop-range output{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;color:var(--muted)}
-.crop-range input[type=range]{width:100%;accent-color:var(--terracotta)}
+.preview-stage.crop-enabled #mugCanvas{cursor:grab}
+.preview-stage.crop-dragging #mugCanvas{cursor:grabbing}
+.frame-guide{position:absolute;border:2px solid rgba(255,255,255,.92);box-shadow:0 0 0 9999px rgba(21,19,17,.15);pointer-events:none;display:none;border-radius:4px}
+.frame-guide.visible{display:block}
+.frame-guide::before{content:"Drag image to position. Drag corners to resize.";position:absolute;left:0;bottom:calc(100% + 10px);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);background:rgba(255,248,236,.96);padding:6px 10px;border-radius:999px;white-space:nowrap;border:1px solid var(--line)}
+.frame-handle{position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid var(--terracotta);pointer-events:auto;box-shadow:0 6px 20px rgba(21,19,17,.18)}
+.frame-handle.tl{left:-8px;top:-8px;cursor:nwse-resize}
+.frame-handle.tr{right:-8px;top:-8px;cursor:nesw-resize}
+.frame-handle.bl{left:-8px;bottom:-8px;cursor:nesw-resize}
+.frame-handle.br{right:-8px;bottom:-8px;cursor:nwse-resize}
 .qty-row{display:flex;align-items:center;gap:14px}
 .qty-box{display:flex;align-items:center;border:1px solid var(--line-2);border-radius:12px;overflow:hidden}
 .qty-box button{width:38px;height:38px;font-size:18px;color:var(--ink-2)}
@@ -471,6 +472,12 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
       <div class="mug-wrap">
         <canvas id="mugCanvas" width="880" height="680"></canvas>
       </div>
+      <div class="frame-guide" id="frameGuide" aria-hidden="true">
+        <span class="frame-handle tl" data-crop-handle="tl"></span>
+        <span class="frame-handle tr" data-crop-handle="tr"></span>
+        <span class="frame-handle bl" data-crop-handle="bl"></span>
+        <span class="frame-handle br" data-crop-handle="br"></span>
+      </div>
     </div>
   </div>
 
@@ -478,13 +485,6 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
     <div class="form-pane">
       <h2 id="cust-title">Customize your mug</h2>
       <div class="sub" id="cust-subtitle">Upload artwork, pick a finish, see it live.</div>
-
-      <div class="field">
-        <label class="ttl">Size</label>
-        <div class="size-picks" id="sizePicks">
-          <div class="size-pick active" data-size="md" data-label="Standard" data-price="0"><span class="sz">Standard</span><span class="oz">11 oz</span></div>
-        </div>
-      </div>
 
       <div class="field">
         <label class="ttl">Your artwork</label>
@@ -498,23 +498,6 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
           <img id="uploadThumb" alt="">
           <span class="name" id="uploadName"></span>
           <span class="remove" id="uploadRemove">remove</span>
-        </div>
-        <div class="crop-controls" id="cropControls">
-          <div class="crop-grid">
-            <div class="crop-range full">
-              <label>Zoom <output id="cropZoomVal">100%</output></label>
-              <input type="range" id="cropZoom" min="80" max="220" step="1" value="100">
-            </div>
-            <div class="crop-range">
-              <label>Left / right <output id="cropXVal">0%</output></label>
-              <input type="range" id="cropX" min="-100" max="100" step="1" value="0">
-            </div>
-            <div class="crop-range">
-              <label>Up / down <output id="cropYVal">0%</output></label>
-              <input type="range" id="cropY" min="-100" max="100" step="1" value="0">
-            </div>
-          </div>
-          <div class="help">Adjust the crop for framed products. The saved file will match the 16 × 12 print area.</div>
         </div>
       </div>
 
@@ -764,23 +747,14 @@ function productNeedsCropControls(product){
 
 function syncCropControls(){
   const product = PRODUCTS.find(x=>x.id===state.activeProduct);
-  const wrap = $('#cropControls');
-  if (!wrap) return;
   const show = productNeedsCropControls(product) && Boolean(state.artwork);
-  wrap.classList.toggle('shown', show);
-  const zoom = $('#cropZoom');
-  const x = $('#cropX');
-  const y = $('#cropY');
-  if (zoom) zoom.value = String(Math.round(state.artworkScale * 100));
-  if (x) x.value = String(Math.round(state.artworkOffsetX * 100));
-  if (y) y.value = String(Math.round(state.artworkOffsetY * 100));
-  const zoomVal = $('#cropZoomVal');
-  const xVal = $('#cropXVal');
-  const yVal = $('#cropYVal');
-  if (zoomVal) zoomVal.textContent = `${Math.round(state.artworkScale * 100)}%`;
-  if (xVal) xVal.textContent = `${Math.round(state.artworkOffsetX * 100)}%`;
-  if (yVal) yVal.textContent = `${Math.round(state.artworkOffsetY * 100)}%`;
+  const guide = $('#frameGuide');
+  const stage = $('#previewStage');
+  if (stage) stage.classList.toggle('crop-enabled', show);
+  if (guide) guide.classList.toggle('visible', show);
+  syncFrameGuide();
 }
+
 
 function fitArtworkCover(frameW, frameH){
   if (!artImg) return null;
@@ -811,6 +785,127 @@ function drawArtworkCover(targetX, targetY, targetW, targetH){
   const dx = targetX + (targetW - fit.drawW) / 2 + fit.offsetX;
   const dy = targetY + (targetH - fit.drawH) / 2 + fit.offsetY;
   mctx.drawImage(artImg, dx, dy, fit.drawW, fit.drawH);
+}
+
+function getCropRectForProduct(product, width = mugCanvas.width, height = mugCanvas.height){
+  if (!productNeedsCropControls(product)) return null;
+  if (product.render === 'woodframe') {
+    if (!woodFrameBlankImg.complete || !woodFrameBlankImg.naturalWidth) return null;
+    const imgAR = woodFrameBlankImg.naturalWidth / woodFrameBlankImg.naturalHeight;
+    let drawW = width * 0.92, drawH = drawW / imgAR;
+    if (drawH > height * 0.92){ drawH = height * 0.92; drawW = drawH * imgAR; }
+    const dx = (width - drawW)/2, dy = (height - drawH)/2;
+    return {
+      x: dx + drawW * 0.10,
+      y: dy + drawH * 0.18,
+      w: drawW * 0.80,
+      h: drawH * 0.60,
+    };
+  }
+  if (product.render === 'frame') {
+    const pad = 60, fw = width - pad * 2, fh = height - pad * 2;
+    const inner = 16;
+    return { x: pad + inner, y: pad + inner, w: fw - inner * 2, h: fh - inner * 2 };
+  }
+  return null;
+}
+
+function syncFrameGuide(){
+  const product = PRODUCTS.find(x=>x.id===state.activeProduct);
+  const guide = $('#frameGuide');
+  const canvas = $('#mugCanvas');
+  if (!guide || !canvas || !productNeedsCropControls(product) || !state.artwork) {
+    if (guide) guide.classList.remove('visible');
+    return;
+  }
+  const rect = getCropRectForProduct(product);
+  if (!rect) {
+    guide.classList.remove('visible');
+    return;
+  }
+  const bounds = canvas.getBoundingClientRect();
+  const scaleX = bounds.width / mugCanvas.width;
+  const scaleY = bounds.height / mugCanvas.height;
+  guide.style.left = `${rect.x * scaleX}px`;
+  guide.style.top = `${rect.y * scaleY}px`;
+  guide.style.width = `${rect.w * scaleX}px`;
+  guide.style.height = `${rect.h * scaleY}px`;
+  guide.classList.add('visible');
+}
+
+function clampArtworkOffsets(targetW, targetH){
+  const fit = fitArtworkCover(targetW, targetH);
+  if (!fit) return;
+  const slackX = Math.max(0, fit.drawW - targetW);
+  const slackY = Math.max(0, fit.drawH - targetH);
+  if (slackX === 0) state.artworkOffsetX = 0;
+  else state.artworkOffsetX = Math.max(-1, Math.min(1, state.artworkOffsetX));
+  if (slackY === 0) state.artworkOffsetY = 0;
+  else state.artworkOffsetY = Math.max(-1, Math.min(1, state.artworkOffsetY));
+}
+
+function applyCropDrag(deltaX, deltaY){
+  const product = PRODUCTS.find(x=>x.id===state.activeProduct);
+  const rect = getCropRectForProduct(product);
+  if (!rect) return;
+  const fit = fitArtworkCover(rect.w, rect.h);
+  if (!fit) return;
+  const slackX = Math.max(0, fit.drawW - rect.w);
+  const slackY = Math.max(0, fit.drawH - rect.h);
+  if (slackX > 0) state.artworkOffsetX = Math.max(-1, Math.min(1, state.artworkOffsetX + (deltaX * 2) / slackX));
+  if (slackY > 0) state.artworkOffsetY = Math.max(-1, Math.min(1, state.artworkOffsetY + (deltaY * 2) / slackY));
+}
+
+function applyCropScale(delta){
+  const product = PRODUCTS.find(x=>x.id===state.activeProduct);
+  const rect = getCropRectForProduct(product);
+  if (!rect) return;
+  const nextScale = Math.max(0.8, Math.min(2.4, state.artworkScale + delta));
+  state.artworkScale = nextScale;
+  clampArtworkOffsets(rect.w, rect.h);
+}
+
+function attachCropInteractions(){
+  const stage = $('#previewStage');
+  const guide = $('#frameGuide');
+  if (!stage || !guide) return;
+  let dragMode = null;
+  let lastX = 0;
+  let lastY = 0;
+
+  function stopDrag(){
+    dragMode = null;
+    stage.classList.remove('crop-dragging');
+  }
+
+  stage.addEventListener('pointerdown', event => {
+    const product = PRODUCTS.find(x=>x.id===state.activeProduct);
+    if (!productNeedsCropControls(product) || !state.artwork) return;
+    const handle = event.target.closest('[data-crop-handle]');
+    dragMode = handle ? 'scale' : 'move';
+    lastX = event.clientX;
+    lastY = event.clientY;
+    stage.classList.add('crop-dragging');
+    event.preventDefault();
+  });
+
+  window.addEventListener('pointermove', event => {
+    if (!dragMode) return;
+    const bounds = mugCanvas.getBoundingClientRect();
+    const scaleX = mugCanvas.width / bounds.width;
+    const scaleY = mugCanvas.height / bounds.height;
+    const deltaX = (event.clientX - lastX) * scaleX;
+    const deltaY = (event.clientY - lastY) * scaleY;
+    lastX = event.clientX;
+    lastY = event.clientY;
+    if (dragMode === 'move') applyCropDrag(deltaX, deltaY);
+    if (dragMode === 'scale') applyCropScale((deltaX + deltaY) / 900);
+    drawPreview();
+    syncFrameGuide();
+  });
+
+  window.addEventListener('pointerup', stopDrag);
+  window.addEventListener('pointercancel', stopDrag);
 }
 
 function exportArtworkForProduct(product){
@@ -1053,16 +1148,6 @@ $('#uploadRemove').addEventListener('click', e => {
   state.artworkOffsetY = 0;
   drawPreview();
   syncCropControls();
-});
-
-[['#cropZoom','artworkScale',v => Math.max(0.8, Number(v)/100)], ['#cropX','artworkOffsetX',v => Number(v)/100], ['#cropY','artworkOffsetY',v => Number(v)/100]].forEach(([selector,key,map]) => {
-  const input = $(selector);
-  if (!input) return;
-  input.addEventListener('input', () => {
-    state[key] = map(input.value);
-    syncCropControls();
-    drawPreview();
-  });
 });
 
 function addItemToCart(product, overrides = {}) {
@@ -1345,6 +1430,7 @@ renderGrid();
 renderCart();
 drawPreview();
 syncCropControls();
+attachCropInteractions();
 
 // ---- TWEAKS ----
 (function(){
