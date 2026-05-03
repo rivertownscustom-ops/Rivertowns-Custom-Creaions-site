@@ -959,10 +959,23 @@ function drawWoodFrame(){
   mctx.clearRect(0,0,w,h);
   const frame = getWoodFrameBounds(w, h);
   if (woodFrameBlankImg.complete && woodFrameBlankImg.naturalWidth){
-    mctx.drawImage(woodFrameBlankImg, frame.x, frame.y, frame.w, frame.h);
+    if (artImg) {
+      const fit = fitArtworkCover(frame.w, frame.h);
+      if (fit) {
+        const artX = frame.x + (frame.w - fit.drawW) / 2 + fit.offsetX;
+        const artY = frame.y + (frame.h - fit.drawH) / 2 + fit.offsetY;
+        mctx.save();
+        mctx.filter = 'grayscale(1)';
+        mctx.globalAlpha = 0.35;
+        mctx.drawImage(artImg, artX, artY, fit.drawW, fit.drawH);
+        mctx.restore();
+      }
+    }
+
     const cropRect = getCropRectForProduct({ render: 'woodframe' }, w, h);
     if (!cropRect) return;
     const frontX = cropRect.x, frontY = cropRect.y, frontW = cropRect.w, frontH = cropRect.h;
+
     mctx.save();
     mctx.beginPath(); mctx.rect(frontX, frontY, frontW, frontH); mctx.clip();
     if (artImg){
@@ -976,6 +989,12 @@ function drawWoodFrame(){
       mctx.font = 'italic 400 24px "Fraunces",serif';
       mctx.fillText('drag to frame it', frontX + frontW/2, frontY + frontH*0.60);
     }
+    mctx.restore();
+
+    mctx.save();
+    mctx.strokeStyle = 'rgba(201,164,122,.9)';
+    mctx.lineWidth = 2;
+    mctx.strokeRect(frame.x, frame.y, frame.w, frame.h);
     mctx.restore();
   }
 }
