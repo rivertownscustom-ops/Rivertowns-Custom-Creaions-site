@@ -650,7 +650,7 @@ const PRODUCTS = [
   {id:'cork-coast',cat:'coasters',name:'Custom Coaster',price:7,tiers:[{qty:1,price:7},{qty:2,price:12}],colors:['#FFFDF7'],tint:'cream',render:'coaster',tagline:'1 for $7 · 2 for $12'},
   {id:'fridge-magnet',cat:'magnets',name:'Fridge Magnets',price:10,badge:'New',colors:['#FFFDF7'],tint:'amber',render:'frame',tagline:'Set of 4 · 2.5×2.5"'},
   {id:'metal-frame',cat:'frames',name:'Metal Print Frame',price:48,badge:'Premium',colors:['#151311','#C8A770','#FFFDF7'],tint:'forest',render:'frame',tagline:'Brushed aluminum · 8×10'},
-  {id:'wood-frame',cat:'frames',name:'Wood Frame',price:25,colors:['#C9A47A'],tint:'cream',render:'woodframe',image:'assets/wood-frame.png',tagline:'Solid maple · 12×16'},
+  {id:'wood-frame',cat:'frames',name:'Wood Frame',price:25,colors:['#C9A47A'],tint:'cream',render:'woodframe',image:'assets/wood-frame.png',tagline:'Solid maple · 16×12'},
 ];
 
 const SVGS = {
@@ -793,7 +793,7 @@ function drawArtworkCover(targetX, targetY, targetW, targetH){
 }
 
 function getWoodFrameBounds(width = mugCanvas.width, height = mugCanvas.height){
-  const frameAR = 12 / 16;
+  const frameAR = 16 / 12;
   let drawW = width * 0.92;
   let drawH = drawW / frameAR;
   if (drawH > height * 0.92) {
@@ -812,19 +812,11 @@ function getCropRectForProduct(product, width = mugCanvas.width, height = mugCan
   if (!productNeedsCropControls(product)) return null;
   if (product.render === 'woodframe') {
     const frame = getWoodFrameBounds(width, height);
-    const maxW = frame.w * 0.62;
-    const maxH = frame.h * 0.74;
-    let cropW = maxW;
-    let cropH = cropW * (16 / 12);
-    if (cropH > maxH) {
-      cropH = maxH;
-      cropW = cropH * (12 / 16);
-    }
     return {
-      x: frame.x + (frame.w - cropW) / 2,
-      y: frame.y + frame.h * 0.03,
-      w: cropW,
-      h: cropH,
+      x: frame.x,
+      y: frame.y,
+      w: frame.w,
+      h: frame.h,
     };
   }
   if (product.render === 'frame') {
@@ -939,8 +931,8 @@ function exportArtworkForProduct(product){
   if (!productNeedsCropControls(product)) return state.artwork || null;
   const exportCanvas = document.createElement('canvas');
   if (product && product.render === 'woodframe') {
-    exportCanvas.width = 1200;
-    exportCanvas.height = 1600;
+    exportCanvas.width = 1600;
+    exportCanvas.height = 1200;
   } else {
     exportCanvas.width = 1600;
     exportCanvas.height = 1200;
