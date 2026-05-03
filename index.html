@@ -976,12 +976,13 @@ function drawWoodFrame(){
     if (artImg){
       drawArtworkCover(frontX, frontY, frontW, frontH);
     } else {
-      mctx.fillStyle = 'rgba(110,80,40,.18)'; mctx.fillRect(frontX, frontY, frontW, frontH);
-      mctx.fillStyle = 'rgba(60,40,20,.45)';
-      mctx.font = '600 32px "JetBrains Mono",monospace'; mctx.textAlign = 'center';
-      mctx.fillText('YOUR PHOTO', frontX + frontW/2, frontY + frontH*0.46);
-      mctx.font = 'italic 400 26px "Fraunces",serif';
-      mctx.fillText('upload to preview', frontX + frontW/2, frontY + frontH*0.58);
+      mctx.fillStyle = 'rgba(255,255,255,.08)'; mctx.fillRect(frontX, frontY, frontW, frontH);
+      mctx.fillStyle = 'rgba(92,58,18,.78)';
+      mctx.font = '600 28px "JetBrains Mono",monospace';
+      mctx.textAlign = 'center';
+      mctx.fillText('PLACE YOUR PHOTO', frontX + frontW/2, frontY + frontH*0.48);
+      mctx.font = 'italic 400 24px "Fraunces",serif';
+      mctx.fillText('drag to frame it', frontX + frontW/2, frontY + frontH*0.60);
     }
     mctx.restore();
   }
