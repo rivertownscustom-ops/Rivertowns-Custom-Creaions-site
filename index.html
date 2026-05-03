@@ -959,6 +959,8 @@ function drawWoodFrame(){
   mctx.clearRect(0,0,w,h);
   const frame = getWoodFrameBounds(w, h);
   if (woodFrameBlankImg.complete && woodFrameBlankImg.naturalWidth){
+    mctx.drawImage(woodFrameBlankImg, frame.x, frame.y, frame.w, frame.h);
+
     if (artImg) {
       const fit = fitArtworkCover(frame.w, frame.h);
       if (fit) {
@@ -966,7 +968,7 @@ function drawWoodFrame(){
         const artY = frame.y + (frame.h - fit.drawH) / 2 + fit.offsetY;
         mctx.save();
         mctx.filter = 'grayscale(1)';
-        mctx.globalAlpha = 0.35;
+        mctx.globalAlpha = 0.28;
         mctx.drawImage(artImg, artX, artY, fit.drawW, fit.drawH);
         mctx.restore();
       }
