@@ -163,12 +163,7 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
 .preview-stage.crop-dragging #mugCanvas{cursor:grabbing}
 .frame-guide{position:absolute;border:2px solid rgba(255,255,255,.92);box-shadow:0 0 0 9999px rgba(21,19,17,.15);pointer-events:none;display:none;border-radius:4px}
 .frame-guide.visible{display:block}
-.frame-guide::before{content:"Drag image to position. Drag corners to resize.";position:absolute;left:0;bottom:calc(100% + 10px);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);background:rgba(255,248,236,.96);padding:6px 10px;border-radius:999px;white-space:nowrap;border:1px solid var(--line)}
-.frame-handle{position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid var(--terracotta);pointer-events:auto;box-shadow:0 6px 20px rgba(21,19,17,.18)}
-.frame-handle.tl{left:-8px;top:-8px;cursor:nwse-resize}
-.frame-handle.tr{right:-8px;top:-8px;cursor:nesw-resize}
-.frame-handle.bl{left:-8px;bottom:-8px;cursor:nesw-resize}
-.frame-handle.br{right:-8px;bottom:-8px;cursor:nwse-resize}
+.frame-guide::before{content:"Adjust to fit frame how you like it. Drag to move. Scroll to resize.";position:absolute;left:0;bottom:calc(100% + 10px);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);background:rgba(255,248,236,.96);padding:6px 10px;border-radius:999px;white-space:nowrap;border:1px solid var(--line)}
 .qty-row{display:flex;align-items:center;gap:14px}
 .qty-box{display:flex;align-items:center;border:1px solid var(--line-2);border-radius:12px;overflow:hidden}
 .qty-box button{width:38px;height:38px;font-size:18px;color:var(--ink-2)}
@@ -472,12 +467,7 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
       <div class="mug-wrap">
         <canvas id="mugCanvas" width="880" height="680"></canvas>
       </div>
-      <div class="frame-guide" id="frameGuide" aria-hidden="true">
-        <span class="frame-handle tl" data-crop-handle="tl"></span>
-        <span class="frame-handle tr" data-crop-handle="tr"></span>
-        <span class="frame-handle bl" data-crop-handle="bl"></span>
-        <span class="frame-handle br" data-crop-handle="br"></span>
-      </div>
+      <div class="frame-guide" id="frameGuide" aria-hidden="true"></div>
     </div>
   </div>
 
@@ -899,8 +889,7 @@ function attachCropInteractions(){
   stage.addEventListener('pointerdown', event => {
     const product = PRODUCTS.find(x=>x.id===state.activeProduct);
     if (!productNeedsCropControls(product) || !state.artwork) return;
-    const handle = event.target.closest('[data-crop-handle]');
-    dragMode = handle ? 'scale' : 'move';
+    dragMode = 'move';
     lastX = event.clientX;
     lastY = event.clientY;
     stage.classList.add('crop-dragging');
@@ -921,6 +910,16 @@ function attachCropInteractions(){
     drawPreview();
     syncFrameGuide();
   });
+
+  stage.addEventListener('wheel', event => {
+    const product = PRODUCTS.find(x=>x.id===state.activeProduct);
+    if (!productNeedsCropControls(product) || !state.artwork) return;
+    event.preventDefault();
+    const delta = -event.deltaY / 700;
+    applyCropScale(delta);
+    drawPreview();
+    syncFrameGuide();
+  }, { passive: false });
 
   window.addEventListener('pointerup', stopDrag);
   window.addEventListener('pointercancel', stopDrag);
@@ -988,7 +987,7 @@ function drawWoodFrame(){
       mctx.textAlign = 'center';
       mctx.fillText('PLACE YOUR PHOTO', frontX + frontW/2, frontY + frontH*0.48);
       mctx.font = 'italic 400 24px "Fraunces",serif';
-      mctx.fillText('drag to frame it', frontX + frontW/2, frontY + frontH*0.60);
+      mctx.fillText('adjust to fit frame how you like it', frontX + frontW/2, frontY + frontH*0.60);
     }
     mctx.restore();
 
