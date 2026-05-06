@@ -938,8 +938,8 @@ function exportArtworkForProduct(product){
   if (!productNeedsCropControls(product)) return state.artwork || null;
   const exportCanvas = document.createElement('canvas');
   if (product && product.render === 'woodframe') {
-    exportCanvas.width = 1600;
-    exportCanvas.height = 1200;
+    exportCanvas.width = 3000;
+    exportCanvas.height = 2250;
   } else {
     exportCanvas.width = 1600;
     exportCanvas.height = 1200;
