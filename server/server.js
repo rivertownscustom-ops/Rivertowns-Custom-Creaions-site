@@ -428,15 +428,11 @@ app.post("/api/create-checkout-session", async (request, response) => {
       },
     });
 
-    response.json({ url: session.url });
-
     if (supabase) {
-      setImmediate(() => {
-        persistCheckoutArtifacts(session.id, normalizedItems, items).catch((error) => {
-          console.error("Checkout artifact persistence failed", error);
-        });
-      });
+      await persistCheckoutArtifacts(session.id, normalizedItems, items);
     }
+
+    response.json({ url: session.url });
   } catch (error) {
     console.error("Checkout session error", error);
     response.status(500).json({ error: error.message || "Could not create checkout session." });
