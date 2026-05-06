@@ -208,6 +208,35 @@ async function uploadOrderImage(rawItem, sessionId, itemIndex) {
   };
 }
 
+async function persistCheckoutArtifacts(sessionId, normalizedItems, rawItems) {
+  if (!supabase) {
+    return;
+  }
+
+  const uploadResults = [];
+
+  for (const [index, rawItem] of rawItems.entries()) {
+    try {
+      uploadResults[index] = await uploadOrderImage(rawItem, sessionId, index);
+    } catch (error) {
+      console.error(`Image upload failed for ${sessionId} item ${index + 1}`, error);
+      uploadResults[index] = {};
+    }
+  }
+
+  const rows = normalizedItems.map((item, index) => ({
+    ...item,
+    ...uploadResults[index],
+    stripe_checkout_session_id: sessionId,
+    payment_status: "pending",
+  }));
+
+  const { error } = await supabase.from("orders").insert(rows);
+  if (error) {
+    throw new Error(`Supabase insert failed: ${error.message}`);
+  }
+}
+
 function formatCurrencyFromCents(amount) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -399,25 +428,15 @@ app.post("/api/create-checkout-session", async (request, response) => {
       },
     });
 
-    if (supabase) {
-      const rows = [];
-      for (const [index, item] of normalizedItems.entries()) {
-        const imageFields = await uploadOrderImage(items[index], session.id, index);
-        rows.push({
-          ...item,
-          ...imageFields,
-          stripe_checkout_session_id: session.id,
-          payment_status: "pending",
-        });
-      }
-
-      const { error } = await supabase.from("orders").insert(rows);
-      if (error) {
-        throw new Error(`Supabase insert failed: ${error.message}`);
-      }
-    }
-
     response.json({ url: session.url });
+
+    if (supabase) {
+      setImmediate(() => {
+        persistCheckoutArtifacts(session.id, normalizedItems, items).catch((error) => {
+          console.error("Checkout artifact persistence failed", error);
+        });
+      });
+    }
   } catch (error) {
     console.error("Checkout session error", error);
     response.status(500).json({ error: error.message || "Could not create checkout session." });
