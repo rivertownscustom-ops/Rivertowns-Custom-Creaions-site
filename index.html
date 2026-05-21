@@ -567,13 +567,16 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
         </div>
         <div class="section-divider"><span>Delivery option</span></div>
         <div class="form-grid">
-          <div class="input-field full" data-field="delivery"><label>Delivery option</label><select name="delivery" required><option value="Delivery by Zev">Delivery by Zev</option><option value="Delivery by Eli">Delivery by Eli</option></select><span class="err">Required</span></div>
+          <div class="input-field full" data-field="delivery"><label>Delivery option</label><select name="delivery" required><option value="Delivery to house">Delivery to house</option><option value="Delivery in person by Zev">Delivery in person by Zev</option><option value="Delivery in person by Eli">Delivery in person by Eli</option></select><span class="err">Required</span></div>
         </div>
-        <div class="section-divider"><span>Shipping address</span></div>
+        <div class="section-divider"><span>Customer details</span></div>
         <div class="form-grid">
           <div class="input-field" data-field="first"><label>First name</label><input type="text" name="first" required><span class="err">Required</span></div>
           <div class="input-field" data-field="last"><label>Last name</label><input type="text" name="last" required><span class="err">Required</span></div>
-          <div class="input-field full" data-field="street"><label>Street address</label><input type="text" name="street" placeholder="123 Riverside Dr" required><span class="err">Required</span></div>
+        </div>
+        <div class="section-divider" id="addressDivider"><span>Shipping address</span></div>
+        <div class="form-grid" id="addressFields">
+          <div class="input-field full" data-field="street"><label>Street address</label><input type="text" name="street" placeholder="123 Riverside Dr"><span class="err">Required</span></div>
           <div class="input-field full"><label>Apt / suite <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label><input type="text" name="apt"></div>
         </div>
       </form>
@@ -1389,7 +1392,7 @@ function buildCheckoutItems(form){
   const apt = form.querySelector('[name="apt"]').value.trim();
   const deliveryLabel = form.querySelector('[name="delivery"]').value.trim();
   const fullName = [first, last].filter(Boolean).join(' ');
-  const address = [street, apt].filter(Boolean).join(', ');
+  const address = deliveryLabel === 'Delivery to house' ? [street, apt].filter(Boolean).join(', ') : '';
 
   return state.cart.map(item => ({
     productId: item.productId,
@@ -1404,14 +1407,34 @@ function buildCheckoutItems(form){
   }));
 }
 
+function syncCheckoutAddressFields(form){
+  const deliverySelect = form.querySelector('[name="delivery"]');
+  const streetInput = form.querySelector('[name="street"]');
+  const addressDivider = $('#addressDivider');
+  const addressFields = $('#addressFields');
+  const needsAddress = deliverySelect?.value === 'Delivery to house';
+
+  if (addressDivider) addressDivider.hidden = !needsAddress;
+  if (addressFields) addressFields.hidden = !needsAddress;
+  if (streetInput) {
+    streetInput.required = needsAddress;
+    if (!needsAddress) {
+      streetInput.closest('.input-field')?.classList.remove('error');
+    }
+  }
+}
+
 function wireCheckoutForm(){
   const form = $('#checkoutForm'); if (!form) return;
+  syncCheckoutAddressFields(form);
+  const deliverySelect = form.querySelector('[name="delivery"]');
+  deliverySelect?.addEventListener('change', () => syncCheckoutAddressFields(form));
   const placeOrderBtn = $('#placeOrder');
   placeOrderBtn.addEventListener('click', async () => {
     if (state.cart.length === 0){ toast('Your cart is empty'); return; }
 
     let ok = true;
-    const required = ['email','delivery','first','last','street'];
+    const required = form.querySelector('[name="delivery"]').value === 'Delivery to house' ? ['email','delivery','first','last','street'] : ['email','delivery','first','last'];
     required.forEach(name => {
       const wrap = form.querySelector(`[data-field="${name}"]`);
       const input = form.querySelector(`[name="${name}"]`);

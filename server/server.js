@@ -101,11 +101,13 @@ function getProductDefinition(productId) {
 }
 
 function getOrderDelivery(item) {
-  const deliveryOption = item.deliveryLabel === "Delivery to house" ? "house" : "slices";
+  const deliveryLabel = String(item.deliveryLabel || "Delivery by Zev").trim();
+  const deliveryOption = deliveryLabel === "Delivery by Eli" ? "eli" : "zev";
   return {
     deliveryOption,
-    deliveryFee: deliveryOption === "house" ? HOUSE_DELIVERY_FEE : SLICES_PICKUP_FEE,
-    address: deliveryOption === "house" ? String(item.address || "").trim() || null : null,
+    deliveryLabel,
+    deliveryFee: HOUSE_DELIVERY_FEE,
+    address: String(item.address || "").trim() || null,
   };
 }
 
@@ -245,6 +247,14 @@ function formatCurrencyFromCents(amount) {
 }
 
 function formatDeliveryOption(option) {
+  if (option === "eli") {
+    return "Delivery by Eli";
+  }
+
+  if (option === "zev") {
+    return "Delivery by Zev";
+  }
+
   return option === "house" ? "Delivery to house" : "Pick up at Slices";
 }
 
@@ -408,7 +418,7 @@ app.post("/api/create-checkout-session", async (request, response) => {
         price_data: {
           currency: "usd",
           product_data: {
-            name: orderDelivery.deliveryOption === "house" ? "Delivery to house" : "Pick up at Slices",
+            name: orderDelivery.deliveryLabel,
           },
           unit_amount: orderDeliveryFeeCents,
         },
