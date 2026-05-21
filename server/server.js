@@ -118,7 +118,7 @@ function getOrderDelivery(item) {
   return {
     deliveryOption,
     deliveryLabel: normalizedLabel,
-    deliveryFee: HOUSE_DELIVERY_FEE,
+    deliveryFee: deliveryOption === "house" ? HOUSE_DELIVERY_FEE : 0,
     address: deliveryOption === "house" ? String(item.address || "").trim() || null : null,
   };
 }
