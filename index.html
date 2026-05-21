@@ -23,6 +23,7 @@
   --radius:14px;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 body{font-size:16px;line-height:1.5}
 img{max-width:100%;display:block}
@@ -1414,11 +1415,19 @@ function syncCheckoutAddressFields(form){
   const addressFields = $('#addressFields');
   const needsAddress = deliverySelect?.value === 'Delivery to house';
 
-  if (addressDivider) addressDivider.hidden = !needsAddress;
-  if (addressFields) addressFields.hidden = !needsAddress;
+  if (addressDivider) {
+    addressDivider.hidden = !needsAddress;
+    addressDivider.style.display = needsAddress ? '' : 'none';
+  }
+  if (addressFields) {
+    addressFields.hidden = !needsAddress;
+    addressFields.style.display = needsAddress ? '' : 'none';
+  }
   if (streetInput) {
     streetInput.required = needsAddress;
     if (!needsAddress) {
+      streetInput.value = '';
+      form.querySelector('[name="apt"]').value = '';
       streetInput.closest('.input-field')?.classList.remove('error');
     }
   }
