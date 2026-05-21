@@ -101,13 +101,25 @@ function getProductDefinition(productId) {
 }
 
 function getOrderDelivery(item) {
-  const deliveryLabel = String(item.deliveryLabel || "Delivery by Zev").trim();
-  const deliveryOption = deliveryLabel === "Delivery by Eli" ? "eli" : "zev";
+  const deliveryLabel = String(item.deliveryLabel || "Delivery to house").trim();
+  const deliveryOption =
+    deliveryLabel === "Delivery in person by Eli"
+      ? "eli"
+      : deliveryLabel === "Delivery in person by Zev"
+        ? "zev"
+        : "house";
+  const normalizedLabel =
+    deliveryOption === "eli"
+      ? "Delivery in person by Eli"
+      : deliveryOption === "zev"
+        ? "Delivery in person by Zev"
+        : "Delivery to house";
+
   return {
     deliveryOption,
-    deliveryLabel,
+    deliveryLabel: normalizedLabel,
     deliveryFee: HOUSE_DELIVERY_FEE,
-    address: String(item.address || "").trim() || null,
+    address: deliveryOption === "house" ? String(item.address || "").trim() || null : null,
   };
 }
 
@@ -248,11 +260,11 @@ function formatCurrencyFromCents(amount) {
 
 function formatDeliveryOption(option) {
   if (option === "eli") {
-    return "Delivery by Eli";
+    return "Delivery in person by Eli";
   }
 
   if (option === "zev") {
-    return "Delivery by Zev";
+    return "Delivery in person by Zev";
   }
 
   return option === "house" ? "Delivery to house" : "Pick up at Slices";
@@ -396,6 +408,11 @@ app.post("/api/create-checkout-session", async (request, response) => {
 
     if (!firstOrder.customer_name || !firstOrder.contact_info) {
       response.status(400).json({ error: "Customer name and email are required." });
+      return;
+    }
+
+    if (orderDelivery.deliveryOption === "house" && !orderDelivery.address) {
+      response.status(400).json({ error: "Delivery address is required." });
       return;
     }
 
