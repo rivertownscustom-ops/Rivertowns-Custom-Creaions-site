@@ -565,6 +565,10 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
             <span class="err">Please enter a valid email</span>
           </div>
         </div>
+        <div class="section-divider"><span>Delivery option</span></div>
+        <div class="form-grid">
+          <div class="input-field full" data-field="delivery"><label>Delivery option</label><select name="delivery" required><option value="Delivery by Zev">Delivery by Zev</option><option value="Delivery by Eli">Delivery by Eli</option></select><span class="err">Required</span></div>
+        </div>
         <div class="section-divider"><span>Shipping address</span></div>
         <div class="form-grid">
           <div class="input-field" data-field="first"><label>First name</label><input type="text" name="first" required><span class="err">Required</span></div>
@@ -1383,6 +1387,7 @@ function buildCheckoutItems(form){
   const last = form.querySelector('[name="last"]').value.trim();
   const street = form.querySelector('[name="street"]').value.trim();
   const apt = form.querySelector('[name="apt"]').value.trim();
+  const deliveryLabel = form.querySelector('[name="delivery"]').value.trim();
   const fullName = [first, last].filter(Boolean).join(' ');
   const address = [street, apt].filter(Boolean).join(', ');
 
@@ -1394,7 +1399,7 @@ function buildCheckoutItems(form){
     notes: null,
     imageName: item.artworkName || null,
     imageDataUrl: item.artwork || null,
-    deliveryLabel: 'Delivery to house',
+    deliveryLabel,
     address,
   }));
 }
@@ -1406,7 +1411,7 @@ function wireCheckoutForm(){
     if (state.cart.length === 0){ toast('Your cart is empty'); return; }
 
     let ok = true;
-    const required = ['email','first','last','street'];
+    const required = ['email','delivery','first','last','street'];
     required.forEach(name => {
       const wrap = form.querySelector(`[data-field="${name}"]`);
       const input = form.querySelector(`[name="${name}"]`);
@@ -1438,7 +1443,7 @@ function wireCheckoutForm(){
       placeOrderBtn.innerHTML = original;
     }
   });
-  form.querySelectorAll('input').forEach(i => i.addEventListener('input', () => {
+  form.querySelectorAll('input, select').forEach(i => i.addEventListener('input', () => {
     const wrap = i.closest('.input-field'); if (wrap) wrap.classList.remove('error');
   }));
 }
