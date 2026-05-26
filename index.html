@@ -594,6 +594,7 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
         <div class="section-divider" id="addressDivider"><span>Shipping address</span></div>
         <div class="form-grid" id="addressFields">
           <div class="input-field full" data-field="street"><label>Street address</label><input type="text" name="street" placeholder="123 Riverside Dr"><span class="err">Required</span></div>
+          <div class="input-field full" data-field="city"><label>Town / city</label><input type="text" name="city" placeholder="Hastings-on-Hudson"><span class="err">Required</span></div>
           <div class="input-field full"><label>Apt / suite <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label><input type="text" name="apt"></div>
         </div>
       </form>
@@ -1429,10 +1430,11 @@ function buildCheckoutItems(form){
   const first = form.querySelector('[name="first"]').value.trim();
   const last = form.querySelector('[name="last"]').value.trim();
   const street = form.querySelector('[name="street"]').value.trim();
+  const city = form.querySelector('[name="city"]').value.trim();
   const apt = form.querySelector('[name="apt"]').value.trim();
   const deliveryLabel = form.querySelector('[name="delivery"]').value.trim();
   const fullName = [first, last].filter(Boolean).join(' ');
-  const address = deliveryLabel === 'Delivery to house' ? [street, apt].filter(Boolean).join(', ') : '';
+  const address = deliveryLabel === 'Delivery to house' ? [street, city, apt].filter(Boolean).join(', ') : '';
 
   return state.cart.map(item => ({
     productId: item.productId,
@@ -1450,6 +1452,7 @@ function buildCheckoutItems(form){
 function syncCheckoutAddressFields(form){
   const deliverySelect = form.querySelector('[name="delivery"]');
   const streetInput = form.querySelector('[name="street"]');
+  const cityInput = form.querySelector('[name="city"]');
   const addressDivider = $('#addressDivider');
   const addressFields = $('#addressFields');
   const needsAddress = deliverySelect?.value === 'Delivery to house';
@@ -1466,9 +1469,18 @@ function syncCheckoutAddressFields(form){
     streetInput.required = needsAddress;
     if (!needsAddress) {
       streetInput.value = '';
-      form.querySelector('[name="apt"]').value = '';
       streetInput.closest('.input-field')?.classList.remove('error');
     }
+  }
+  if (cityInput) {
+    cityInput.required = needsAddress;
+    if (!needsAddress) {
+      cityInput.value = '';
+      cityInput.closest('.input-field')?.classList.remove('error');
+    }
+  }
+  if (!needsAddress) {
+    form.querySelector('[name="apt"]').value = '';
   }
 }
 
@@ -1482,7 +1494,7 @@ function wireCheckoutForm(){
     if (state.cart.length === 0){ toast('Your cart is empty'); return; }
 
     let ok = true;
-    const required = form.querySelector('[name="delivery"]').value === 'Delivery to house' ? ['email','delivery','first','last','street'] : ['email','delivery','first','last'];
+    const required = form.querySelector('[name="delivery"]').value === 'Delivery to house' ? ['email','delivery','first','last','street','city'] : ['email','delivery','first','last'];
     required.forEach(name => {
       const wrap = form.querySelector(`[data-field="${name}"]`);
       const input = form.querySelector(`[name="${name}"]`);
