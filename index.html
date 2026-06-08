@@ -109,7 +109,7 @@ h1.hero-title em{font-style:italic;color:var(--terracotta)}
 .swatch{width:14px;height:14px;border-radius:50%;border:1.5px solid rgba(0,0,0,.08)}
 
 /* VALUE STRIP */
-.strip{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:60px}
+.strip{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:60px;max-width:720px;margin-left:auto;margin-right:auto}
 .strip > div{padding:28px 24px;border-right:1px solid var(--line)}
 .strip > div:last-child{border-right:none}
 .strip h4{margin:0 0 6px;font-size:14px;font-weight:600}
@@ -459,10 +459,6 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
     <div>
       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>
       <h4 id="featShip">Flat $5 shipping</h4><p>Order one or a dozen.</p>
-    </div>
-    <div>
-      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg>
-      <h4>Love-it guarantee</h4><p>Not right? We reprint or refund.</p>
     </div>
   </div>
 </section>
