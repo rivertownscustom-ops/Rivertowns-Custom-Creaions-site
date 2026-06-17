@@ -40,7 +40,7 @@ a{color:inherit}
 .nav-link.primary{background-color:var(--terracotta);color:#fff;gap:8px}
 .nav-link.primary:hover{background-color:#bf431f}
 .hero{max-width:1360px;margin:0 auto;padding:40px 32px 60px}
-.hero-grid{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(320px,.98fr);gap:42px;align-items:center}
+.hero-head{display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:end;margin-bottom:32px}
 .eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);margin-bottom:18px}
 .eyebrow::before{content:"";width:24px;height:1px;background:var(--ink-2)}
 h1{font-family:'Fraunces',Georgia,serif;font-size:clamp(48px,8vw,96px);line-height:.94;letter-spacing:-.035em;font-weight:400;margin:0}
@@ -58,6 +58,7 @@ h1 em{font-style:italic;color:var(--terracotta)}
 .qty-control button{width:42px;height:44px;border:0;background:transparent;color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
 .qty-control input{width:42px;border:0;background:transparent;text-align:center;font:inherit;font-weight:700;color:var(--ink);pointer-events:none}
 .cart-status{min-height:20px;margin-top:12px;font-size:13px;color:var(--forest);font-weight:600}
+.hero-preview{margin-top:12px}
 .photo-panel{border:1px solid var(--line);background:var(--card);border-radius:18px;overflow:hidden;box-shadow:0 22px 50px rgba(87,64,33,.14)}
 .photo-top{min-height:360px;background:radial-gradient(110% 90% at 50% 0%,#fff1c9 0%,#e36c42 50%,#74331f 100%);display:grid;place-items:center;padding:34px;position:relative}
 .photo-top::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(21,19,17,.3))}
@@ -109,7 +110,7 @@ footer{max-width:1360px;margin:0 auto;padding:28px 32px 42px;display:flex;justif
   .nav-actions{justify-self:center}
   .nav-link{padding:9px 12px}
   .hero{padding-top:36px}
-  .hero-grid,.band-inner{grid-template-columns:1fr}
+  .hero-head,.band-inner{grid-template-columns:1fr}
   .photo-top{min-height:290px}
   .edition-grid{grid-template-columns:1fr}
   .placeholder-grid{grid-template-columns:1fr}
@@ -137,10 +138,12 @@ footer{max-width:1360px;margin:0 auto;padding:28px 32px 42px;display:flex;justif
 
 <main>
   <section class="hero">
-    <div class="hero-grid">
+    <div class="hero-head">
       <div>
         <span class="eyebrow">Rivertowns Dispatch merch</span>
         <h1>One mug. Four <em>town editions</em>.</h1>
+      </div>
+      <div>
         <p class="lead">This page is for Rivertowns Dispatch merch. Right now the product is one mug design with four versions: Hastings, Dobbs Ferry, Irvington, and Ardsley. You can swap in your final text and photos later.</p>
         <div class="price-block">
           <div class="price">$19.99</div>
@@ -159,6 +162,8 @@ footer{max-width:1360px;margin:0 auto;padding:28px 32px 42px;display:flex;justif
           <a class="btn" href="/">Back to shop</a>
         </div>
       </div>
+    </div>
+    <div class="hero-preview">
       <div class="photo-panel" aria-label="Dispatch mug preview">
         <div class="photo-top">
           <div class="mug-card">
