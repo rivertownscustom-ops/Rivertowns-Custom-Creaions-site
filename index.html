@@ -103,6 +103,9 @@ h1.hero-title em{font-style:italic;color:var(--terracotta)}
 .btn{padding:11px 16px;border-radius:12px;font-size:13px;font-weight:500;transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:8px}
 .btn-primary{background:var(--ink);color:var(--bg);flex:1}
 .btn-primary:hover{background:var(--terracotta)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn-primary:disabled,.btn-primary:disabled:hover{background:var(--ink);color:var(--bg)}
+.btn-ghost:disabled,.btn-ghost:disabled:hover{border-color:var(--line);color:var(--muted)}
 .btn-ghost{background:transparent;border:1px solid var(--line-2);color:var(--ink-2);padding:10px 12px}
 .btn-ghost:hover{border-color:var(--ink);color:var(--ink)}
 .swatches{display:flex;gap:5px}
@@ -355,6 +358,7 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
   <div class="nav-inner">
     <div class="logo"><span class="logo-mark"></span>Rivertowns Custom</div>
     <div class="nav-right">
+      <a class="nav-btn" href="dispatch/" style="text-decoration:none">Dispatch</a>
       <button class="nav-btn" aria-label="Search">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg>
       </button>
@@ -385,10 +389,10 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
     <div class="tile a" data-open="sig-mug">
       <span class="tile-label">Best seller</span>
       <div class="ph" style="background:var(--bg-2)">
-        <img src="assets/mug-family.png" alt="Custom Photo Mug" style="width:78%;height:auto;position:relative;z-index:0;filter:drop-shadow(0 24px 30px rgba(0,0,0,.2))">
+        <img src="assets/mug-family.png" alt="Travel Mug" style="width:78%;height:auto;position:relative;z-index:0;filter:drop-shadow(0 24px 30px rgba(0,0,0,.2))">
       </div>
       <div class="tile-cta">
-        <div><h3>Custom Photo Mug</h3><span class="price">$16.99 · Classic white ceramic</span></div>
+        <div><h3>Travel Mug</h3><span class="price">$16.99 · Classic white ceramic</span></div>
         <button class="tile-go" aria-label="Customize"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
       </div>
     </div>
@@ -401,8 +405,8 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
         </div>
       </div>
       <div class="tile-cta">
-        <div><h3>Wood Frame</h3><span class="price">From $25 · Solid maple</span></div>
-        <button class="tile-go" aria-label="Customize"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
+        <div><h3>Wood Frame</h3><span class="price">Coming soon</span></div>
+        <button class="tile-go" aria-label="Coming soon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
       </div>
     </div>
 
@@ -419,8 +423,8 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
         </svg>
       </div>
       <div class="tile-cta">
-        <div><h3>Fridge Magnets</h3><span class="price">From $10 · Set of 4</span></div>
-        <button class="tile-go" aria-label="Customize"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
+        <div><h3>Fridge Magnets</h3><span class="price">Coming soon</span></div>
+        <button class="tile-go" aria-label="Coming soon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
       </div>
     </div>
 
@@ -437,8 +441,8 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
         </svg>
       </div>
       <div class="tile-cta">
-        <div><h3>Custom Coaster</h3><span class="price">$7 for 1 · $12 for 2</span></div>
-        <button class="tile-go" aria-label="Customize"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
+        <div><h3>Custom Coaster</h3><span class="price">Coming soon</span></div>
+        <button class="tile-go" aria-label="Coming soon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
       </div>
     </div>
   </div>
@@ -644,11 +648,11 @@ const TWEAKS = {
 };
 
 const PRODUCTS = [
-  {id:'sig-mug',cat:'drinkware',name:'Custom Photo Mug',price:16.99,badge:'Best seller',colors:['#FFFFFF'],tint:'cream',render:'mug',image:'assets/mug-family.png',tagline:'Classic ceramic · 11oz · White'},
-  {id:'cork-coast',cat:'coasters',name:'Custom Coaster',price:7,tiers:[{qty:1,price:7},{qty:2,price:12}],colors:['#FFFDF7'],tint:'cream',render:'coaster',tagline:'1 for $7 · 2 for $12'},
-  {id:'fridge-magnet',cat:'magnets',name:'Fridge Magnets',price:10,badge:'New',colors:['#FFFDF7'],tint:'amber',render:'frame',tagline:'Set of 4 · 2.5×2.5"'},
-  {id:'metal-frame',cat:'frames',name:'Metal Print Frame',price:48,badge:'Premium',colors:['#151311','#C8A770','#FFFDF7'],tint:'forest',render:'frame',tagline:'Brushed aluminum · 8×10'},
-  {id:'wood-frame',cat:'frames',name:'Wood Frame',price:25,colors:['#C9A47A'],tint:'cream',render:'woodframe',image:'assets/wood-frame.png',tagline:'Solid maple · 16×12'},
+  {id:'sig-mug',cat:'drinkware',name:'Travel Mug',price:16.99,badge:'Best seller',colors:['#FFFFFF'],tint:'cream',render:'mug',image:'assets/mug-family.png',tagline:'Classic ceramic · 11oz · White',available:true},
+  {id:'cork-coast',cat:'coasters',name:'Custom Coaster',price:7,tiers:[{qty:1,price:7},{qty:2,price:12}],colors:['#FFFDF7'],tint:'cream',render:'coaster',tagline:'Coming soon',available:false},
+  {id:'fridge-magnet',cat:'magnets',name:'Fridge Magnets',price:10,badge:'New',colors:['#FFFDF7'],tint:'amber',render:'frame',tagline:'Coming soon',available:false},
+  {id:'metal-frame',cat:'frames',name:'Metal Print Frame',price:48,badge:'Premium',colors:['#151311','#C8A770','#FFFDF7'],tint:'forest',render:'frame',tagline:'Coming soon',available:false},
+  {id:'wood-frame',cat:'frames',name:'Wood Frame',price:25,colors:['#C9A47A'],tint:'cream',render:'woodframe',image:'assets/wood-frame.png',tagline:'Coming soon',available:false},
 ];
 
 const SVGS = {
@@ -697,24 +701,27 @@ function renderGrid(){
   const grid = $('#productGrid');
   if (!grid) return;
   const filtered = PRODUCTS.filter(p => state.filter==='all' || p.cat===state.filter);
-  grid.innerHTML = filtered.map(p => `
+  grid.innerHTML = filtered.map(p => {
+    const available = p.available !== false;
+    return `
     <div class="card" data-open="${p.id}">
       <div class="card-media">
         ${p.badge && TWEAKS.showBadges ? `<span class="badge ${p.badge==='New'?'new':''}">${p.badge}</span>`:''}
         ${p.image ? `<div class="ph ${p.tint}" style="background:#FFF8EC"><img src="${p.image}" alt="${p.name}" style="width:86%;height:auto;position:relative;z-index:0;filter:drop-shadow(0 18px 22px rgba(0,0,0,.12))"></div>` : `<div class="ph ${p.tint}">${SVGS[p.render]}</div>`}
       </div>
       <div class="card-body">
-        <div class="card-title"><h3>${p.name}</h3><span class="price">$${p.price}</span></div>
+        <div class="card-title"><h3>${p.name}</h3><span class="price">${available ? `$${p.price}` : 'Coming soon'}</span></div>
         <div class="card-meta">${p.tagline}</div>
         <div class="card-foot">
-          <button class="btn btn-primary" data-open="${p.id}">Customize</button>
-          <button class="btn btn-ghost" data-quick="${p.id}" aria-label="Quick add">
+          <button class="btn btn-primary" data-open="${p.id}" ${available ? '' : 'disabled'}>${available ? 'Customize' : 'Coming soon'}</button>
+          <button class="btn btn-ghost" data-quick="${p.id}" aria-label="${available ? 'Quick add' : 'Coming soon'}" ${available ? '' : 'disabled'}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h2l2.5 11h11L21 8H6"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/><path d="M12 10v6M9 13h6"/></svg>
           </button>
         </div>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 $$('.chip').forEach(c => c.addEventListener('click', () => {
@@ -1131,6 +1138,10 @@ function drawCase(){
 // ---- Customizer ----
 function openCustomizer(productId){
   const p = PRODUCTS.find(x=>x.id===productId) || PRODUCTS[0];
+  if (p.available === false) {
+    toast(`${p.name} coming soon`);
+    return;
+  }
   state.activeProduct = p.id;
   state.color = p.colors[0];
   state.size='md'; state.sizeLabel='Standard'; state.sizeMod=0;
@@ -1239,6 +1250,10 @@ function addItemToCart(product, overrides = {}) {
 // Add to cart
 $('#addToCart').addEventListener('click', () => {
   const p = PRODUCTS.find(x=>x.id===state.activeProduct);
+  if (!p || p.available === false) {
+    toast('This product is coming soon');
+    return;
+  }
   const finalArtwork = exportArtworkForProduct(p);
   addItemToCart(p, { artwork: finalArtwork });
   closeModal('#customizer');
@@ -1342,6 +1357,10 @@ document.addEventListener('click', e => {
   const q = e.target.closest('[data-quick]'); if (q){
     e.stopPropagation();
     const p = PRODUCTS.find(x=>x.id===q.dataset.quick);
+    if (p && p.available === false) {
+      toast(`${p.name} coming soon`);
+      return;
+    }
     if (p) {
       addItemToCart(p, {
         qty: 1,
@@ -1544,6 +1563,9 @@ renderCart();
 drawPreview();
 syncCropControls();
 attachCropInteractions();
+if (new URLSearchParams(window.location.search).get('cart') === 'open') {
+  openDrawer();
+}
 
 // ---- TWEAKS ----
 (function(){
