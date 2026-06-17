@@ -43,14 +43,16 @@ a{color:inherit}
 .hero-head{display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:end;margin-bottom:32px}
 .eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);margin-bottom:18px}
 .eyebrow::before{content:"";width:24px;height:1px;background:var(--ink-2)}
-h1{font-family:'Fraunces',Georgia,serif;font-size:clamp(48px,8vw,96px);line-height:.94;letter-spacing:-.035em;font-weight:400;margin:0}
-h1 em{font-style:italic;color:var(--terracotta)}
-.lead{margin:24px 0 0;color:var(--ink-2);font-size:18px;max-width:560px}
+h1.hero-title{font-family:'Fraunces',Georgia,serif;font-size:clamp(48px,8vw,96px);line-height:.94;letter-spacing:-.035em;font-weight:400;margin:0}
+h1.hero-title em{font-style:italic;color:var(--terracotta)}
+.hero-sub{color:var(--ink-2);font-size:17px;line-height:1.55;max-width:420px;margin:0}
+.hero-meta{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}
+.tag{font-size:12px;padding:7px 12px;border-radius:999px;border:1px solid var(--line-2);color:var(--ink-2);background:var(--bg)}
 .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
 .btn{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:13px 18px;border-radius:999px;text-decoration:none;font-weight:700;font-size:14px;border:1px solid var(--line-2);background:var(--card)}
 .btn.primary{background:var(--terracotta);border-color:var(--terracotta);color:white}
 .btn:hover{transform:translateY(-1px)}
-.price-block{display:flex;align-items:baseline;gap:12px;margin-top:26px}
+.price-block{display:flex;align-items:baseline;gap:12px;margin-top:14px}
 .price{font-family:'Fraunces',Georgia,serif;font-size:48px;line-height:1;letter-spacing:-.035em;color:var(--ink)}
 .price-note{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;color:var(--forest);text-transform:uppercase;letter-spacing:.08em}
 .purchase-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:24px}
@@ -141,25 +143,13 @@ footer{max-width:1360px;margin:0 auto;padding:28px 32px 42px;display:flex;justif
     <div class="hero-head">
       <div>
         <span class="eyebrow">Rivertowns Dispatch merch</span>
-        <h1>One mug. Four <em>town editions</em>.</h1>
+        <h1 class="hero-title">Choose a mug for your <em>town</em>.</h1>
       </div>
       <div>
-        <p class="lead">This page is for Rivertowns Dispatch merch. Right now the product is one mug design with four versions: Hastings, Dobbs Ferry, Irvington, and Ardsley. You can swap in your final text and photos later.</p>
-        <div class="price-block">
-          <div class="price">$19.99</div>
-          <div class="price-note">per mug</div>
-        </div>
-        <div class="purchase-row" aria-label="Add Rivertowns Dispatch mug to cart">
-          <div class="qty-control">
-            <button type="button" id="qtyDown" aria-label="Decrease quantity">-</button>
-            <input id="qtyInput" value="1" readonly aria-label="Quantity">
-            <button type="button" id="qtyUp" aria-label="Increase quantity">+</button>
-          </div>
-          <button class="btn primary" type="button" id="addDispatchCart" data-edition="Hastings">Add Hastings mug - $19.99</button>
-        </div>
-        <div class="cart-status" id="cartStatus" role="status" aria-live="polite"></div>
-        <div class="hero-actions">
-          <a class="btn" href="/">Back to shop</a>
+        <p class="hero-sub">Rivertowns Dispatch merch starts with one mug in four versions: Hastings, Dobbs Ferry, Irvington, and Ardsley. Pick the town you want below, and you can swap in final photos and text later.</p>
+        <div class="hero-meta">
+          <span class="tag">4 town editions</span>
+          <span class="tag">$19.99 mug</span>
         </div>
       </div>
     </div>
@@ -187,6 +177,20 @@ footer{max-width:1360px;margin:0 auto;padding:28px 32px 42px;display:flex;justif
       <h2>Choose a town edition</h2>
       <p>Each version is the same mug product with different Rivertowns Dispatch artwork for the town.</p>
     </div>
+    <div class="price-block">
+      <div class="price">$19.99</div>
+      <div class="price-note">per mug</div>
+    </div>
+    <div class="purchase-row" aria-label="Add Rivertowns Dispatch mug to cart">
+      <div class="qty-control">
+        <button type="button" id="qtyDown" aria-label="Decrease quantity">-</button>
+        <input id="qtyInput" value="1" readonly aria-label="Quantity">
+        <button type="button" id="qtyUp" aria-label="Increase quantity">+</button>
+      </div>
+      <button class="btn primary" type="button" id="addDispatchCart" data-edition="Hastings">Add Hastings mug - $19.99</button>
+      <a class="btn" href="/">Back to shop</a>
+    </div>
+    <div class="cart-status" id="cartStatus" role="status" aria-live="polite"></div>
     <div class="edition-grid">
       <article class="edition-card">
         <div class="edition-art">
