@@ -37,7 +37,8 @@ a{color:inherit}
 .nav-actions{justify-self:end;display:flex;align-items:center;gap:10px}
 .nav-link{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:10px 15px;border-radius:999px;text-decoration:none;font-size:13px;font-weight:600;color:var(--ink-2)}
 .nav-link:hover{background:var(--bg-2)}
-.nav-link.primary{background:var(--ink);color:var(--bg)}
+.nav-link.primary{background-color:var(--terracotta);color:#fff;gap:8px}
+.nav-link.primary:hover{background-color:#bf431f}
 .hero{max-width:1180px;margin:0 auto;padding:56px 24px 48px}
 .hero-grid{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(320px,.98fr);gap:42px;align-items:center}
 .eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);margin-bottom:18px}
@@ -112,7 +113,10 @@ footer{max-width:1180px;margin:0 auto;padding:28px 24px 42px;display:flex;justif
       <a class="nav-link" href="/">Back to shop</a>
     </div>
     <div class="nav-actions">
-      <a class="nav-link primary" href="/?cart=open">Cart</a>
+      <a class="nav-link primary" href="/?cart=open">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 5h2l2.5 11h11L21 8H6"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+        <span>Cart</span>
+      </a>
     </div>
   </div>
 </nav>
