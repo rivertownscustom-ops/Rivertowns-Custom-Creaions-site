@@ -3,19 +3,312 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Payment Successful</title>
-    <link rel="stylesheet" href="zevs-custom-creations.css" />
+    <title>Payment Successful | Rivertowns Custom</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500&family=JetBrains+Mono:wght@400;500&display=swap" />
+    <style>
+      :root {
+        --bg: #FFF8EC;
+        --bg-2: #FBF1DE;
+        --ink: #151311;
+        --ink-2: #3B3731;
+        --muted: #8A8278;
+        --line: #E8DDC5;
+        --line-2: #D9CDB0;
+        --terracotta: #D94F2A;
+        --forest: #2B4D3E;
+        --card: #FFFDF7;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: Inter, system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      .page {
+        width: min(920px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 42px 0;
+      }
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 54px;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: Fraunces, Georgia, serif;
+        font-size: 22px;
+        font-weight: 500;
+        letter-spacing: -0.02em;
+      }
+      .logo-mark {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--terracotta), #F2B44A);
+        position: relative;
+      }
+      .logo-mark::after {
+        content: "";
+        position: absolute;
+        inset: 7px;
+        border-radius: 50%;
+        background: var(--bg);
+      }
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 11px 16px;
+        border-radius: 999px;
+        background: var(--ink);
+        color: var(--bg);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .confirmation {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 24px 60px rgba(87, 64, 33, .12);
+      }
+      .hero {
+        padding: 42px;
+        border-bottom: 1px solid var(--line);
+        background: linear-gradient(180deg, #FFFDF7, var(--bg-2));
+      }
+      .check {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--forest);
+        color: white;
+        margin-bottom: 20px;
+      }
+      h1 {
+        margin: 0 0 12px;
+        font-family: Fraunces, Georgia, serif;
+        font-weight: 500;
+        font-size: clamp(34px, 7vw, 62px);
+        line-height: 1;
+        letter-spacing: -0.03em;
+      }
+      .lead {
+        margin: 0;
+        max-width: 640px;
+        color: var(--ink-2);
+        font-size: 18px;
+        line-height: 1.55;
+      }
+      .summary {
+        padding: 34px 42px 42px;
+      }
+      .summary h2 {
+        margin: 0 0 18px;
+        font-family: Fraunces, Georgia, serif;
+        font-size: 28px;
+        font-weight: 500;
+        letter-spacing: -0.02em;
+      }
+      .items {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        border-top: 1px solid var(--line);
+      }
+      .item {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 18px;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .item h3 {
+        margin: 0 0 5px;
+        font-family: Fraunces, Georgia, serif;
+        font-size: 20px;
+        font-weight: 500;
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.55;
+      }
+      .line-price {
+        font-weight: 700;
+        white-space: nowrap;
+      }
+      .totals {
+        margin-top: 18px;
+        display: grid;
+        gap: 8px;
+        max-width: 340px;
+        margin-left: auto;
+        font-size: 14px;
+      }
+      .row {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+      }
+      .row.total {
+        margin-top: 6px;
+        padding-top: 12px;
+        border-top: 1px solid var(--line);
+        font-family: Fraunces, Georgia, serif;
+        font-size: 24px;
+        font-weight: 500;
+      }
+      .empty-note {
+        color: var(--muted);
+        line-height: 1.6;
+        margin: 0;
+      }
+      @media (max-width: 640px) {
+        .page { width: min(100% - 24px, 920px); padding: 24px 0; }
+        .nav { margin-bottom: 28px; }
+        .hero, .summary { padding: 28px 22px; }
+        .item { grid-template-columns: 1fr; gap: 8px; }
+        .line-price { white-space: normal; }
+        .totals { max-width: none; }
+      }
+    </style>
   </head>
   <body>
-    <main class="site-shell">
-      <section class="hero">
-        <div class="hero-copy">
+    <main class="page">
+      <nav class="nav" aria-label="Confirmation navigation">
+        <div class="logo"><span class="logo-mark"></span>Rivertowns Custom</div>
+        <a class="button" href="./">Back to shop</a>
+      </nav>
+
+      <section class="confirmation">
+        <div class="hero">
+          <div class="check" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M5 12l5 5L20 7"></path>
+            </svg>
+          </div>
           <h1>Payment successful</h1>
-          <p class="hero-text">
-            Your order was sent. Once the Stripe webhook is connected, paid orders will automatically save in your backend database.
-          </p>
+          <p class="lead">Thanks for supporting our local business. We received your order and will get started on it soon.</p>
+        </div>
+
+        <div class="summary">
+          <h2>Order summary</h2>
+          <div id="orderSummary">
+            <p class="empty-note">Your order summary is being prepared. A confirmation will also be sent by email.</p>
+          </div>
         </div>
       </section>
     </main>
+
+    <script>
+      const SHIPPING_FEE = 5;
+
+      function formatCurrency(value) {
+        return `$${Number(value || 0).toFixed(2)}`;
+      }
+
+      function readCart() {
+        try {
+          const parsed = JSON.parse(localStorage.getItem('rt_cart') || '[]');
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (_error) {
+          return [];
+        }
+      }
+
+      function readPendingOrder() {
+        try {
+          const parsed = JSON.parse(localStorage.getItem('rt_pending_order') || 'null');
+          return parsed && Array.isArray(parsed.items) ? parsed : null;
+        } catch (_error) {
+          return null;
+        }
+      }
+
+      function escapeHtml(value) {
+        return String(value || '').replace(/[&<>"']/g, (char) => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+        }[char]));
+      }
+
+      function itemPrice(item) {
+        return Number(item.price || item.unitPrice || 0);
+      }
+
+      function itemQuantity(item) {
+        return Number(item.qty || item.quantity || 1);
+      }
+
+      function itemMeta(item) {
+        const parts = [];
+        if (item.sizeLabel) parts.push(item.sizeLabel);
+        if (item.colorName) parts.push(item.colorName);
+        if (item.artworkName) parts.push(`Artwork: ${item.artworkName}`);
+        return parts.length ? parts.join(' | ') : 'Custom item';
+      }
+
+      function renderSummary() {
+        const pendingOrder = readPendingOrder();
+        const cart = pendingOrder ? pendingOrder.items : readCart();
+        const summary = document.getElementById('orderSummary');
+
+        if (!cart.length) {
+          summary.innerHTML = '<p class="empty-note">Your order was completed. A confirmation email will include the full order details.</p>';
+          return;
+        }
+
+        const subtotal = Number(pendingOrder?.subtotal ?? cart.reduce((sum, item) => sum + itemPrice(item) * itemQuantity(item), 0));
+        const shipping = Number(pendingOrder?.shipping ?? (subtotal > 0 ? SHIPPING_FEE : 0));
+        const itemsHtml = cart.map((item) => {
+          const qty = itemQuantity(item);
+          const unit = itemPrice(item);
+          const lineTotal = unit * qty;
+          const name = item.name || item.productName || 'Custom item';
+          return `
+            <article class="item">
+              <div>
+                <h3>${escapeHtml(name)}</h3>
+                <div class="meta">Quantity: ${qty}<br>${escapeHtml(itemMeta(item))}</div>
+              </div>
+              <div class="line-price">${formatCurrency(lineTotal)}</div>
+            </article>
+          `;
+        }).join('');
+
+        summary.innerHTML = `
+          <div class="items">${itemsHtml}</div>
+          <div class="totals">
+            <div class="row"><span>Subtotal</span><strong>${formatCurrency(subtotal)}</strong></div>
+            <div class="row"><span>${escapeHtml(pendingOrder?.deliveryLabel || 'Shipping')}</span><strong>${shipping === 0 ? 'Free' : formatCurrency(shipping)}</strong></div>
+            <div class="row total"><span>Total</span><span>${formatCurrency(pendingOrder?.total ?? subtotal + shipping)}</span></div>
+          </div>
+        `;
+
+        localStorage.removeItem('rt_pending_order');
+        localStorage.removeItem('rt_cart');
+      }
+
+      renderSummary();
+    </script>
   </body>
 </html>

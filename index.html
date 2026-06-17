@@ -1439,6 +1439,31 @@ function buildCheckoutItems(form){
   }));
 }
 
+function savePendingOrderSummary(form){
+  const deliveryLabel = form.querySelector('[name="delivery"]').value.trim();
+  const shipping = getCheckoutShipping();
+  const items = state.cart.map(item => ({
+    name: item.name || item.productName || 'Custom item',
+    qty: item.qty,
+    price: item.price,
+    sizeLabel: item.sizeLabel || '',
+    colorName: item.colorName || '',
+    artworkName: item.artworkName || '',
+  }));
+  const subtotal = items.reduce((sum, item) => sum + item.price * item.qty, 0);
+  try {
+    localStorage.setItem('rt_pending_order', JSON.stringify({
+      items,
+      deliveryLabel,
+      shipping,
+      subtotal,
+      total: subtotal + shipping,
+    }));
+  } catch (_error) {
+    // The success page can still fall back to the cart if this snapshot cannot be saved.
+  }
+}
+
 function syncCheckoutAddressFields(form){
   const deliverySelect = form.querySelector('[name="delivery"]');
   const streetInput = form.querySelector('[name="street"]');
@@ -1499,6 +1524,7 @@ function wireCheckoutForm(){
     const original = placeOrderBtn.innerHTML;
     placeOrderBtn.disabled = true;
     placeOrderBtn.textContent = 'Opening checkout...';
+    savePendingOrderSummary(form);
 
     try {
       const response = await fetch(`${BACKEND_BASE_URL}/api/create-checkout-session`, {
