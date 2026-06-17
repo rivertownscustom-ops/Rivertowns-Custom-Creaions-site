@@ -452,7 +452,11 @@ app.post("/api/create-checkout-session", async (request, response) => {
     });
 
     if (supabase) {
-      await persistCheckoutArtifacts(session.id, normalizedItems, items);
+      try {
+        await persistCheckoutArtifacts(session.id, normalizedItems, items);
+      } catch (error) {
+        console.error("Supabase order persistence failed", error);
+      }
     }
 
     response.json({ url: session.url });
