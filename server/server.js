@@ -71,13 +71,28 @@ app.post(
 
     if (event.type === "checkout.session.completed" && supabase) {
       const session = event.data.object;
-      await supabase
+      const { data: updatedOrders, error: updateError } = await supabase
         .from("orders")
         .update({
           payment_status: "paid",
           stripe_payment_intent_id: session.payment_intent || null,
         })
-        .eq("stripe_checkout_session_id", session.id);
+        .eq("stripe_checkout_session_id", session.id)
+        .select("id");
+
+      if (updateError) {
+        console.error("Order payment update failed", updateError);
+        response.status(500).json({ error: "Failed to mark order as paid." });
+        return;
+      }
+
+      if (!updatedOrders || updatedOrders.length === 0) {
+        console.error("Order payment update matched no rows", {
+          stripe_checkout_session_id: session.id,
+        });
+        response.status(500).json({ error: "No matching order found for completed checkout." });
+        return;
+      }
 
       try {
         await sendConfirmationEmailForSession(session);
