@@ -78,6 +78,12 @@ function extractEmailAddress(value: string | null | undefined) {
   return match?.[0]?.trim() || null;
 }
 
+function formatProductName(value: string | null | undefined, fallbackLabel: string) {
+  if (!value) return fallbackLabel;
+  if (value === "Travel Mug") return "Custom Travel Mug";
+  return value;
+}
+
 function getRequestApiKey(request: Request) {
   const authorization = request.headers.get("Authorization") || "";
   const bearerMatch = authorization.match(/^Bearer\s+(.+)$/i);
@@ -166,8 +172,12 @@ function buildInternalMessage(sessionId: string, orders: OrderRow[]) {
   lines.push("Items:");
 
   orders.forEach((order, index) => {
+    const productName = formatProductName(
+      order.product_name,
+      `Item ${index + 1}`,
+    );
     lines.push(
-      `- ${order.quantity} x ${order.product_name || `Item ${index + 1}`} - ${formatCurrencyFromCents(order.unit_price)}`,
+      `- ${order.quantity} x ${productName} - ${formatCurrencyFromCents(order.unit_price)}`,
     );
 
     if (order.notes) {
@@ -197,7 +207,9 @@ function buildCustomerMessage(orders: OrderRow[]) {
   ];
 
   orders.forEach((order, index) => {
-    lines.push(`- ${order.quantity} x ${order.product_name || `Item ${index + 1}`}`);
+    lines.push(
+      `- ${order.quantity} x ${formatProductName(order.product_name, `Item ${index + 1}`)}`,
+    );
     if (order.notes) {
       lines.push(`Notes: ${order.notes}`);
     }

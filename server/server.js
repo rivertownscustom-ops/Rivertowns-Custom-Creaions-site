@@ -19,7 +19,7 @@ const HOURLY_ORDER_SUMMARY_FUNCTION_URL =
     : "";
 
 const PRODUCT_CATALOG = {
-  "sig-mug": { name: "Travel Mug", unitPrice: 16.99 },
+  "sig-mug": { name: "Custom Travel Mug", unitPrice: 16.99 },
 };
 
 const stripe = process.env.STRIPE_SECRET_KEY
@@ -308,6 +308,14 @@ function formatDeliveryOption(option) {
   return option === "house" ? "Delivery to house" : "Pick up at Slices";
 }
 
+function formatProductName(value, fallbackLabel) {
+  if (!value) {
+    return fallbackLabel;
+  }
+
+  return value === "Travel Mug" ? "Custom Travel Mug" : value;
+}
+
 function buildOrderEmailHtml(session, orders) {
   const firstOrder = orders[0];
   const itemRows = orders
@@ -318,7 +326,7 @@ function buildOrderEmailHtml(session, orders) {
 
       return `
         <li>
-          <strong>${order.product_name || `Item ${index + 1}`}</strong><br />
+          <strong>${formatProductName(order.product_name, `Item ${index + 1}`)}</strong><br />
           Quantity: ${order.quantity}<br />
           ${order.notes ? `Notes: ${order.notes}<br />` : ""}
           ${imageLink}
@@ -359,8 +367,8 @@ function buildOrderEmailText(session, orders) {
   lines.push(`Total paid: ${formatCurrencyFromCents(session.amount_total)}`);
   lines.push("Items:");
 
-  orders.forEach((order) => {
-    lines.push(`${order.product_name}`);
+  orders.forEach((order, index) => {
+    lines.push(`${formatProductName(order.product_name, `Item ${index + 1}`)}`);
     lines.push(`Quantity: ${order.quantity}`);
 
     if (order.notes) {
