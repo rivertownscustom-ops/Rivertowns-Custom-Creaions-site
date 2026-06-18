@@ -50,6 +50,12 @@ type InvocationBody = {
   retryOnly?: boolean;
 };
 
+type EmailAttachment = {
+  content: string;
+  filename: string;
+  path?: never;
+};
+
 function formatCurrencyFromCents(amount: number | null | undefined) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -82,6 +88,32 @@ function formatProductName(value: string | null | undefined, fallbackLabel: stri
   if (!value) return fallbackLabel;
   if (value === "Travel Mug") return "Custom Travel Mug";
   return value;
+}
+
+function encodeBase64(bytes: Uint8Array) {
+  let binary = "";
+
+  for (let index = 0; index < bytes.length; index += 0x8000) {
+    const chunk = bytes.subarray(index, index + 0x8000);
+    binary += String.fromCharCode(...chunk);
+  }
+
+  return btoa(binary);
+}
+
+function getAttachmentFilename(imageUrl: string, index: number) {
+  try {
+    const url = new URL(imageUrl);
+    const lastSegment = url.pathname.split("/").filter(Boolean).pop();
+
+    if (lastSegment?.includes(".")) {
+      return decodeURIComponent(lastSegment);
+    }
+  } catch {
+    // Fall through to generated name.
+  }
+
+  return `uploaded-image-${index + 1}.jpg`;
 }
 
 function getRequestApiKey(request: Request) {
@@ -347,6 +379,12 @@ async function enqueuePreviousHourOrders() {
 }
 
 async function enqueueSpecificSession(sessionId: string) {
+  const orders = await fetchPaidOrdersForSession(sessionId);
+
+  return enqueueOrders(orders, { sessionId });
+}
+
+async function fetchPaidOrdersForSession(sessionId: string) {
   const { data, error } = await supabase
     .from("orders")
     .select(
@@ -361,10 +399,41 @@ async function enqueueSpecificSession(sessionId: string) {
     throw new Error(`Session order lookup failed: ${error.message}`);
   }
 
-  return enqueueOrders((data || []) as OrderRow[], { sessionId });
+  return (data || []) as OrderRow[];
 }
 
-async function sendPlainTextEmail(to: string, subject: string, text: string) {
+async function buildInternalImageAttachments(sessionId: string) {
+  const orders = await fetchPaidOrdersForSession(sessionId);
+  const uniqueUrls = [...new Set(
+    orders
+      .map((order) => order.image_public_url)
+      .filter((value): value is string => Boolean(value)),
+  )];
+  const attachments: EmailAttachment[] = [];
+
+  for (const [index, imageUrl] of uniqueUrls.entries()) {
+    const response = await fetch(imageUrl);
+
+    if (!response.ok) {
+      throw new Error(`Image download failed: ${imageUrl}`);
+    }
+
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    attachments.push({
+      filename: getAttachmentFilename(imageUrl, index),
+      content: encodeBase64(bytes),
+    });
+  }
+
+  return attachments;
+}
+
+async function sendPlainTextEmail(
+  to: string,
+  subject: string,
+  text: string,
+  attachments?: EmailAttachment[],
+) {
   const mailConfig = await getMailConfig();
   const resendApiKey = mailConfig.resend_api_key || Deno.env.get("RESEND_API_KEY") || "";
   const resendFromEmail =
@@ -387,6 +456,7 @@ async function sendPlainTextEmail(to: string, subject: string, text: string) {
       to: [to],
       subject,
       text,
+      attachments,
     }),
   });
 
@@ -429,10 +499,15 @@ async function attemptQueuedDeliveries() {
 
   for (const row of queuedRows) {
     try {
+      const internalAttachments = await buildInternalImageAttachments(
+        row.stripe_checkout_session_id,
+      );
+
       await sendPlainTextEmail(
         row.delivery_target,
         row.internal_subject,
         row.internal_message,
+        internalAttachments,
       );
 
       const customerEmail = extractEmailAddress(row.contact_info);
