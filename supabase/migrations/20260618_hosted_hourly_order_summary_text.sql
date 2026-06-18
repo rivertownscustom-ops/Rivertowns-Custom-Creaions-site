@@ -40,14 +40,14 @@ begin
 
   if existing_id is null then
     perform vault.create_secret(
-      'sb_secret_QQ6JMqTxDZ73dPno9eP1LQ_YnsZF3G8',
+      'REPLACE_IN_SUPABASE_VAULT',
       'hourly_order_summary_service_role_key',
       'Service role key for invoking the hosted hourly order summary Edge Function'
     );
   else
     perform vault.update_secret(
       existing_id,
-      'sb_secret_QQ6JMqTxDZ73dPno9eP1LQ_YnsZF3G8',
+      'REPLACE_IN_SUPABASE_VAULT',
       'hourly_order_summary_service_role_key',
       'Service role key for invoking the hosted hourly order summary Edge Function'
     );
