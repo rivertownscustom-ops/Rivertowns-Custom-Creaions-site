@@ -45,6 +45,11 @@ type MailConfig = {
   eli_notification_email: string | null;
 };
 
+type InvocationBody = {
+  sessionId?: string;
+  retryOnly?: boolean;
+};
+
 function formatCurrencyFromCents(amount: number | null | undefined) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -71,6 +76,25 @@ function extractEmailAddress(value: string | null | undefined) {
   if (!value) return null;
   const match = value.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
   return match?.[0]?.trim() || null;
+}
+
+function getRequestApiKey(request: Request) {
+  const authorization = request.headers.get("Authorization") || "";
+  const bearerMatch = authorization.match(/^Bearer\s+(.+)$/i);
+  return (
+    bearerMatch?.[1]?.trim() ||
+    request.headers.get("apikey")?.trim() ||
+    null
+  );
+}
+
+function isAuthorizedRequest(request: Request) {
+  const requestApiKey = getRequestApiKey(request);
+  return Boolean(
+    requestApiKey &&
+      SUPABASE_SERVICE_ROLE_KEY &&
+      requestApiKey === SUPABASE_SERVICE_ROLE_KEY,
+  );
 }
 
 function getCurrentHourStartInTimeZone(timeZone: string) {
@@ -202,38 +226,19 @@ function buildCustomerMessage(orders: OrderRow[]) {
   return lines.join("\n");
 }
 
-async function enqueuePreviousHourOrders() {
+async function enqueueOrders(orders: OrderRow[], metadata: Record<string, unknown>) {
   const mailConfig = await getMailConfig();
   const deliveryTarget =
     mailConfig.eli_notification_email || ELI_NOTIFICATION_EMAIL;
-  const currentHourStart = getCurrentHourStartInTimeZone("America/New_York");
-  const previousHourStart = new Date(currentHourStart.getTime() - 60 * 60 * 1000);
 
-  const { data: orders, error } = await supabase
-    .from("orders")
-    .select(
-      "id,customer_name,contact_info,quantity,delivery_option,total_amount,address,notes,payment_status,stripe_checkout_session_id,created_at,image_public_url,product_name,unit_price",
-    )
-    .eq("payment_status", "paid")
-    .gte("created_at", previousHourStart.toISOString())
-    .lt("created_at", currentHourStart.toISOString())
-    .not("stripe_checkout_session_id", "is", null)
-    .order("created_at", { ascending: true })
-    .order("id", { ascending: true });
-
-  if (error) {
-    throw new Error(`Order lookup failed: ${error.message}`);
-  }
-
-  const groupedOrders = groupOrdersBySession((orders || []) as OrderRow[]);
+  const groupedOrders = groupOrdersBySession(orders);
   const sessionIds = [...groupedOrders.keys()];
 
   if (sessionIds.length === 0) {
     return {
       queuedSessions: [] as string[],
       queuedCount: 0,
-      previousHourStart: previousHourStart.toISOString(),
-      currentHourStart: currentHourStart.toISOString(),
+      ...metadata,
     };
   }
 
@@ -291,9 +296,60 @@ async function enqueuePreviousHourOrders() {
   return {
     queuedSessions: inserts.map((entry) => entry.stripe_checkout_session_id),
     queuedCount: inserts.length,
-    previousHourStart: previousHourStart.toISOString(),
-    currentHourStart: currentHourStart.toISOString(),
+    ...metadata,
   };
+}
+
+async function fetchPaidOrdersForPreviousHour() {
+  const currentHourStart = getCurrentHourStartInTimeZone("America/New_York");
+  const previousHourStart = new Date(currentHourStart.getTime() - 60 * 60 * 1000);
+
+  const { data, error } = await supabase
+    .from("orders")
+    .select(
+      "id,customer_name,contact_info,quantity,delivery_option,total_amount,address,notes,payment_status,stripe_checkout_session_id,created_at,image_public_url,product_name,unit_price",
+    )
+    .eq("payment_status", "paid")
+    .gte("created_at", previousHourStart.toISOString())
+    .lt("created_at", currentHourStart.toISOString())
+    .not("stripe_checkout_session_id", "is", null)
+    .order("created_at", { ascending: true })
+    .order("id", { ascending: true });
+
+  if (error) {
+    throw new Error(`Order lookup failed: ${error.message}`);
+  }
+
+  return {
+    orders: (data || []) as OrderRow[],
+    metadata: {
+      previousHourStart: previousHourStart.toISOString(),
+      currentHourStart: currentHourStart.toISOString(),
+    },
+  };
+}
+
+async function enqueuePreviousHourOrders() {
+  const { orders, metadata } = await fetchPaidOrdersForPreviousHour();
+  return enqueueOrders(orders, metadata);
+}
+
+async function enqueueSpecificSession(sessionId: string) {
+  const { data, error } = await supabase
+    .from("orders")
+    .select(
+      "id,customer_name,contact_info,quantity,delivery_option,total_amount,address,notes,payment_status,stripe_checkout_session_id,created_at,image_public_url,product_name,unit_price",
+    )
+    .eq("payment_status", "paid")
+    .eq("stripe_checkout_session_id", sessionId)
+    .order("created_at", { ascending: true })
+    .order("id", { ascending: true });
+
+  if (error) {
+    throw new Error(`Session order lookup failed: ${error.message}`);
+  }
+
+  return enqueueOrders((data || []) as OrderRow[], { sessionId });
 }
 
 async function sendPlainTextEmail(to: string, subject: string, text: string) {
@@ -425,8 +481,19 @@ Deno.serve(async (request: Request) => {
     return Response.json({ error: "Method not allowed" }, { status: 405 });
   }
 
+  if (!isAuthorizedRequest(request)) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
-    const enqueueResult = await enqueuePreviousHourOrders();
+    const body = request.headers.get("Content-Type")?.includes("application/json")
+      ? await request.json().catch(() => ({} as InvocationBody))
+      : ({} as InvocationBody);
+    const enqueueResult = body.sessionId
+      ? await enqueueSpecificSession(body.sessionId)
+      : body.retryOnly
+        ? { queuedSessions: [] as string[], queuedCount: 0, retryOnly: true }
+        : await enqueuePreviousHourOrders();
     const deliveryResult = await attemptQueuedDeliveries();
 
     return Response.json({

@@ -13,6 +13,10 @@ const IMAGE_BUCKET = process.env.SUPABASE_IMAGE_BUCKET || "mug-images";
 const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
 const RESEND_FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "";
 const RESEND_REPLY_TO = process.env.RESEND_REPLY_TO || "";
+const HOURLY_ORDER_SUMMARY_FUNCTION_URL =
+  process.env.SUPABASE_URL
+    ? `${process.env.SUPABASE_URL}/functions/v1/hourly-order-summary-text`
+    : "";
 
 const PRODUCT_CATALOG = {
   "sig-mug": { name: "Travel Mug", unitPrice: 16.99 },
@@ -46,6 +50,29 @@ app.get("/api/health", (_request, response) => {
     emailConfigured: Boolean(RESEND_API_KEY && RESEND_FROM_EMAIL),
   });
 });
+
+async function triggerHostedOrderSummary(sessionId) {
+  if (!HOURLY_ORDER_SUMMARY_FUNCTION_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return;
+  }
+
+  const response = await fetch(HOURLY_ORDER_SUMMARY_FUNCTION_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+      apikey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+    },
+    body: JSON.stringify({
+      sessionId,
+      trigger: "stripe-webhook",
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Hosted order summary trigger failed: ${await response.text()}`);
+  }
+}
 
 app.post(
   "/api/stripe-webhook",
@@ -95,9 +122,9 @@ app.post(
       }
 
       try {
-        await sendConfirmationEmailForSession(session);
+        await triggerHostedOrderSummary(session.id);
       } catch (error) {
-        console.error("Confirmation email failed", error);
+        console.error("Hosted order summary trigger failed", error);
       }
     }
 
