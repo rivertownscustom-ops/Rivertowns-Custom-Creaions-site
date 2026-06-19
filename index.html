@@ -34,9 +34,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* NAV */
 .nav{position:sticky;top:0;z-index:40;background:rgba(255,248,236,.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
 .nav-inner{max-width:1360px;margin:0 auto;padding:18px 32px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:24px}
-.logo{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-size:22px;letter-spacing:-0.02em;font-weight:500}
-.logo-mark{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--terracotta),var(--amber));position:relative}
-.logo-mark::after{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--bg)}
+.logo{display:flex;align-items:center;gap:12px;font-family:'Fraunces',serif;font-size:22px;letter-spacing:-0.02em;font-weight:500}
+.logo-mark{width:44px;height:44px;object-fit:contain;flex:0 0 auto}
 .nav-center{justify-self:center}
 .nav-links{display:flex;gap:28px;margin-left:8px}
 .nav-links a{color:var(--ink-2);text-decoration:none;font-size:14px;font-weight:500}
@@ -322,6 +321,7 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
 
 @media (max-width:480px){
   .logo{font-size:18px;min-width:0}
+  .logo-mark{width:38px;height:38px}
   .nav-inner{grid-template-columns:1fr;gap:12px;justify-items:center}
   .nav-center,.nav-right{justify-self:center}
   .hero{padding-top:24px}
@@ -358,7 +358,7 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
 
 <nav class="nav">
   <div class="nav-inner">
-    <div class="logo"><span class="logo-mark"></span>Rivertowns Custom</div>
+    <div class="logo"><img class="logo-mark" src="assets/rivertowns-logo-transparent.png" alt="" aria-hidden="true">Rivertowns Custom</div>
     <div class="nav-center">
       <a href="dispatch/" style="text-decoration:none;color:var(--ink-2);font-size:14px;font-weight:600">Click here for Rivertowns Dispatch Merch</a>
     </div>
@@ -378,7 +378,7 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
       <h1 class="hero-title" id="heroTitle">Put any<br/>image or text<br/>on <em>anything</em>.</h1>
     </div>
     <div>
-      <p class="hero-sub" id="heroSub">A local business run by 7 year old Zev and 13 year old Eli, selling mugs, frames, coasters and more! Printed in our local studio. Upload a photo, preview it live, make it yours.</p>
+      <p class="hero-sub" id="heroSub">Rivertowns Custom is a child-run local Rivertowns business by 7 year old Zev and 13 year old Eli. We sell custom travel mugs, frames, coasters, magnets, and more. By supporting us, you are supporting a local Rivertowns business and helping our small shop grow.</p>
       <div class="hero-meta">
         <span class="tag">Next-day production</span>
         <span class="tag" id="heroShipTag">$5 flat shipping</span>
@@ -641,7 +641,7 @@ const TWEAKS = {
   "headline": "Put any image or text on anything.",
   "headlineAccent": "anything",
   "eyebrow": "Est. 2026 · Hastings-on-Hudson",
-  "heroSub": "A local business run by 7 year old Zev and 13 year old Eli, selling mugs, frames, coasters and more! Printed in our local studio. Upload a photo, preview it live, make it yours.",
+  "heroSub": "Rivertowns Custom is a child-run local Rivertowns business by 7 year old Zev and 13 year old Eli. We sell custom travel mugs, frames, coasters, magnets, and more. By supporting us, you are supporting a local Rivertowns business and helping our small shop grow.",
   "shipping": 5,
   "showBadges": true,
   "ctaLabel": "Make something",
