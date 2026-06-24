@@ -147,6 +147,8 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
 .field{margin-bottom:20px}
 .field label.ttl{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);margin-bottom:10px;font-weight:600}
 .field .help{font-size:12px;color:var(--muted);margin-top:6px}
+.field .help a{color:var(--terracotta);font-weight:600;text-decoration:none}
+.field .help a:hover{text-decoration:underline}
 .size-picks{display:flex;gap:8px}
 .size-pick{flex:1;padding:12px;border:1px solid var(--line-2);border-radius:12px;text-align:center;transition:all .15s;background:#fff}
 .size-pick:hover{border-color:var(--ink-2)}
@@ -172,11 +174,15 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
 .frame-guide{position:absolute;border:none;box-shadow:none;pointer-events:none;display:none;border-radius:4px}
 .frame-guide.visible{display:block}
 .frame-guide::before{content:"Move and resize your photo to fit the frame. Drag the photo to move it. Use two-finger scroll or your mouse wheel to resize it.";position:absolute;left:0;bottom:calc(100% + 10px);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);background:rgba(255,248,236,.96);padding:6px 10px;border-radius:999px;white-space:normal;max-width:min(520px,82vw);line-height:1.35;border:1px solid var(--line)}
-.qty-row{display:flex;align-items:center;gap:14px}
+.qty-row{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap}
 .qty-box{display:flex;align-items:center;border:1px solid var(--line-2);border-radius:12px;overflow:hidden}
 .qty-box button{width:38px;height:38px;font-size:18px;color:var(--ink-2)}
 .qty-box button:hover{background:var(--bg-2)}
+.qty-box button:disabled{opacity:.35;cursor:not-allowed}
+.qty-box button:disabled:hover{background:transparent}
 .qty-box input{width:44px;height:38px;border:none;text-align:center;font-family:inherit;font-size:14px;font-weight:500;background:#fff;outline:none}
+.bulk-note{display:flex;flex-direction:column;gap:2px;max-width:330px;margin-top:0;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg-2);line-height:1.35}
+.bulk-note strong{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
 .form-foot{padding:18px 32px 24px;border-top:1px solid var(--line);background:var(--bg);display:flex;flex-direction:column;gap:12px;flex-shrink:0}
 .price-row{display:flex;justify-content:space-between;align-items:baseline}
 .price-row .lbl{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
@@ -198,6 +204,7 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
 .cart-item .side .price{font-weight:500;font-size:15px}
 .cart-item .side .qty-mini{display:flex;align-items:center;border:1px solid var(--line-2);border-radius:999px;font-size:12px}
 .cart-item .side .qty-mini button{width:24px;height:24px;color:var(--ink-2)}
+.cart-item .side .qty-mini button:disabled{opacity:.35;cursor:not-allowed}
 .cart-item .side .qty-mini span{padding:0 4px;min-width:16px;text-align:center}
 .cart-item .side .remove{font-size:11px;color:var(--muted);text-decoration:underline;cursor:pointer}
 .cart-item .side .remove:hover{color:var(--terracotta)}
@@ -393,7 +400,7 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
         <img src="assets/mug-homepage.png" alt="Travel Mug" style="width:100%;height:100%;object-fit:cover;position:relative;z-index:0">
       </div>
       <div class="tile-cta">
-        <div><h3>Travel Mug</h3><span class="price">$16.99 · Classic white ceramic</span></div>
+        <div><h3>Custom Travel Mug</h3><span class="price">$16.99 · Classic white ceramic</span></div>
         <button class="tile-go" aria-label="Customize"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
       </div>
     </div>
@@ -406,7 +413,7 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
         </div>
       </div>
       <div class="tile-cta">
-        <div><h3>Wood Frame</h3><span class="price">Coming soon</span></div>
+        <div><h3>Custom Wood Frame</h3><span class="price">Coming soon</span></div>
         <button class="tile-go" aria-label="Coming soon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
       </div>
     </div>
@@ -424,7 +431,7 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
         </svg>
       </div>
       <div class="tile-cta">
-        <div><h3>Fridge Magnets</h3><span class="price">Coming soon</span></div>
+        <div><h3>Custom Fridge Magnets</h3><span class="price">Coming soon</span></div>
         <button class="tile-go" aria-label="Coming soon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
       </div>
     </div>
@@ -505,7 +512,10 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
             <input type="text" id="qtyInput" value="1" readonly>
             <button id="qtyUp" aria-label="Increase">+</button>
           </div>
-          <span class="help">Orders over 10 please email us at rivertownscustom@gmail.com for bulk discounts.</span>
+          <span class="help bulk-note">
+            <strong>More than 10?</strong>
+            <span>Email <a href="mailto:rivertownscustom@gmail.com">rivertownscustom@gmail.com</a> for bulk discounts.</span>
+          </span>
         </div>
       </div>
     </div>
@@ -649,12 +659,14 @@ const TWEAKS = {
 };
 
 const PRODUCTS = [
-  {id:'sig-mug',cat:'drinkware',name:'Travel Mug',price:16.99,badge:'Best seller',colors:['#FFFFFF'],tint:'cream',render:'mug',image:'assets/mug-homepage.png',tagline:'Classic ceramic · 11oz · White',available:true},
+  {id:'sig-mug',cat:'drinkware',name:'Custom Travel Mug',price:16.99,badge:'Best seller',colors:['#FFFFFF'],tint:'cream',render:'mug',image:'assets/mug-homepage.png',tagline:'Classic ceramic · 11oz · White',available:true},
   {id:'cork-coast',cat:'coasters',name:'Custom Coaster',price:7,tiers:[{qty:1,price:7},{qty:2,price:12}],colors:['#FFFDF7'],tint:'cream',render:'coaster',tagline:'Coming soon',available:false},
-  {id:'fridge-magnet',cat:'magnets',name:'Fridge Magnets',price:10,badge:'New',colors:['#FFFDF7'],tint:'amber',render:'frame',tagline:'Coming soon',available:false},
-  {id:'metal-frame',cat:'frames',name:'Metal Print Frame',price:48,badge:'Premium',colors:['#151311','#C8A770','#FFFDF7'],tint:'forest',render:'frame',tagline:'Coming soon',available:false},
-  {id:'wood-frame',cat:'frames',name:'Wood Frame',price:25,colors:['#C9A47A'],tint:'cream',render:'woodframe',image:'assets/wood-frame.png',tagline:'Coming soon',available:false},
+  {id:'fridge-magnet',cat:'magnets',name:'Custom Fridge Magnets',price:10,badge:'New',colors:['#FFFDF7'],tint:'amber',render:'frame',tagline:'Coming soon',available:false},
+  {id:'metal-frame',cat:'frames',name:'Custom Metal Print Frame',price:48,badge:'Premium',colors:['#151311','#C8A770','#FFFDF7'],tint:'forest',render:'frame',tagline:'Coming soon',available:false},
+  {id:'wood-frame',cat:'frames',name:'Custom Wood Frame',price:25,colors:['#C9A47A'],tint:'cream',render:'woodframe',image:'assets/wood-frame.png',tagline:'Coming soon',available:false},
 ];
+
+const MAX_ORDER_QTY = 10;
 
 const SVGS = {
   mug:`<svg viewBox="0 0 220 220"><path d="M40 60 Q40 50 50 50 L150 50 Q160 50 160 60 L160 165 Q160 180 145 180 L55 180 Q40 180 40 165 Z" fill="#FFFFFF" stroke="#E0DDD5" stroke-width="1"/><path d="M160 80 Q195 80 195 110 Q195 140 160 140" fill="none" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round"/><path d="M160 80 Q195 80 195 110 Q195 140 160 140" fill="none" stroke="#E0DDD5" stroke-width="1"/><ellipse cx="100" cy="55" rx="60" ry="6" fill="rgba(0,0,0,.18)"/></svg>`,
@@ -663,10 +675,18 @@ const SVGS = {
   case:`<svg viewBox="0 0 220 220"><rect x="75" y="30" width="70" height="160" rx="14" fill="#151311" stroke="#0A0908" stroke-width="1.5"/><rect x="82" y="40" width="56" height="140" rx="8" fill="#2A2622"/><circle cx="95" cy="54" r="4" fill="#0A0908"/><circle cx="95" cy="54" r="2" fill="#3B4A6B"/><rect x="110" y="50" width="12" height="8" rx="2" fill="#0A0908"/></svg>`,
 };
 
+function normalizeQuantity(qty){
+  return Math.min(MAX_ORDER_QTY, Math.max(1, Number(qty) || 1));
+}
+
+function cartQuantity(){
+  return state.cart.reduce((sum, item) => sum + normalizeQuantity(item.qty), 0);
+}
+
 function readCart(){
   try {
     const parsed = JSON.parse(localStorage.getItem('rt_cart') || '[]');
-    return Array.isArray(parsed) ? parsed : [];
+    return Array.isArray(parsed) ? parsed.map(item => ({ ...item, qty: normalizeQuantity(item.qty) })) : [];
   } catch (_error) {
     return [];
   }
@@ -1163,11 +1183,19 @@ function openCustomizer(productId){
 }
 
 function updatePrice(){
+  syncCustomizerQuantity();
   const p = PRODUCTS.find(x=>x.id===state.activeProduct);
   const unit = p.price + state.sizeMod;
   const total = unit * state.qty;
   $('#livePrice').textContent = `$${total.toFixed(2)}`;
   $('#liveUnit').textContent = state.qty > 1 ? `/ ${state.qty} items · $${unit.toFixed(2)} ea` : '/ 1 item';
+}
+
+function syncCustomizerQuantity(){
+  state.qty = normalizeQuantity(state.qty);
+  $('#qtyInput').value = state.qty;
+  $('#qtyDown').disabled = state.qty <= 1;
+  $('#qtyUp').disabled = state.qty >= MAX_ORDER_QTY;
 }
 
 $$('#sizePicks .size-pick').forEach(sp => sp.addEventListener('click', () => {
@@ -1179,8 +1207,8 @@ $$('#sizePicks .size-pick').forEach(sp => sp.addEventListener('click', () => {
   updatePrice();
 }));
 
-$('#qtyUp').addEventListener('click', () => { state.qty = Math.min(99, state.qty+1); $('#qtyInput').value = state.qty; updatePrice(); });
-$('#qtyDown').addEventListener('click', () => { state.qty = Math.max(1, state.qty-1); $('#qtyInput').value = state.qty; updatePrice(); });
+$('#qtyUp').addEventListener('click', () => { state.qty = normalizeQuantity(state.qty + 1); updatePrice(); });
+$('#qtyDown').addEventListener('click', () => { state.qty = normalizeQuantity(state.qty - 1); updatePrice(); });
 
 // Upload
 const uploadZone = $('#uploadZone');
@@ -1228,13 +1256,20 @@ $('#uploadRemove').addEventListener('click', e => {
 
 function addItemToCart(product, overrides = {}) {
   state.cart = readCart();
+  const availableQty = MAX_ORDER_QTY - cartQuantity();
+  const requestedQty = normalizeQuantity(overrides.qty ?? state.qty);
+  if (availableQty <= 0) {
+    toast('For more than 10, email us for bulk discounts');
+    return false;
+  }
+  const finalQty = Math.min(requestedQty, availableQty);
   const finalArtwork = (overrides.artwork ?? state.artwork ?? null);
   const item = {
     lineId: Date.now()+'-'+Math.random().toString(36).slice(2,6),
     productId: product.id,
     name: product.name,
     price: (overrides.price ?? product.price + state.sizeMod),
-    qty: (overrides.qty ?? state.qty),
+    qty: finalQty,
     color: (overrides.color ?? state.color ?? '#FFFDF7'),
     sizeLabel: (overrides.sizeLabel ?? state.sizeLabel ?? 'Standard'),
     artwork: finalArtwork,
@@ -1245,7 +1280,8 @@ function addItemToCart(product, overrides = {}) {
   state.cart.push(item);
   saveCart();
   renderCart();
-  toast(`Added ${product.name} to cart`);
+  toast(finalQty < requestedQty ? `Added ${finalQty}. Email us for more than 10.` : `Added ${product.name} to cart`);
+  return true;
 }
 
 // Add to cart
@@ -1256,8 +1292,9 @@ $('#addToCart').addEventListener('click', () => {
     return;
   }
   const finalArtwork = exportArtworkForProduct(p);
-  addItemToCart(p, { artwork: finalArtwork });
-  closeModal('#customizer');
+  if (addItemToCart(p, { artwork: finalArtwork })) {
+    closeModal('#customizer');
+  }
 });
 
 // ---- Cart ----
@@ -1275,7 +1312,7 @@ function saveCart(){
       // Keep the cart alive in memory even if the browser cannot persist it.
     }
   }
-  $('#cartCount').textContent = state.cart.reduce((s,i)=>s+i.qty,0);
+  $('#cartCount').textContent = cartQuantity();
 }
 
 function renderCart(){
@@ -1293,6 +1330,7 @@ function renderCart(){
     $('#openCheckout').disabled = true;
     return;
   }
+  const currentCartQty = cartQuantity();
   body.innerHTML = state.cart.map(i => `
     <div class="cart-item" data-line="${i.lineId}">
       <div class="thumb" style="background:${i.color}">
@@ -1308,7 +1346,7 @@ function renderCart(){
       <div class="side">
         <span class="price">$${(i.price*i.qty).toFixed(2)}</span>
         <div class="qty-mini">
-          <button data-qd="${i.lineId}">−</button><span>${i.qty}</span><button data-qu="${i.lineId}">+</button>
+          <button data-qd="${i.lineId}">−</button><span>${i.qty}</span><button data-qu="${i.lineId}" ${currentCartQty >= MAX_ORDER_QTY || i.qty >= MAX_ORDER_QTY ? 'disabled' : ''}>+</button>
         </div>
         <span class="remove" data-rm="${i.lineId}">remove</span>
       </div>
@@ -1326,7 +1364,7 @@ function renderCart(){
   $('#openCheckout').disabled = false;
 
   body.querySelectorAll('[data-qu]').forEach(b => b.addEventListener('click', () => {
-    const it = state.cart.find(x=>x.lineId===b.dataset.qu); if(it){ it.qty = Math.min(99, it.qty+1); renderCart(); }
+    const it = state.cart.find(x=>x.lineId===b.dataset.qu); if(it && cartQuantity() < MAX_ORDER_QTY){ it.qty = normalizeQuantity(it.qty + 1); renderCart(); }
   }));
   body.querySelectorAll('[data-qd]').forEach(b => b.addEventListener('click', () => {
     const it = state.cart.find(x=>x.lineId===b.dataset.qd); if(it){ it.qty -= 1; if (it.qty <= 0) state.cart = state.cart.filter(x=>x.lineId!==it.lineId); renderCart(); }

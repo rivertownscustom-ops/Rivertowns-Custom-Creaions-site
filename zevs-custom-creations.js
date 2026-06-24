@@ -22,7 +22,7 @@ const PRODUCTS = [
   {
     id: "wood-frame",
     category: "frames",
-    name: "Wood Frame",
+    name: "Custom Wood Frame",
     price: 25,
     badge: "New",
     tagline: "Solid maple · 12x16",
@@ -32,7 +32,7 @@ const PRODUCTS = [
   {
     id: "metal-frame",
     category: "frames",
-    name: "Metal Print Frame",
+    name: "Custom Metal Print Frame",
     price: 48,
     badge: "Premium",
     tagline: "Brushed aluminum · 8x10",
@@ -41,7 +41,7 @@ const PRODUCTS = [
   {
     id: "fridge-magnet",
     category: "gifts",
-    name: "Fridge Magnets",
+    name: "Custom Fridge Magnets",
     price: 10,
     badge: "Set of 4",
     tagline: "Square magnets · set of 4",
