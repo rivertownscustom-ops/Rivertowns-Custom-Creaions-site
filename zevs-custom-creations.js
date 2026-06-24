@@ -16,7 +16,7 @@ const PRODUCTS = [
     price: 20,
     badge: "Best seller",
     tagline: "Classic ceramic · 11 oz",
-    heroImage: "assets/mug-family.png",
+    heroImage: "assets/mug-homepage.png",
     render: "mug",
   },
   {
