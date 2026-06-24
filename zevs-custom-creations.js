@@ -110,7 +110,7 @@ const canvas = document.getElementById("productCanvas");
 const ctx = canvas.getContext("2d");
 
 const mugBlank = new Image();
-mugBlank.src = "assets/mug-blank.png";
+mugBlank.src = "assets/mug-editor.png";
 const woodFrameBlank = new Image();
 woodFrameBlank.src = "assets/wood-frame-blank.png";
 
@@ -421,17 +421,17 @@ function drawMugPreview() {
 
   if (mugBlank.complete && mugBlank.naturalWidth) {
     const ratio = mugBlank.naturalWidth / mugBlank.naturalHeight;
-    const drawH = h * 0.95;
+    const drawH = h * 0.9;
     const drawW = drawH * ratio;
     const dx = (w - drawW) / 2;
     const dy = (h - drawH) / 2;
     ctx.drawImage(mugBlank, dx, dy, drawW, drawH);
   }
 
-  const frontX = w * 0.26;
-  const frontY = h * 0.28;
-  const frontW = w * 0.34;
-  const frontH = h * 0.44;
+  const frontX = w * 0.25;
+  const frontY = h * 0.29;
+  const frontW = w * 0.35;
+  const frontH = h * 0.43;
   ctx.save();
   ctx.beginPath();
   ctx.rect(frontX, frontY, frontW, frontH);

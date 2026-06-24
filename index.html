@@ -976,7 +976,7 @@ function exportArtworkForProduct(product){
 }
 
 const mugBlankImg = new Image();
-mugBlankImg.src = 'assets/mug.png';
+mugBlankImg.src = 'assets/mug-editor.png';
 mugBlankImg.onload = () => drawMug();
 
 const woodFrameBlankImg = new Image();
@@ -1035,17 +1035,17 @@ function drawMug(){
 
   if (mugBlankImg.complete && mugBlankImg.naturalWidth){
     const imgAR = mugBlankImg.naturalWidth / mugBlankImg.naturalHeight;
-    const drawH = h * 0.95;
+    const drawH = h * 0.9;
     const drawW = drawH * imgAR;
     const dx = (w - drawW)/2;
     const dy = (h - drawH)/2;
     mctx.drawImage(mugBlankImg, dx, dy, drawW, drawH);
   }
 
-  const frontX = w * 0.26;
-  const frontY = h * 0.28;
-  const frontW = w * 0.34;
-  const frontH = h * 0.44;
+  const frontX = w * 0.25;
+  const frontY = h * 0.29;
+  const frontW = w * 0.35;
+  const frontH = h * 0.43;
 
   mctx.save();
   mctx.beginPath();
