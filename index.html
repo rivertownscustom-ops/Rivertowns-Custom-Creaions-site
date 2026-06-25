@@ -797,7 +797,7 @@ function productNeedsCropControls(product){
 }
 
 function getMinArtworkScale(product){
-  return productNeedsCropControls(product) ? 1.08 : 1;
+  return productNeedsCropControls(product) ? 1.08 : 0.8;
 }
 
 function syncCropControls(){
@@ -841,6 +841,69 @@ function drawArtworkCover(targetX, targetY, targetW, targetH){
   const dx = targetX + (targetW - fit.drawW) / 2 + fit.offsetX;
   const dy = targetY + (targetH - fit.drawH) / 2 + fit.offsetY;
   mctx.drawImage(artImg, dx, dy, fit.drawW, fit.drawH);
+}
+
+function getArtworkVisibleSourceRect(image){
+  const scanW = Math.min(360, image.naturalWidth || image.width);
+  const scanH = Math.max(1, Math.round(scanW / ((image.naturalWidth || image.width) / (image.naturalHeight || image.height))));
+  const scanCanvas = document.createElement('canvas');
+  scanCanvas.width = scanW;
+  scanCanvas.height = scanH;
+  const scanCtx = scanCanvas.getContext('2d', { willReadFrequently: true });
+  scanCtx.drawImage(image, 0, 0, scanW, scanH);
+  const pixels = scanCtx.getImageData(0, 0, scanW, scanH).data;
+  let minX = scanW, minY = scanH, maxX = -1, maxY = -1;
+  for (let y = 0; y < scanH; y += 1) {
+    for (let x = 0; x < scanW; x += 1) {
+      const i = (y * scanW + x) * 4;
+      const r = pixels[i], g = pixels[i + 1], b = pixels[i + 2], a = pixels[i + 3];
+      const nearlyWhite = r > 240 && g > 240 && b > 240 && Math.max(r, g, b) - Math.min(r, g, b) < 16;
+      if (a > 12 && !nearlyWhite) {
+        minX = Math.min(minX, x);
+        minY = Math.min(minY, y);
+        maxX = Math.max(maxX, x);
+        maxY = Math.max(maxY, y);
+      }
+    }
+  }
+  if (maxX < minX || maxY < minY) return null;
+  const pad = 4;
+  minX = Math.max(0, minX - pad);
+  minY = Math.max(0, minY - pad);
+  maxX = Math.min(scanW - 1, maxX + pad);
+  maxY = Math.min(scanH - 1, maxY + pad);
+  const scaleX = (image.naturalWidth || image.width) / scanW;
+  const scaleY = (image.naturalHeight || image.height) / scanH;
+  return {
+    sx: minX * scaleX,
+    sy: minY * scaleY,
+    sw: (maxX - minX + 1) * scaleX,
+    sh: (maxY - minY + 1) * scaleY,
+  };
+}
+
+function drawArtworkContain(targetX, targetY, targetW, targetH){
+  if (!artImg) return;
+  const src = getArtworkVisibleSourceRect(artImg) || {
+    sx: 0,
+    sy: 0,
+    sw: artImg.naturalWidth || artImg.width,
+    sh: artImg.naturalHeight || artImg.height,
+  };
+  const srcAR = src.sw / src.sh;
+  const targetAR = targetW / targetH;
+  let drawW;
+  let drawH;
+  if (srcAR > targetAR) {
+    drawW = targetW;
+    drawH = drawW / srcAR;
+  } else {
+    drawH = targetH;
+    drawW = drawH * srcAR;
+  }
+  const dx = targetX + (targetW - drawW) / 2;
+  const dy = targetY + (targetH - drawH) / 2;
+  mctx.drawImage(artImg, src.sx, src.sy, src.sw, src.sh, dx, dy, drawW, drawH);
 }
 
 function getWoodFrameBounds(width = mugCanvas.width, height = mugCanvas.height){
@@ -1086,7 +1149,7 @@ function drawMug(){
   mctx.clip();
 
   if (artImg){
-    drawArtworkCover(frontX, frontY, frontW, frontH);
+    drawArtworkContain(frontX, frontY, frontW, frontH);
 
     const sh = mctx.createLinearGradient(frontX,0,frontX+frontW,0);
     sh.addColorStop(0,'rgba(0,0,0,.18)');

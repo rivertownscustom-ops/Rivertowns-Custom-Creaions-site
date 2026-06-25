@@ -117,6 +117,51 @@ woodFrameBlank.src = "assets/wood-frame-blank.png";
 let artworkImage = null;
 let toastTimer = null;
 
+function getVisibleSourceRect(image) {
+  const scanW = Math.min(360, image.naturalWidth || image.width);
+  const scanH = Math.max(1, Math.round(scanW / ((image.naturalWidth || image.width) / (image.naturalHeight || image.height))));
+  const scanCanvas = document.createElement("canvas");
+  scanCanvas.width = scanW;
+  scanCanvas.height = scanH;
+  const scanCtx = scanCanvas.getContext("2d", { willReadFrequently: true });
+  scanCtx.drawImage(image, 0, 0, scanW, scanH);
+  const pixels = scanCtx.getImageData(0, 0, scanW, scanH).data;
+  let minX = scanW;
+  let minY = scanH;
+  let maxX = -1;
+  let maxY = -1;
+  for (let y = 0; y < scanH; y += 1) {
+    for (let x = 0; x < scanW; x += 1) {
+      const i = (y * scanW + x) * 4;
+      const r = pixels[i];
+      const g = pixels[i + 1];
+      const b = pixels[i + 2];
+      const a = pixels[i + 3];
+      const nearlyWhite = r > 240 && g > 240 && b > 240 && Math.max(r, g, b) - Math.min(r, g, b) < 16;
+      if (a > 12 && !nearlyWhite) {
+        minX = Math.min(minX, x);
+        minY = Math.min(minY, y);
+        maxX = Math.max(maxX, x);
+        maxY = Math.max(maxY, y);
+      }
+    }
+  }
+  if (maxX < minX || maxY < minY) return null;
+  const pad = 4;
+  minX = Math.max(0, minX - pad);
+  minY = Math.max(0, minY - pad);
+  maxX = Math.min(scanW - 1, maxX + pad);
+  maxY = Math.min(scanH - 1, maxY + pad);
+  const scaleX = (image.naturalWidth || image.width) / scanW;
+  const scaleY = (image.naturalHeight || image.height) / scanH;
+  return {
+    sx: minX * scaleX,
+    sy: minY * scaleY,
+    sw: (maxX - minX + 1) * scaleX,
+    sh: (maxY - minY + 1) * scaleY,
+  };
+}
+
 function formatCurrency(value) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -438,19 +483,29 @@ function drawMugPreview() {
   ctx.clip();
 
   if (artworkImage) {
-    const ar = artworkImage.width / artworkImage.height;
+    const src = getVisibleSourceRect(artworkImage) || {
+      sx: 0,
+      sy: 0,
+      sw: artworkImage.naturalWidth || artworkImage.width,
+      sh: artworkImage.naturalHeight || artworkImage.height,
+    };
+    const ar = src.sw / src.sh;
     const frontAr = frontW / frontH;
     let drawW;
     let drawH;
     if (ar > frontAr) {
-      drawH = frontH;
-      drawW = drawH * ar;
-    } else {
       drawW = frontW;
       drawH = drawW / ar;
+    } else {
+      drawH = frontH;
+      drawW = drawH * ar;
     }
     ctx.drawImage(
       artworkImage,
+      src.sx,
+      src.sy,
+      src.sw,
+      src.sh,
       frontX + frontW / 2 - drawW / 2,
       frontY + frontH / 2 - drawH / 2,
       drawW,
