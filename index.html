@@ -1145,14 +1145,6 @@ function drawMug(){
 
   if (artImg){
     drawArtworkContain(frontX, frontY, frontW, frontH);
-
-    const sh = mctx.createLinearGradient(frontX,0,frontX+frontW,0);
-    sh.addColorStop(0,'rgba(0,0,0,.18)');
-    sh.addColorStop(0.3,'rgba(0,0,0,0)');
-    sh.addColorStop(0.7,'rgba(0,0,0,0)');
-    sh.addColorStop(1,'rgba(0,0,0,.14)');
-    mctx.fillStyle = sh;
-    mctx.fillRect(frontX, frontY, frontW, frontH);
   } else {
     mctx.fillStyle = 'rgba(0,0,0,.22)';
     mctx.font = '600 16px "JetBrains Mono", monospace';
