@@ -439,11 +439,15 @@ function drawMugPreview() {
 
   if (artworkImage) {
     const ar = artworkImage.width / artworkImage.height;
-    let drawW = frontW * 0.9;
-    let drawH = drawW / ar;
-    if (drawH > frontH * 0.9) {
-      drawH = frontH * 0.9;
+    const frontAr = frontW / frontH;
+    let drawW;
+    let drawH;
+    if (ar > frontAr) {
+      drawH = frontH;
       drawW = drawH * ar;
+    } else {
+      drawW = frontW;
+      drawH = drawW / ar;
     }
     ctx.drawImage(
       artworkImage,

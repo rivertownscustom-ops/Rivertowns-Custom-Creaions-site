@@ -797,7 +797,7 @@ function productNeedsCropControls(product){
 }
 
 function getMinArtworkScale(product){
-  return productNeedsCropControls(product) ? 1.08 : 0.8;
+  return productNeedsCropControls(product) ? 1.08 : 1;
 }
 
 function syncCropControls(){
@@ -1086,17 +1086,7 @@ function drawMug(){
   mctx.clip();
 
   if (artImg){
-    const artScale = state.artworkScale;
-    const artAR = artImg.width / artImg.height;
-    let artW = frontW * artScale;
-    let artH = artW / artAR;
-    if (artH > frontH * artScale){
-      artH = frontH * artScale;
-      artW = artH * artAR;
-    }
-    const centerX = frontX + frontW/2;
-    const centerY = frontY + frontH/2;
-    mctx.drawImage(artImg, centerX - artW/2, centerY - artH/2, artW, artH);
+    drawArtworkCover(frontX, frontY, frontW, frontH);
 
     const sh = mctx.createLinearGradient(frontX,0,frontX+frontW,0);
     sh.addColorStop(0,'rgba(0,0,0,.18)');
