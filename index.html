@@ -134,6 +134,7 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
 .preview{background:var(--bg);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;min-height:400px}
 .preview-stage{width:100%;flex:1;display:flex;align-items:center;justify-content:center;padding:30px;position:relative;user-select:none}
 .preview-label{position:absolute;top:20px;left:20px;display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+.preview-disclaimer{position:absolute;left:24px;right:24px;bottom:18px;text-align:center;font-size:12px;line-height:1.4;color:var(--muted);background:rgba(255,253,247,.82);border:1px solid var(--line);border-radius:999px;padding:7px 12px;backdrop-filter:blur(8px)}
 .live-dot{width:7px;height:7px;border-radius:50%;background:var(--terracotta);animation:pulse 1.6s infinite}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.6)}}
 .mug-wrap{width:min(440px,100%);aspect-ratio:880/680;height:auto;position:relative;max-width:100%}
@@ -308,7 +309,7 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
   .modal.customizer{width:min(560px,96vw);height:min(760px,94dvh);max-height:94dvh;display:flex;flex-direction:column;overflow:hidden;border-radius:20px}
   .modal.customizer > div:last-child{flex:1;min-height:0;overflow:hidden}
   .preview{height:min(42dvh,310px);min-height:230px;flex:0 0 auto}
-  .preview-stage{padding:46px 14px 16px}
+  .preview-stage{padding:46px 14px 34px}
   .mug-wrap{width:min(100%,420px)}
   .mug-wrap.frame-mode{width:min(100%,460px)}
   .form-grid{grid-template-columns:1fr}
@@ -344,7 +345,8 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
   .modal-close{top:12px;right:12px}
   .preview{height:36dvh;min-height:220px}
   .preview-label{top:16px;left:16px}
-  .preview-stage{padding:44px 10px 12px}
+  .preview-disclaimer{left:12px;right:12px;bottom:10px;font-size:11px;border-radius:10px}
+  .preview-stage{padding:44px 10px 34px}
   .frame-guide::before{font-size:9.5px;max-width:76vw;padding:5px 8px}
   .modal.checkout{height:100%;max-height:100%;border-radius:0}
   .drawer{width:100%}
@@ -471,6 +473,7 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
       </div>
       <div class="frame-guide" id="frameGuide" aria-hidden="true"></div>
     </div>
+    <div class="preview-disclaimer">Mockup only. Final print placement and color may look different on the mug.</div>
   </div>
 
   <div style="display:flex;flex-direction:column;overflow:hidden;min-height:0">
@@ -491,7 +494,6 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
             <img id="uploadThumb" alt="">
             <div class="meta">
               <span class="name" id="uploadName"></span>
-              <span class="hint" id="uploadHint">Adjust to fit frame how you like it. Drag to move. Scroll to resize.</span>
             </div>
           </div>
           <span class="remove" id="uploadRemove">remove</span>
