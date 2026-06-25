@@ -49,11 +49,12 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 
 /* HERO */
 .hero{max-width:1360px;margin:0 auto;padding:40px 32px 60px}
-.hero-head{display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:end;margin-bottom:32px}
+.hero-head{display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:start;margin-bottom:32px}
 .eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);margin-bottom:20px}
 .eyebrow::before{content:"";width:24px;height:1px;background:var(--ink-2)}
 h1.hero-title{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(44px,7vw,104px);line-height:.96;letter-spacing:-0.035em;margin:0}
 h1.hero-title em{font-style:italic;color:var(--terracotta)}
+.hero-copy{padding-top:42px}
 .hero-sub{color:var(--ink-2);font-size:17px;line-height:1.55;max-width:380px;margin:0}
 .hero-meta{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}
 .tag{font-size:12px;padding:7px 12px;border-radius:999px;border:1px solid var(--line-2);color:var(--ink-2);background:var(--bg)}
@@ -297,6 +298,7 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
   .nav-btn span:not(.cart-count){display:none}
   .nav-btn.primary{padding:10px 14px}
   .hero-head{grid-template-columns:1fr;gap:clamp(16px,3vw,24px)}
+  .hero-copy{padding-top:0}
   .hero-grid{
     grid-template-columns:1fr 1fr;
     grid-template-rows:clamp(180px,36vw,280px) clamp(130px,24vw,200px) clamp(130px,24vw,200px)
@@ -387,7 +389,7 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
       <span class="eyebrow" id="heroEyebrow">Est. 2026 · Hastings-on-Hudson</span>
       <h1 class="hero-title" id="heroTitle">Put any<br/>image or design<br/>on <em>anything</em>.</h1>
     </div>
-    <div>
+    <div class="hero-copy">
       <p class="hero-sub" id="heroSub">Rivertowns Custom is a youth-led local Rivertowns business. We sell custom travel mugs, frames, coasters, magnets, and more. By supporting us, you are supporting a local Rivertowns business and helping our small shop grow.</p>
       <div class="hero-meta">
         <span class="tag">Next-day production</span>
