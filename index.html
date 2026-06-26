@@ -4,6 +4,8 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Rivertowns Custom — Make it yours</title>
+<link rel="icon" href="/favicon.ico" sizes="any" />
+<link rel="icon" type="image/png" sizes="512x512" href="/favicon.png" />
 <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon.png" />
 <link rel="shortcut icon" type="image/png" href="/assets/favicon.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
@@ -791,6 +793,10 @@ function productCanZoomArtwork(product){
 }
 
 function getMinArtworkScale(product){
+  return productNeedsCropControls(product) ? 0.7 : 0.45;
+}
+
+function getDefaultArtworkScale(product){
   return productNeedsCropControls(product) ? 1.08 : 1;
 }
 
@@ -819,7 +825,7 @@ function fitArtworkCover(frameW, frameH){
     baseH = frameW / artAR;
   }
   const product = PRODUCTS.find(x=>x.id===state.activeProduct);
-  const scale = Math.max(getMinArtworkScale(product), state.artworkScale || 1);
+  const scale = Math.max(getMinArtworkScale(product), state.artworkScale ?? getDefaultArtworkScale(product));
   const drawW = baseW * scale;
   const drawH = baseH * scale;
   const slackX = Math.max(0, drawW - frameW);
@@ -896,7 +902,7 @@ function drawArtworkContain(targetX, targetY, targetW, targetH){
     drawW = drawH * srcAR;
   }
   const product = PRODUCTS.find(x=>x.id===state.activeProduct);
-  const zoom = Math.max(1, state.artworkScale || getMinArtworkScale(product));
+  const zoom = Math.max(getMinArtworkScale(product), state.artworkScale ?? getDefaultArtworkScale(product));
   drawW *= zoom;
   drawH *= zoom;
   const dx = targetX + (targetW - drawW) / 2;
@@ -1222,7 +1228,7 @@ function openCustomizer(productId){
   state.color = p.colors[0];
   state.size='md'; state.sizeLabel='Standard'; state.sizeMod=0;
   state.qty=1; state.artwork=null; state.artworkName=null;
-  state.artworkScale=getMinArtworkScale(p); state.artworkOffsetX=0; state.artworkOffsetY=0; artImg=null;
+  state.artworkScale=getDefaultArtworkScale(p); state.artworkOffsetX=0; state.artworkOffsetY=0; artImg=null;
 
   $('#cust-title').textContent = `Customize your ${p.name.toLowerCase()}`;
   $('#cust-subtitle').textContent = p.tagline;
@@ -1288,7 +1294,7 @@ function handleFile(f){
     state.artwork = ev.target.result;
     state.artworkName = f.name;
     const img = new Image();
-    img.onload = () => { const product = PRODUCTS.find(x=>x.id===state.activeProduct); artImg = img; state.artworkScale = Math.max(getMinArtworkScale(product), state.artworkScale || 1); drawPreview(); syncCropControls(); };
+    img.onload = () => { const product = PRODUCTS.find(x=>x.id===state.activeProduct); artImg = img; state.artworkScale = Math.max(getDefaultArtworkScale(product), state.artworkScale || getDefaultArtworkScale(product)); drawPreview(); syncCropControls(); };
     img.src = ev.target.result;
     $('#uploadThumb').src = ev.target.result;
     $('#uploadName').textContent = f.name;
@@ -1303,7 +1309,7 @@ $('#uploadRemove').addEventListener('click', e => {
   $('#uploadPreview').classList.remove('shown');
   $('#fileInput').value = '';
   const product = PRODUCTS.find(x=>x.id===state.activeProduct);
-  state.artworkScale = getMinArtworkScale(product);
+  state.artworkScale = getDefaultArtworkScale(product);
   state.artworkOffsetX = 0;
   state.artworkOffsetY = 0;
   drawPreview();
