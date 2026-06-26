@@ -573,6 +573,8 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
         <div class="form-grid" id="addressFields">
           <div class="input-field full" data-field="street"><label>Street address</label><input type="text" name="street" placeholder="123 Riverside Dr"><span class="err">Required</span></div>
           <div class="input-field full" data-field="city"><label>Town / city</label><input type="text" name="city" placeholder="Hastings-on-Hudson"><span class="err">Required</span></div>
+          <div class="input-field" data-field="state"><label>State</label><input type="text" name="state" placeholder="NY" maxlength="2"><span class="err">Required</span></div>
+          <div class="input-field" data-field="zip"><label>ZIP code</label><input type="text" name="zip" placeholder="10706" inputmode="numeric"><span class="err">Required</span></div>
           <div class="input-field full"><label>Apt / suite <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label><input type="text" name="apt"></div>
         </div>
       </form>
@@ -1522,10 +1524,13 @@ function buildCheckoutItems(form){
   const last = form.querySelector('[name="last"]').value.trim();
   const street = form.querySelector('[name="street"]').value.trim();
   const city = form.querySelector('[name="city"]').value.trim();
+  const stateValue = form.querySelector('[name="state"]').value.trim().toUpperCase();
+  const zip = form.querySelector('[name="zip"]').value.trim();
   const apt = form.querySelector('[name="apt"]').value.trim();
   const deliveryLabel = form.querySelector('[name="delivery"]').value.trim();
   const fullName = [first, last].filter(Boolean).join(' ');
-  const address = deliveryLabel === 'Delivery to house' ? [street, city, apt].filter(Boolean).join(', ') : '';
+  const cityStateZip = [city, stateValue, zip].filter(Boolean).join(' ');
+  const address = deliveryLabel === 'Delivery to house' ? [street, apt, cityStateZip].filter(Boolean).join(', ') : '';
 
   return state.cart.map(item => ({
     productId: item.productId,
@@ -1569,6 +1574,8 @@ function syncCheckoutAddressFields(form){
   const deliverySelect = form.querySelector('[name="delivery"]');
   const streetInput = form.querySelector('[name="street"]');
   const cityInput = form.querySelector('[name="city"]');
+  const stateInput = form.querySelector('[name="state"]');
+  const zipInput = form.querySelector('[name="zip"]');
   const addressDivider = $('#addressDivider');
   const addressFields = $('#addressFields');
   const needsAddress = deliverySelect?.value === 'Delivery to house';
@@ -1595,6 +1602,20 @@ function syncCheckoutAddressFields(form){
       cityInput.closest('.input-field')?.classList.remove('error');
     }
   }
+  if (stateInput) {
+    stateInput.required = needsAddress;
+    if (!needsAddress) {
+      stateInput.value = '';
+      stateInput.closest('.input-field')?.classList.remove('error');
+    }
+  }
+  if (zipInput) {
+    zipInput.required = needsAddress;
+    if (!needsAddress) {
+      zipInput.value = '';
+      zipInput.closest('.input-field')?.classList.remove('error');
+    }
+  }
   if (!needsAddress) {
     form.querySelector('[name="apt"]').value = '';
   }
@@ -1610,17 +1631,21 @@ function wireCheckoutForm(){
     if (state.cart.length === 0){ toast('Your cart is empty'); return; }
 
     let ok = true;
-    const required = form.querySelector('[name="delivery"]').value === 'Delivery to house' ? ['email','delivery','first','last','street','city'] : ['email','delivery','first','last'];
+    const required = form.querySelector('[name="delivery"]').value === 'Delivery to house' ? ['email','delivery','first','last','street','city','state','zip'] : ['email','delivery','first','last'];
     required.forEach(name => {
       const wrap = form.querySelector(`[data-field="${name}"]`);
       const input = form.querySelector(`[name="${name}"]`);
       const val = input.value.trim();
       let valid = val.length > 0;
       if (name === 'email') valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+      if (name === 'state') valid = /^[A-Za-z]{2}$/.test(val);
+      if (name === 'zip') valid = /^\\d{5}(-\\d{4})?$/.test(val);
       if (wrap) wrap.classList.toggle('error', !valid);
       if (!valid) ok = false;
     });
     if (!ok){ toast('Please fill in all required fields'); return; }
+    const stateInput = form.querySelector('[name="state"]');
+    if (stateInput) stateInput.value = stateInput.value.trim().toUpperCase();
 
     const original = placeOrderBtn.innerHTML;
     placeOrderBtn.disabled = true;
