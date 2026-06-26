@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FAQs - Rivertowns Custom</title>
+<link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon.png" />
+<link rel="shortcut icon" type="image/png" href="/assets/favicon.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&display=swap">
+<style>
+:root{
+  --bg:#FFF8EC;
+  --bg-2:#FBF1DE;
+  --ink:#151311;
+  --ink-2:#3B3731;
+  --muted:#8A8278;
+  --line:#E8DDC5;
+  --line-2:#D9CDB0;
+  --terracotta:#D94F2A;
+  --card:#FFFDF7;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+body{font-size:16px;line-height:1.5}
+a{color:inherit}
+.nav{position:sticky;top:0;z-index:40;background:rgba(255,248,236,.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav-inner{max-width:1120px;margin:0 auto;padding:18px 32px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:24px}
+.logo{display:flex;align-items:center;gap:12px;font-family:'Fraunces',serif;font-size:22px;letter-spacing:-0.02em;font-weight:500;text-decoration:none}
+.logo-mark{width:68px;height:68px;object-fit:contain;flex:0 0 auto}
+.nav-right{justify-self:end;display:flex;align-items:center;gap:8px}
+.nav-btn{padding:10px 14px;border-radius:999px;font-size:13px;font-weight:500;color:var(--ink-2);display:inline-flex;align-items:center;justify-content:center;text-align:center;gap:8px;transition:background .15s;text-decoration:none}
+.nav-btn:hover{background:var(--bg-2)}
+.nav-btn.primary{background:var(--terracotta);color:#fff}
+.page{max-width:900px;margin:0 auto;padding:56px 32px 76px}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);margin-bottom:18px}
+.eyebrow::before{content:"";width:24px;height:1px;background:var(--ink-2)}
+h1{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(42px,7vw,82px);line-height:1;letter-spacing:-0.025em;margin:0 0 28px}
+.faq-list{border-top:1px solid var(--line)}
+.faq-item{padding:24px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:minmax(220px,.7fr) minmax(0,1fr);gap:28px}
+.faq-item h2{font-family:'Fraunces',serif;font-size:25px;line-height:1.15;font-weight:500;letter-spacing:-0.01em;margin:0}
+.faq-item p{margin:0;color:var(--ink-2);font-size:16px;line-height:1.65}
+.faq-item a{font-weight:600;text-decoration:none}
+.faq-item a:hover{text-decoration:underline}
+@media (max-width:700px){
+  .nav-inner{padding:14px 20px}
+  .logo{font-size:18px}
+  .logo-mark{width:56px;height:56px}
+  .page{padding:40px 22px 60px}
+  .faq-item{grid-template-columns:1fr;gap:8px;padding:22px 0}
+  .faq-item h2{font-size:22px}
+}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="/"><img class="logo-mark" src="/assets/rivertowns-logo-transparent.png" alt="" aria-hidden="true">Rivertowns Custom</a>
+    <div class="nav-right">
+      <a class="nav-btn" href="/">Home</a>
+      <a class="nav-btn primary" href="/?cart=open">Cart</a>
+    </div>
+  </div>
+</nav>
+
+<main class="page">
+  <span class="eyebrow">Helpful answers</span>
+  <h1>FAQs</h1>
+  <div class="faq-list">
+    <section class="faq-item">
+      <h2>Can I use any photo?</h2>
+      <p>Yes - family photos, pet photos, logos, team designs, drawings, or transparent PNGs work best.</p>
+    </section>
+    <section class="faq-item">
+      <h2>How fast is production?</h2>
+      <p>Most orders are ready within 48 hours.</p>
+    </section>
+    <section class="faq-item">
+      <h2>Do you do bulk orders?</h2>
+      <p>Yes. Email <a href="mailto:rivertownscustom@gmail.com">rivertownscustom@gmail.com</a> for orders over 10.</p>
+    </section>
+    <section class="faq-item">
+      <h2>Can you help fix or crop my image?</h2>
+      <p>Yes. We'll make sure it fits nicely before printing.</p>
+    </section>
+    <section class="faq-item">
+      <h2>Where are you located?</h2>
+      <p>Hastings-on-Hudson, NY.</p>
+    </section>
+  </div>
+</main>
+</body>
+</html>
