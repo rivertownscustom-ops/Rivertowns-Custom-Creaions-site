@@ -417,19 +417,19 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
       <span class="tile-label">Lightly textured to give liveliness</span>
       <div class="ph wood-ph" style="background:#C9A47A;display:flex;align-items:center;justify-content:center">
         <div style="width:76%;height:78%;box-shadow:0 8px 24px rgba(0,0,0,.35);overflow:hidden;position:relative;z-index:1">
-          <img src="assets/wood-frame-hero.png" alt="Wood Frame" style="width:100%;height:100%;object-fit:cover;display:block">
+          <img src="assets/wood-frame-hero.png" alt="Custom Photo Frame" style="width:100%;height:100%;object-fit:cover;display:block">
         </div>
       </div>
       <div class="tile-cta">
-        <div><h3>Custom Wood Frame</h3><span class="price">$27.99 · 12 x 16</span></div>
+        <div><h3>Custom Photo Frame</h3><span class="price">$27.99 · 12 x 16 wood frame</span></div>
         <button class="tile-go" aria-label="Customize"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
       </div>
     </div>
 
     <div class="tile" data-open="fridge-magnet">
       <span class="tile-label">Coming soon</span>
-      <div class="ph amber">
-        <img src="assets/fridge-magnet-homepage.png" alt="Custom Fridge Magnets" style="width:100%;height:100%;object-fit:cover;display:block">
+      <div class="ph amber" style="background:#FFF8EC">
+        <img src="assets/fridge-magnet-homepage.png" alt="Custom Fridge Magnets" style="width:86%;height:86%;object-fit:contain;display:block;margin:auto">
       </div>
       <div class="tile-cta">
         <div><h3>Custom Fridge Magnets</h3><span class="price">Coming soon</span></div>
@@ -657,7 +657,7 @@ const PRODUCTS = [
   {id:'cork-coast',cat:'coasters',name:'Custom Coaster',price:7,tiers:[{qty:1,price:7},{qty:2,price:12}],colors:['#FFFDF7'],tint:'cream',render:'coaster',image:'assets/coaster-homepage.png',tagline:'Coming soon',available:false},
   {id:'fridge-magnet',cat:'magnets',name:'Custom Fridge Magnets',price:10,badge:'Coming soon',colors:['#FFFDF7'],tint:'amber',render:'frame',image:'assets/fridge-magnet-homepage.png',tagline:'Coming soon',available:false},
   {id:'metal-frame',cat:'frames',name:'Custom Metal Print Frame',price:48,badge:'Premium',colors:['#151311','#C8A770','#FFFDF7'],tint:'forest',render:'frame',tagline:'Coming soon',available:false},
-  {id:'wood-frame',cat:'frames',name:'Custom Wood Frame',price:27.99,colors:['#C9A47A'],tint:'cream',render:'woodframe',image:'assets/wood-frame.png',tagline:'12 x 16',available:true},
+  {id:'wood-frame',cat:'frames',name:'Custom Photo Frame',price:27.99,colors:['#C9A47A'],tint:'cream',render:'woodframe',image:'assets/wood-frame.png',tagline:'12 x 16 wood frame',available:true},
 ];
 
 const MAX_ORDER_QTY = 10;

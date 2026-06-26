@@ -22,10 +22,10 @@ const PRODUCTS = [
   {
     id: "wood-frame",
     category: "frames",
-    name: "Custom Wood Frame",
+    name: "Custom Photo Frame",
     price: 27.99,
     badge: "New",
-    tagline: "12 by 16",
+    tagline: "12 x 16 wood frame",
     heroImage: "assets/wood-frame.png",
     render: "woodframe",
   },

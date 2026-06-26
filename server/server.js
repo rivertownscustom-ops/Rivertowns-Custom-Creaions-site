@@ -20,7 +20,7 @@ const HOURLY_ORDER_SUMMARY_FUNCTION_URL =
 
 const PRODUCT_CATALOG = {
   "sig-mug": { name: "Custom Travel Mug", unitPrice: 16.99 },
-  "wood-frame": { name: "Custom Wood Frame", unitPrice: 27.99 },
+  "wood-frame": { name: "Custom Photo Frame", unitPrice: 27.99 },
 };
 
 const stripe = process.env.STRIPE_SECRET_KEY
