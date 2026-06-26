@@ -15,7 +15,7 @@ const PRODUCTS = [
     name: "Custom Photo Mug",
     price: 20,
     badge: "Best seller",
-    tagline: "Classic ceramic · 11 oz",
+    tagline: "12 oz with lid",
     heroImage: "assets/mug-homepage.png",
     render: "mug",
   },
