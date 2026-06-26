@@ -657,6 +657,7 @@ const PRODUCTS = [
 ];
 
 const MAX_ORDER_QTY = 10;
+const MAX_ARTWORK_SCALE = 5;
 
 const SVGS = {
   mug:`<svg viewBox="0 0 220 220"><path d="M40 60 Q40 50 50 50 L150 50 Q160 50 160 60 L160 165 Q160 180 145 180 L55 180 Q40 180 40 165 Z" fill="#FFFFFF" stroke="#E0DDD5" stroke-width="1"/><path d="M160 80 Q195 80 195 110 Q195 140 160 140" fill="none" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round"/><path d="M160 80 Q195 80 195 110 Q195 140 160 140" fill="none" stroke="#E0DDD5" stroke-width="1"/><ellipse cx="100" cy="55" rx="60" ry="6" fill="rgba(0,0,0,.18)"/></svg>`,
@@ -785,8 +786,12 @@ function productNeedsCropControls(product){
   return Boolean(product && (product.render === 'woodframe' || product.render === 'frame'));
 }
 
+function productCanZoomArtwork(product){
+  return Boolean(product && (product.render === 'mug' || productNeedsCropControls(product)));
+}
+
 function getMinArtworkScale(product){
-  return productNeedsCropControls(product) ? 1.08 : 0.8;
+  return productNeedsCropControls(product) ? 1.08 : 1;
 }
 
 function syncCropControls(){
@@ -890,6 +895,10 @@ function drawArtworkContain(targetX, targetY, targetW, targetH){
     drawH = targetH;
     drawW = drawH * srcAR;
   }
+  const product = PRODUCTS.find(x=>x.id===state.activeProduct);
+  const zoom = Math.max(1, state.artworkScale || getMinArtworkScale(product));
+  drawW *= zoom;
+  drawH *= zoom;
   const dx = targetX + (targetW - drawW) / 2;
   const dy = targetY + (targetH - drawH) / 2;
   mctx.drawImage(artImg, src.sx, src.sy, src.sw, src.sh, dx, dy, drawW, drawH);
@@ -978,12 +987,11 @@ function applyCropDrag(deltaX, deltaY){
 
 function applyCropScale(delta){
   const product = PRODUCTS.find(x=>x.id===state.activeProduct);
-  const rect = getCropRectForProduct(product);
-  if (!rect) return;
   const minScale = getMinArtworkScale(product);
-  const nextScale = Math.max(minScale, Math.min(2.4, state.artworkScale + delta));
+  const nextScale = Math.max(minScale, Math.min(MAX_ARTWORK_SCALE, state.artworkScale + delta));
   state.artworkScale = nextScale;
-  clampArtworkOffsets(rect.w, rect.h);
+  const rect = getCropRectForProduct(product);
+  if (rect) clampArtworkOffsets(rect.w, rect.h);
 }
 
 function attachCropInteractions(){
@@ -1026,7 +1034,7 @@ function attachCropInteractions(){
 
   stage.addEventListener('wheel', event => {
     const product = PRODUCTS.find(x=>x.id===state.activeProduct);
-    if (!productNeedsCropControls(product) || !state.artwork) return;
+    if (!productCanZoomArtwork(product) || !state.artwork) return;
     event.preventDefault();
     const delta = -event.deltaY / 700;
     applyCropScale(delta);
