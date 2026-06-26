@@ -53,8 +53,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .hero-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(420px,.95fr);gap:56px;align-items:start;margin-bottom:32px}
 .eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);margin-bottom:20px}
 .eyebrow::before{content:"";width:24px;height:1px;background:var(--ink-2)}
-h1.hero-title{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(44px,7vw,104px);line-height:.96;letter-spacing:-0.035em;margin:0}
+h1.hero-title{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(42px,6.2vw,88px);line-height:1;letter-spacing:-0.03em;margin:0;max-width:780px}
 h1.hero-title em{font-style:italic;color:var(--terracotta)}
+.hero-title-sub{display:block;margin-top:16px;max-width:620px;font-family:'Inter',sans-serif;font-size:clamp(17px,1.9vw,25px);line-height:1.28;letter-spacing:0;color:var(--ink-2)}
 .hero-copy{padding-top:34px}
 .hero-sub{color:var(--ink-2);font-size:17px;line-height:1.55;max-width:540px;margin:0}
 .hero-meta{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}
@@ -385,7 +386,7 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
   <div class="hero-head">
     <div>
       <span class="eyebrow" id="heroEyebrow">Est. 2026 · Hastings-on-Hudson</span>
-      <h1 class="hero-title" id="heroTitle">Put any<br/>image or design<br/>on <em>anything</em>.</h1>
+      <h1 class="hero-title" id="heroTitle">Turn your favorite photo into a <em>custom gift</em><span class="hero-title-sub">Made locally by Rivertowns Custom, a youth-led family business.</span></h1>
     </div>
     <div class="hero-copy">
       <p class="hero-sub" id="heroSub">Rivertowns Custom is a youth-led local Rivertowns business. We sell custom travel mugs, frames, coasters, magnets, and more. Each mug is made with love in our local home studio. By supporting us, you are supporting a local Rivertowns business and helping our small shop grow. Email rivertownscustom@gmail.com for questions or bulk orders.</p>
@@ -416,8 +417,8 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
         </div>
       </div>
       <div class="tile-cta">
-        <div><h3>Custom Wood Frame</h3><span class="price">Coming soon</span></div>
-        <button class="tile-go" aria-label="Coming soon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
+        <div><h3>Custom Wood Frame</h3><span class="price">$27.99 · 12 by 16</span></div>
+        <button class="tile-go" aria-label="Customize"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
       </div>
     </div>
 
@@ -637,8 +638,8 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
 <script>
 const TWEAKS = {
   "accent": "#D94F2A",
-  "headline": "Put any image or design on anything.",
-  "headlineAccent": "anything",
+  "headline": "Turn your favorite photo into a custom gift\nMade locally by Rivertowns Custom, a youth-led family business.",
+  "headlineAccent": "custom gift",
   "eyebrow": "Est. 2026 · Hastings-on-Hudson",
   "heroSub": "Rivertowns Custom is a youth-led local Rivertowns business. We sell custom travel mugs, frames, coasters, magnets, and more. Each mug is made with love in our local home studio. By supporting us, you are supporting a local Rivertowns business and helping our small shop grow. Email rivertownscustom@gmail.com for questions or bulk orders.",
   "shipping": 5,
@@ -652,7 +653,7 @@ const PRODUCTS = [
   {id:'cork-coast',cat:'coasters',name:'Custom Coaster',price:7,tiers:[{qty:1,price:7},{qty:2,price:12}],colors:['#FFFDF7'],tint:'cream',render:'coaster',image:'assets/coaster-homepage.png',tagline:'Coming soon',available:false},
   {id:'fridge-magnet',cat:'magnets',name:'Custom Fridge Magnets',price:10,badge:'New',colors:['#FFFDF7'],tint:'amber',render:'frame',image:'assets/fridge-magnet-homepage.png',tagline:'Coming soon',available:false},
   {id:'metal-frame',cat:'frames',name:'Custom Metal Print Frame',price:48,badge:'Premium',colors:['#151311','#C8A770','#FFFDF7'],tint:'forest',render:'frame',tagline:'Coming soon',available:false},
-  {id:'wood-frame',cat:'frames',name:'Custom Wood Frame',price:25,colors:['#C9A47A'],tint:'cream',render:'woodframe',image:'assets/wood-frame.png',tagline:'Coming soon',available:false},
+  {id:'wood-frame',cat:'frames',name:'Custom Wood Frame',price:27.99,colors:['#C9A47A'],tint:'cream',render:'woodframe',image:'assets/wood-frame.png',tagline:'12 by 16',available:true},
 ];
 
 const MAX_ORDER_QTY = 10;
@@ -1712,12 +1713,14 @@ if (new URLSearchParams(window.location.search).get('cart') === 'open') {
     if (title){
       const raw = (TWEAKS.headline || '').trim();
       const word = (TWEAKS.headlineAccent || '').trim();
-      let html = escapeHtml(raw);
-      if (word){
+      const lines = raw.split(/\n+/).map(line => escapeHtml(line.trim())).filter(Boolean);
+      if (word && lines.length){
         const re = new RegExp('(' + word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'i');
-        html = html.replace(re, '<em>$1</em>');
+        lines[0] = lines[0].replace(re, '<em>$1</em>');
       }
-      html = html.replace(/\n/g, '<br/>');
+      const html = lines.length > 1
+        ? `${lines[0]}<span class="hero-title-sub">${lines.slice(1).join(' ')}</span>`
+        : (lines[0] || '');
       title.innerHTML = html;
     }
 
