@@ -76,10 +76,7 @@ h1.hero-title em{font-style:italic;color:var(--terracotta);white-space:nowrap}
 .tile:hover .tile-go{transform:translateX(3px)}
 .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .ph::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.45) 100%);z-index:1}
-.ph.terracotta{background:radial-gradient(120% 80% at 20% 0%,#E66A3F 0%,#B8391A 60%,#7A2410 100%)}
-.ph.forest{background:radial-gradient(120% 80% at 80% 0%,#4A7560 0%,#2B4D3E 60%,#122A21 100%)}
-.ph.amber{background:radial-gradient(120% 80% at 50% 0%,#FACB7A 0%,#D99030 60%,#8E5A14 100%)}
-.ph.cream{background:radial-gradient(120% 80% at 30% 0%,#F5E9CC 0%,#DCC89A 60%,#A48C5A 100%)}
+.ph.terracotta,.ph.forest,.ph.amber,.ph.cream{background:var(--bg-2)}
 .ph svg{filter:drop-shadow(0 20px 24px rgba(0,0,0,.25));position:relative;z-index:0;width:62%;height:auto}
 .ph.wood-ph::before{display:none}
 
