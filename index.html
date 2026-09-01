@@ -30,6 +30,7 @@
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
+html{scroll-behavior:smooth}
 html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 body{font-size:16px;line-height:1.5}
 img{max-width:100%;display:block}
@@ -39,50 +40,59 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 
 /* NAV */
 .nav{position:sticky;top:0;z-index:40;background:rgba(255,248,236,.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
-.nav-inner{max-width:1360px;margin:0 auto;padding:18px 32px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:24px}
+.nav-inner{max-width:1360px;margin:0 auto;padding:18px 32px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:32px}
 .logo{display:flex;align-items:center;gap:12px;font-family:'Fraunces',serif;font-size:22px;letter-spacing:-0.02em;font-weight:500}
 .logo-mark{width:68px;height:68px;object-fit:contain;flex:0 0 auto}
-.nav-links{display:flex;gap:28px;margin-left:8px}
-.nav-links a{color:var(--ink-2);text-decoration:none;font-size:14px;font-weight:500}
-.nav-links a:hover{color:var(--terracotta)}
-.nav-right{justify-self:end;display:flex;align-items:center;gap:8px}
-.nav-btn{padding:10px 14px;border-radius:999px;font-size:13px;font-weight:500;color:var(--ink-2);display:inline-flex;align-items:center;justify-content:center;text-align:center;gap:8px;transition:background .15s;text-decoration:none}
+.nav-center{display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap}
+.nav-right{justify-self:end;display:flex;align-items:center;justify-content:flex-end}
+.nav-btn{padding:10px 18px;border-radius:999px;font-size:13px;font-weight:500;color:var(--ink-2);display:inline-flex;align-items:center;justify-content:center;text-align:center;gap:8px;transition:background .15s;text-decoration:none;border:1px solid var(--line);background:rgba(255,253,247,.72)}
 .nav-btn:hover{background:var(--bg-2)}
-.nav-btn.primary{background:var(--ink);color:var(--bg);padding:10px 18px}
-.nav-btn.primary:hover{background:var(--terracotta)}
+.nav-btn.primary{background:rgba(255,253,247,.72);color:var(--ink);padding:10px 14px}
+.nav-btn.primary:hover{background:var(--bg-2)}
+.nav-btn.section-link{padding:10px 14px;font-size:13px}
 .cart-count{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--terracotta);color:#fff;font-size:11px;font-weight:600}
 
 /* HERO */
 .hero{max-width:1360px;margin:0 auto;padding:40px 32px 60px}
-.hero-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(420px,.95fr);gap:56px;align-items:start;margin-bottom:32px}
+.hero-head{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(340px,.85fr);gap:40px;align-items:start;margin-bottom:12px}
 .eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);margin-bottom:20px}
 .eyebrow::before{content:"";width:24px;height:1px;background:var(--ink-2)}
 h1.hero-title{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(42px,5.9vw,86px);line-height:1.06;letter-spacing:-0.018em;margin:0;max-width:760px;text-wrap:balance}
 h1.hero-title .line{display:block}
 h1.hero-title em{font-style:italic;color:var(--terracotta);white-space:nowrap}
-.hero-copy{padding-top:34px}
-.hero-sub{color:var(--ink-2);font-size:17px;line-height:1.55;max-width:540px;margin:0}
+.hero-copy{padding-top:22px}
+.hero-sub{color:var(--ink-2);font-size:17px;line-height:1.55;max-width:500px;margin:0}
 .hero-meta{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}
 .tag{font-size:12px;padding:7px 12px;border-radius:999px;border:1px solid var(--line-2);color:var(--ink-2);background:var(--bg)}
-
-.hero-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;grid-template-rows:320px 220px;gap:12px}
-.tile{border-radius:18px;overflow:hidden;position:relative;border:1px solid var(--line);cursor:pointer}
-.tile.a{grid-row:span 2}
-.tile-label{position:absolute;left:14px;top:14px;max-width:calc(100% - 28px);font-size:11px;line-height:1.25;letter-spacing:.12em;text-transform:uppercase;color:#fff;background:rgba(21,19,17,.5);backdrop-filter:blur(8px);padding:6px 10px;border-radius:999px;z-index:2}
-.tile-cta{position:absolute;left:14px;bottom:14px;right:14px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;z-index:2;color:#fff}
-.tile-cta h3{margin:0;font-family:'Fraunces',serif;font-size:22px;font-weight:500;letter-spacing:-0.01em;line-height:1.1}
-.tile-cta .price{font-size:12px;color:rgba(255,255,255,.85);margin-top:4px;display:block}
-.tile-go{width:36px;height:36px;border-radius:50%;background:#fff;color:var(--ink);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .2s}
+.hero-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(300px,1fr));gap:14px}
+.tile{border-radius:18px;overflow:hidden;position:relative;border:1px solid var(--line);cursor:pointer;display:grid;grid-template-rows:auto minmax(0,1fr) auto;background:var(--bg-2)}
+.tile.a{grid-row:auto}
+.tile-label{position:relative;left:auto;top:auto;justify-self:start;max-width:calc(100% - 24px);margin:12px 12px 6px;font-size:10px;line-height:1.2;letter-spacing:.12em;text-transform:uppercase;color:#fff;background:var(--ink-2);padding:6px 9px;border-radius:999px;z-index:2}
+.tile-cta{position:relative;left:auto;bottom:auto;right:auto;display:flex;align-items:center;justify-content:space-between;gap:10px;z-index:2;color:var(--ink);background:#FFFDF7;border-top:1px solid var(--line);padding:13px 14px 14px}
+.tile-cta h3{margin:0;font-family:'Fraunces',serif;font-size:20px;font-weight:500;letter-spacing:-0.01em;line-height:1.08}
+.tile-cta .price{font-size:12px;color:var(--muted);margin-top:4px;display:block}
+.tile-go{width:32px;height:32px;border-radius:50%;background:var(--terracotta);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .2s}
 .tile:hover .tile-go{transform:translateX(3px)}
 .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .ph::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.45) 100%);z-index:1}
+.hero-grid .ph{position:relative;inset:auto;min-height:0}
+.hero-grid .ph::before{display:none}
 .ph.terracotta,.ph.forest,.ph.amber,.ph.cream{background:var(--bg-2)}
 .ph svg{filter:drop-shadow(0 20px 24px rgba(0,0,0,.25));position:relative;z-index:0;width:62%;height:auto}
 .ph.wood-ph::before{display:none}
 
 /* SECTION */
 .section{max-width:1360px;margin:0 auto;padding:60px 32px}
-.section-head{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:32px;border-bottom:1px solid var(--line);padding-bottom:18px}
+.section.compact-products{padding-top:18px;padding-bottom:28px}
+#products{
+  --bg-2:#F7F1E7;
+  --line:#D8C9B2;
+  --line-2:#D8C9B2;
+  --card:#F7F1E7;
+  background:#EFE7DA;
+  border-radius:28px;
+}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:26px;border-bottom:1px solid var(--line);padding-bottom:18px}
 .section-head h2{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(28px,3.6vw,46px);letter-spacing:-0.02em;margin:6px 0 0}
 .filters{display:flex;gap:6px;flex-wrap:wrap}
 .chip{font-size:13px;padding:8px 14px;border-radius:999px;border:1px solid var(--line-2);color:var(--ink-2);background:var(--bg);transition:all .15s}
@@ -123,12 +133,45 @@ h1.hero-title em{font-style:italic;color:var(--terracotta);white-space:nowrap}
 .strip p{margin:0;font-size:13px;color:var(--muted);line-height:1.5}
 .strip .icon{width:20px;height:20px;margin-bottom:12px;color:var(--terracotta)}
 
+/* TRUST + HOW IT WORKS */
+.info-band{max-width:1360px;margin:0 auto;padding:0 32px 24px}
+.info-band .section-head{margin-bottom:20px}
+.trust-block{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;align-items:stretch}
+.trust-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 18px;min-height:126px}
+.trust-card .kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.trust-card .kicker::before{content:"";width:18px;height:1px;background:var(--line-2)}
+.trust-card h3{margin:0 0 8px;font-family:'Fraunces',serif;font-size:22px;font-weight:500;letter-spacing:-0.01em;line-height:1.1}
+.trust-card p{margin:0;color:var(--ink-2);font-size:14px;line-height:1.55}
+
+.how-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:24px;align-items:start}
+.how-copy{max-width:420px}
+.how-copy p{margin:14px 0 0;color:var(--ink-2);font-size:16px;line-height:1.65}
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.step-card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px 18px;min-height:0;display:flex;flex-direction:column;gap:14px}
+.step-no{width:34px;height:34px;border-radius:50%;background:var(--terracotta);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.step-card h3{margin:0;font-family:'Fraunces',serif;font-size:22px;font-weight:500;letter-spacing:-0.01em;line-height:1.05}
+.step-card p{margin:0;color:var(--ink-2);font-size:14px;line-height:1.55}
+
 footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:24px;color:var(--muted);font-size:13px;flex-wrap:wrap}
+section[id]{scroll-margin-top:110px}
+.anchor-target{scroll-margin-top:116px}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+}
+
+@media (min-width:901px){
+  .nav-inner{max-width:none;padding-left:18px;padding-right:18px}
+  .hero-head{align-items:center}
+  .hero-copy{padding-top:0}
+  .how-grid{grid-template-columns:1fr}
+  .steps{width:100%}
+}
 
 /* OVERLAY + MODAL */
-.overlay{position:fixed;inset:0;background:rgba(21,19,17,.45);backdrop-filter:blur(4px);z-index:90;opacity:0;pointer-events:none;transition:opacity .25s}
+.overlay{position:fixed;inset:0;background:rgba(21,19,17,.45);backdrop-filter:blur(4px);z-index:30;opacity:0;pointer-events:none;transition:opacity .25s}
 .overlay.open{opacity:1;pointer-events:auto}
-.modal{position:fixed;z-index:100;background:var(--card);border-radius:24px;box-shadow:0 30px 80px -20px rgba(21,19,17,.4);overflow:hidden;transform:translate(-50%,-48%) scale(.96);opacity:0;pointer-events:none;transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .2s;left:50%;top:50%}
+.modal{position:fixed;z-index:35;background:var(--card);border-radius:24px;box-shadow:0 30px 80px -20px rgba(21,19,17,.4);overflow:hidden;transform:translate(-50%,-48%) scale(.96);opacity:0;pointer-events:none;transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .2s;left:50%;top:50%}
 .modal.open{transform:translate(-50%,-50%) scale(1);opacity:1;pointer-events:auto}
 .modal.customizer{width:min(1100px,94vw);height:min(720px,92vh);display:grid;grid-template-columns:1.2fr .9fr;min-height:0}
 .modal-close{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;background:rgba(21,19,17,.08);display:flex;align-items:center;justify-content:center;z-index:3;transition:background .15s}
@@ -285,32 +328,44 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
 .tw-switch.on::after{transform:translateX(14px)}
 
 /* Fluid spacing tokens */
-.hero{padding:clamp(16px,4vw,40px) clamp(16px,4vw,32px) clamp(32px,5vw,60px)}
+.hero{padding:clamp(16px,4vw,40px) clamp(16px,4vw,32px) clamp(12px,2.2vw,24px)}
 .section{padding:clamp(32px,5vw,60px) clamp(16px,4vw,32px)}
 .nav-inner{padding:clamp(12px,1.6vw,18px) clamp(16px,3vw,32px)}
 
 /* Fluid hero grid rows */
-.hero-grid{grid-template-rows:clamp(200px,28vw,320px) clamp(140px,18vw,220px)}
+.hero-grid{grid-template-rows:repeat(2,clamp(300px,24vw,340px))}
 
 @media (max-width:1100px){
+  .nav-center{gap:14px}
+  .nav-btn{padding:9px 12px}
   .grid{grid-template-columns:repeat(3,1fr)}
+  .trust-block{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 
 @media (max-width:900px){
-  .nav-links{display:none}
-  .nav-btn span:not(.cart-count){display:none}
+  #openCart span:not(.cart-count){display:inline}
   .nav-btn.primary{padding:10px 14px}
   .hero-head{grid-template-columns:1fr;gap:clamp(16px,3vw,24px)}
   .hero-copy{padding-top:0}
   .hero-grid{
     grid-template-columns:1fr 1fr;
-    grid-template-rows:clamp(180px,36vw,280px) clamp(130px,24vw,200px) clamp(130px,24vw,200px)
+    grid-template-rows:repeat(2,clamp(250px,33vw,300px))
   }
-  .hero-grid .tile.a{grid-column:span 2;grid-row:auto}
+  .tile-cta h3{font-size:18px}
+  .tile-cta .price{font-size:11px}
   .grid{grid-template-columns:repeat(2,1fr);gap:14px}
   .strip{grid-template-columns:1fr 1fr}
   .strip > div{border-right:none;border-bottom:1px solid var(--line)}
   .strip > div:nth-child(odd){border-right:1px solid var(--line)}
+  .info-band{padding:0 16px 20px}
+  .trust-card{padding:18px 16px;min-height:0}
+  .trust-card h3{font-size:20px}
+  .trust-card p{font-size:13px;line-height:1.5}
+  .how-grid{grid-template-columns:1fr;gap:18px}
+  .step-card{min-height:0;padding:18px 16px;gap:12px}
+  .step-card h3{font-size:20px}
+  .step-card p{font-size:13px;line-height:1.5}
   .modal.customizer{width:min(560px,96vw);height:min(760px,94dvh);max-height:94dvh;display:flex;flex-direction:column;overflow:hidden;border-radius:20px}
   .modal.customizer > div:last-child{flex:1;min-height:0;overflow:hidden}
   .preview{height:min(42dvh,310px);min-height:230px;flex:0 0 auto}
@@ -324,28 +379,69 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
 }
 
 @media (max-width:640px){
+  .nav-inner{
+    width:100%;
+    grid-template-columns:minmax(0,1fr) auto;
+    grid-template-areas:"brand cart" "links links";
+    gap:8px 12px;
+    padding:10px 14px 8px;
+  }
+  .logo{grid-area:brand;justify-self:start;min-width:0;white-space:nowrap}
+  .nav-center{
+    grid-area:links;
+    width:100%;
+    justify-content:flex-start;
+    flex-wrap:nowrap;
+    gap:8px;
+    overflow-x:auto;
+    overscroll-behavior-inline:contain;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+    padding:1px 0 3px;
+  }
+  .nav-center::-webkit-scrollbar{display:none}
+  .nav-right{grid-area:cart;justify-self:end}
+  .nav-btn{min-height:44px;white-space:nowrap;padding:9px 14px}
+  #openCart{min-width:88px}
   .hero-grid{
     grid-template-columns:1fr;
-    grid-template-rows:clamp(200px,55vw,340px) clamp(130px,36vw,200px) clamp(130px,36vw,200px) clamp(130px,36vw,200px)
+    grid-template-rows:repeat(4,clamp(280px,84vw,380px))
   }
-  .hero-grid .tile.a{grid-column:auto}
+  .tile-go{width:44px;height:44px}
+  .tile-cta{padding:14px 14px 15px}
   .grid{grid-template-columns:repeat(2,1fr)}
+  .trust-block{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr}
   .tile-cta h3{font-size:clamp(15px,4vw,22px)}
+  section[id]{scroll-margin-top:126px}
+  .anchor-target{scroll-margin-top:126px}
 }
 
 @media (max-width:480px){
-  .logo{font-size:18px;min-width:0}
-  .logo-mark{width:56px;height:56px}
-  .nav-inner{grid-template-columns:1fr;gap:12px;justify-items:center}
-  .nav-right{justify-self:center}
-  .hero{padding-top:24px}
-  h1.hero-title{font-size:clamp(42px,15vw,64px);line-height:1}
+  .logo{font-size:17px;gap:8px}
+  .logo-mark{width:46px;height:46px}
+  .nav-btn{font-size:12px}
+  .hero{padding-top:20px}
+  .section{padding:26px 16px 34px}
+  .section.compact-products{padding-top:4px;padding-bottom:20px}
+  .section-tight{padding-top:8px}
+  h1.hero-title{font-size:clamp(38px,12.5vw,54px);line-height:1.02}
+  .eyebrow{margin-bottom:14px;font-size:11px}
+  .hero-head{gap:14px}
   .grid{grid-template-columns:1fr}
   .strip{grid-template-columns:1fr}
   .strip > div{border-right:none !important}
-  .hero-sub{font-size:15px}
-  .hero-meta{gap:6px}
-  .tag{font-size:11px;padding:6px 10px}
+  .hero-sub{font-size:15px;line-height:1.6}
+  #products{border-radius:20px}
+  .section-head{margin-bottom:18px;padding-bottom:14px}
+  .section-head h2{font-size:clamp(26px,8vw,34px)}
+  .hero-grid{gap:12px;grid-template-rows:repeat(4,clamp(300px,88vw,350px))}
+  .tile{border-radius:16px}
+  .tile-label{margin:10px 10px 5px}
+  .tile-cta h3{font-size:20px}
+  .tile-cta .price{font-size:12px}
+  .trust-card{border-radius:16px}
+  .step-card{border-radius:16px}
   .modal.customizer{width:100vw;height:100dvh;max-height:100dvh;border-radius:0}
   .modal-close{top:12px;right:12px}
   .preview{height:36dvh;min-height:220px}
@@ -359,6 +455,8 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
   .form-pane{padding:20px 20px 12px}
   .checkout-body{padding:26px 20px 10px}
   .checkout-foot{padding:16px 20px 20px}
+  .form-pane input,.form-pane textarea,.form-pane select,.checkout-body input,.checkout-body textarea,.checkout-body select{font-size:16px}
+  footer{margin-top:24px;padding:24px 16px;text-align:center;justify-content:center}
 }
 ::-webkit-scrollbar{width:8px;height:8px}
 ::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:4px}
@@ -374,8 +472,13 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
 <nav class="nav">
   <div class="nav-inner">
     <div class="logo"><img class="logo-mark" src="assets/rivertowns-logo-transparent.png" alt="" aria-hidden="true">Rivertowns Custom</div>
+    <div class="nav-center">
+      <a class="nav-btn section-link" href="#products-start">Products</a>
+      <a class="nav-btn section-link" href="#trust-start">Trust</a>
+      <a class="nav-btn section-link" href="#how-it-works">How it works</a>
+      <a class="nav-btn" href="faq.html">FAQs</a>
+    </div>
     <div class="nav-right">
-      <a class="nav-btn" href="/faq.html">FAQs</a>
       <button class="nav-btn" id="openCart" style="background-color:var(--terracotta);color:#fff">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h2l2.5 11h11L21 8H6"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
         <span>Cart</span> <span class="cart-count" id="cartCount">0</span>
@@ -388,35 +491,26 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
   <div class="hero-head">
     <div>
       <span class="eyebrow" id="heroEyebrow">Est. 2026 · Hastings-on-Hudson</span>
-      <h1 class="hero-title" id="heroTitle"><span class="line">Put any image</span><span class="line">or design on <em>anything</em>.</span></h1>
+      <h1 class="hero-title" id="heroTitle"><span class="line">Personalized products made</span><span class="line">with your image or design</span></h1>
     </div>
     <div class="hero-copy">
-      <p class="hero-sub" id="heroSub">Rivertowns Custom is a youth-led local Rivertowns business. We sell custom travel mugs and photo frames, and soon we will be selling coasters, magnets, and more. Each mug is made with love in our local home studio. By supporting us, you are supporting a local Rivertowns business and helping our small shop grow. Email rivertownscustom@gmail.com for questions or bulk orders.</p>
-      <div class="hero-meta">
-        <span class="tag">Production within 48 hours</span>
-        <span class="tag" id="heroShipTag">$5 flat shipping</span>
-      </div>
+      <p class="hero-sub" id="heroSub">Rivertowns Custom is a youth-led local shop creating custom mugs, frames, and gifts in Hastings-on-Hudson. Upload your image, place your order securely, and we will take care of the rest.</p>
     </div>
   </div>
+</section>
 
-  <div class="hero-grid">
-    <div class="tile a" data-open="sig-mug">
-      <span class="tile-label">Best seller</span>
-      <div class="ph" style="background:var(--bg-2)">
-        <img src="assets/mug-homepage.png" alt="Travel Mug" style="width:100%;height:100%;object-fit:cover;position:relative;z-index:0">
-      </div>
-      <div class="tile-cta">
-        <div><h3>Custom Travel Mug</h3><span class="price">$16.99 · 12 oz with lid</span></div>
-        <button class="tile-go" aria-label="Customize"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
-      </div>
+<section class="section section-tight compact-products" id="products" aria-labelledby="products-title">
+  <div class="section-head">
+    <div>
+      <span class="eyebrow anchor-target" id="products-start">Start here</span>
+      <h2 id="products-title">Shop featured products</h2>
     </div>
-
-    <div class="tile" data-open="wood-frame" style="background:var(--bg-2)">
+  </div>
+  <div class="hero-grid">
+    <div class="tile a" data-open="wood-frame" style="background:var(--bg-2)">
       <span class="tile-label">Lightly textured to give liveliness</span>
       <div class="ph" style="background:var(--bg-2);display:flex;align-items:center;justify-content:center">
-        <div style="width:76%;height:78%;box-shadow:0 8px 24px rgba(0,0,0,.35);overflow:hidden;position:relative;z-index:1">
-          <img src="assets/wood-frame-hero.png" alt="Custom Photo Frame" style="width:100%;height:100%;object-fit:cover;display:block">
-        </div>
+        <img src="assets/wood-frame-hero.png" alt="Custom Photo Frame" style="width:82%;height:72%;object-fit:contain;display:block;position:relative;z-index:1;filter:drop-shadow(0 14px 18px rgba(0,0,0,.18))">
       </div>
       <div class="tile-cta">
         <div><h3>Custom Photo Frame</h3><span class="price">$27.99 · 12 x 16 wood frame</span></div>
@@ -424,10 +518,21 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
       </div>
     </div>
 
+    <div class="tile" data-open="sig-mug">
+      <span class="tile-label">Customer favorite</span>
+      <div class="ph" style="background:var(--bg-2)">
+        <img src="assets/mug-homepage.png" alt="Travel Mug" style="width:92%;height:92%;object-fit:contain;display:block;margin:auto;position:relative;z-index:0">
+      </div>
+      <div class="tile-cta">
+        <div><h3>Custom Travel Mug</h3><span class="price">$16.99 · 12 oz with lid</span></div>
+        <button class="tile-go" aria-label="Customize"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
+      </div>
+    </div>
+
     <div class="tile" data-open="fridge-magnet">
       <span class="tile-label">Coming soon</span>
       <div class="ph" style="background:var(--bg-2)">
-        <img src="assets/fridge-magnet-homepage.png" alt="Custom Fridge Magnets" style="width:86%;height:86%;object-fit:contain;display:block;margin:auto">
+        <img src="assets/fridge-magnet-homepage.png" alt="Custom Fridge Magnets" style="width:92%;height:92%;object-fit:contain;display:block;margin:auto;position:relative;z-index:1;filter:drop-shadow(0 14px 18px rgba(0,0,0,.14))">
       </div>
       <div class="tile-cta">
         <div><h3>Custom Fridge Magnets</h3><span class="price">Coming soon</span></div>
@@ -437,11 +542,75 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
     <div class="tile" data-open="cork-coast">
       <span class="tile-label">Coming soon</span>
       <div class="ph" style="background:var(--bg-2)">
-        <img src="assets/coaster-homepage.png" alt="Custom Coaster" style="width:86%;height:86%;object-fit:contain;display:block;margin:auto">
+        <img src="assets/coaster-homepage.png" alt="Custom Coaster" style="width:86%;height:86%;object-fit:contain;display:block;margin:auto;position:relative;z-index:1;filter:drop-shadow(0 14px 18px rgba(0,0,0,.14))">
       </div>
       <div class="tile-cta">
         <div><h3>Custom Coaster</h3><span class="price">Coming soon</span></div>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="info-band" id="trust-highlights" aria-label="Trust highlights">
+  <div class="section-head">
+    <div>
+      <span class="eyebrow anchor-target" id="trust-start">Why order here</span>
+      <h2>Trust highlights</h2>
+    </div>
+  </div>
+  <div class="trust-block">
+    <article class="trust-card">
+      <span class="kicker">Local shop</span>
+      <h3>Made in Hastings-on-Hudson, NY</h3>
+      <p>Every custom order is handled by our small Rivertowns studio, not a mass marketplace.</p>
+    </article>
+    <article class="trust-card">
+      <span class="kicker">Custom care</span>
+      <h3>Custom proofs handled with care</h3>
+      <p>We take care with uploaded photos and design notes so your final piece comes out the way you expect.</p>
+    </article>
+    <article class="trust-card">
+      <span class="kicker">Production</span>
+      <h3>Most orders ready within 48 hours</h3>
+      <p>We move quickly on production so your custom item gets started soon after checkout.</p>
+    </article>
+    <article class="trust-card">
+      <span class="kicker">Payments</span>
+      <h3>Secure checkout with Stripe</h3>
+      <p>Your payment is processed through Stripe for a familiar, secure checkout experience.</p>
+    </article>
+  </div>
+</section>
+
+<section class="section" id="how-it-works" aria-labelledby="how-it-works-title">
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">Simple process</span>
+      <h2 id="how-it-works-title">How it works</h2>
+    </div>
+  </div>
+  <div class="how-grid">
+    <div class="steps">
+      <article class="step-card">
+        <span class="step-no">1</span>
+        <h3>You choose a product</h3>
+        <p>You choose the object you want to customize.</p>
+      </article>
+      <article class="step-card">
+        <span class="step-no">2</span>
+        <h3>Upload your image</h3>
+        <p>Add a photo, logo, drawing, or design file right in the customizer.</p>
+      </article>
+      <article class="step-card">
+        <span class="step-no">3</span>
+        <h3>Checkout securely</h3>
+        <p>Review your order and pay through Stripe using a secure checkout flow.</p>
+      </article>
+      <article class="step-card">
+        <span class="step-no">4</span>
+        <h3>We receive your order</h3>
+        <p>After we receive your customized order, we use UV printing technology to make it, and then we ship it right to your doorstep.</p>
+      </article>
     </div>
   </div>
 </section>
@@ -640,10 +809,10 @@ footer{max-width:1360px;margin:40px auto 0;padding:30px 32px;border-top:1px soli
 <script>
 const TWEAKS = {
   "accent": "#D94F2A",
-  "headline": "Put any image or design on anything.",
-  "headlineAccent": "anything",
+  "headline": "Personalized products made with your image or design",
+  "headlineAccent": "",
   "eyebrow": "Est. 2026 · Hastings-on-Hudson",
-  "heroSub": "Rivertowns Custom is a youth-led local Rivertowns business. We sell custom travel mugs and photo frames, and soon we will be selling coasters, magnets, and more. Each mug is made with love in our local home studio. By supporting us, you are supporting a local Rivertowns business and helping our small shop grow. Email rivertownscustom@gmail.com for questions or bulk orders.",
+  "heroSub": "Rivertowns Custom is a youth-led local shop creating custom mugs, frames, and gifts in Hastings-on-Hudson. Upload your image, place your order securely, and we will take care of the rest.",
   "shipping": 5,
   "showBadges": true,
   "ctaLabel": "Make something",
