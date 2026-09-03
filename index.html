@@ -637,7 +637,7 @@ section[id]{scroll-margin-top:110px}
       </div>
       <div class="frame-guide" id="frameGuide" aria-hidden="true"></div>
     </div>
-    <div class="preview-disclaimer">Mockup only. Final print placement and color may look different on the mug.</div>
+    <div class="preview-disclaimer" id="previewDisclaimer">Mockup only. Final print placement and color may look different on the mug.</div>
   </div>
 
   <div style="display:flex;flex-direction:column;overflow:hidden;min-height:0">
@@ -1402,6 +1402,7 @@ function openCustomizer(productId){
 
   $('#cust-title').textContent = `Customize your ${p.name.toLowerCase()}`;
   $('#cust-subtitle').textContent = p.tagline;
+  $('#previewDisclaimer').hidden = p.id === 'wood-frame';
   $('#uploadPreview').classList.remove('shown');
   $('#fileInput').value = '';
   $('#qtyInput').value = 1;
