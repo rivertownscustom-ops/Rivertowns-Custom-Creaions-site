@@ -533,6 +533,7 @@ section[id]{scroll-margin-top:110px}
   .preview{height:auto;min-height:210px;max-height:none;flex:1 1 auto}
   .preview-stage{flex:1;height:100%;padding:48px 6px 6px}
   .mug-wrap{width:min(88vw,360px)}
+  .mug-wrap.mug-mode{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin:0}
   .mug-wrap.frame-mode{width:100%;height:auto;max-width:calc(100vw - 12px);max-height:none;aspect-ratio:16/12}
   .mug-wrap.magnet-mode{width:auto;height:min(168px,calc(100% - 8px));max-width:48vw}
   .form-pane{flex:0 0 auto;overflow:hidden;padding:12px 18px 4px}
@@ -1053,6 +1054,7 @@ function syncCanvasForProduct(product){
 
   if (mugCanvas.width !== nextWidth) mugCanvas.width = nextWidth;
   if (mugCanvas.height !== nextHeight) mugCanvas.height = nextHeight;
+  if (wrap) wrap.classList.toggle('mug-mode', !isWoodFrame && !isMagnet && product?.render === 'mug');
   if (wrap) wrap.classList.toggle('frame-mode', isWoodFrame);
   if (wrap) wrap.classList.toggle('magnet-mode', isMagnet);
 }
