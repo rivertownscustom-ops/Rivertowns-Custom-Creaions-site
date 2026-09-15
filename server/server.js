@@ -21,6 +21,12 @@ const HOURLY_ORDER_SUMMARY_FUNCTION_URL =
 const PRODUCT_CATALOG = {
   "sig-mug": { name: "Custom Travel Mug", unitPrice: 16.99 },
   "wood-frame": { name: "Custom Photo Frame", unitPrice: 27.99 },
+  "fridge-magnet": {
+    name: "Custom Fridge or Locker Magnets",
+    unitPrice: 6,
+    bulkUnitPrice: 5,
+    bulkMinQuantity: 2,
+  },
 };
 
 const stripe = process.env.STRIPE_SECRET_KEY
@@ -174,7 +180,11 @@ function buildNormalizedOrder(rawItem, orderDelivery, itemIndex) {
   }
 
   const quantity = Math.max(1, Number(rawItem.quantity || 1));
-  const unitPriceCents = toCents(product.unitPrice);
+  const unitPrice =
+    product.bulkUnitPrice != null && quantity >= (product.bulkMinQuantity || 2)
+      ? product.bulkUnitPrice
+      : product.unitPrice;
+  const unitPriceCents = toCents(unitPrice);
   const deliveryFeeCents = itemIndex === 0 ? toCents(orderDelivery.deliveryFee) : 0;
   const itemSubtotalCents = unitPriceCents * quantity;
 

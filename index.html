@@ -181,12 +181,13 @@ section[id]{scroll-margin-top:110px}
 /* Preview pane */
 .preview{background:var(--bg);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;min-height:400px}
 .preview-stage{width:100%;flex:1;display:flex;align-items:center;justify-content:center;padding:30px;position:relative;user-select:none}
-.preview-label{position:absolute;top:20px;left:20px;display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+.preview-label{position:absolute;top:20px;left:20px;display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);z-index:2}
 .preview-disclaimer{position:absolute;left:24px;right:24px;bottom:18px;text-align:center;font-size:12px;line-height:1.4;color:var(--muted);background:rgba(255,253,247,.82);border:1px solid var(--line);border-radius:999px;padding:7px 12px;backdrop-filter:blur(8px)}
 .live-dot{width:7px;height:7px;border-radius:50%;background:var(--terracotta);animation:pulse 1.6s infinite}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.6)}}
 .mug-wrap{width:min(440px,100%);aspect-ratio:880/680;height:auto;position:relative;max-width:100%}
 .mug-wrap.frame-mode{width:min(560px,100%);aspect-ratio:16/12}
+.mug-wrap.magnet-mode{width:auto;height:min(100%,460px);max-width:72%;aspect-ratio:5/7}
 #mugCanvas{width:100%;height:100%;display:block}
 
 /* Form pane */
@@ -372,7 +373,7 @@ section[id]{scroll-margin-top:110px}
   .preview{height:min(42dvh,310px);min-height:230px;flex:0 0 auto}
   .preview-stage{padding:46px 14px 34px}
   .mug-wrap{width:min(100%,420px)}
-  .mug-wrap.frame-mode{width:min(100%,460px)}
+  .mug-wrap.frame-mode{width:auto;height:min(100%,260px);max-width:min(100%,460px)}
   .form-grid{grid-template-columns:1fr}
   .form-grid .full{grid-column:auto}
   .section-head{flex-direction:column;align-items:flex-start}
@@ -451,7 +452,7 @@ section[id]{scroll-margin-top:110px}
   .preview-disclaimer{left:12px;right:12px;bottom:10px;font-size:11px;border-radius:10px}
   .preview-stage{padding:52px 18px 18px}
   .mug-wrap{width:min(82vw,340px)}
-  .mug-wrap.frame-mode{width:min(86vw,360px)}
+  .mug-wrap.frame-mode{width:auto;height:100%;max-width:86vw}
   .frame-guide::before{display:none}
   .modal.checkout{height:100%;max-height:100%;border-radius:0}
   .drawer{width:100%}
@@ -549,12 +550,13 @@ section[id]{scroll-margin-top:110px}
     </div>
 
     <div class="tile" data-open="fridge-magnet">
-      <span class="tile-label">Coming soon</span>
+      <span class="tile-label">New</span>
       <div class="ph" style="background:var(--bg-2)">
         <img class="magnet-product-image" src="assets/fridge-magnet-homepage.png" alt="Custom Fridge or Locker Magnets">
       </div>
       <div class="tile-cta">
-        <div><h3>Custom Fridge or Locker Magnets</h3><span class="price">50 × 70 mm</span></div>
+        <div><h3>Custom Fridge or Locker Magnets</h3><span class="price">$6 each · 2 for $10 · 50 × 70 mm</span></div>
+        <button class="tile-go" aria-label="Customize"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
       </div>
     </div>
 
@@ -841,7 +843,7 @@ const TWEAKS = {
 const PRODUCTS = [
   {id:'sig-mug',cat:'drinkware',name:'Custom Travel Mug',price:16.99,badge:'Best seller',colors:['#FFFFFF'],tint:'cream',render:'mug',image:'assets/mug-homepage.png',tagline:'12 oz with lid',available:true},
   {id:'cork-coast',cat:'coasters',name:'Custom Coaster',price:7,tiers:[{qty:1,price:7},{qty:2,price:12}],colors:['#FFFDF7'],tint:'cream',render:'coaster',image:'assets/coaster-homepage.png',tagline:'Coming soon',available:false},
-  {id:'fridge-magnet',cat:'magnets',name:'Custom Fridge or Locker Magnets',price:10,badge:'Coming soon',colors:['#FFFDF7'],tint:'cream',render:'frame',image:'assets/fridge-magnet-homepage.png',tagline:'50 × 70 mm',available:false},
+  {id:'fridge-magnet',cat:'magnets',name:'Custom Fridge or Locker Magnets',price:6,bulkPrice:5,bulkMinQty:2,badge:'New',colors:['#FFFFFF'],tint:'cream',render:'magnet',image:'assets/fridge-magnet-homepage.png',tagline:'50 × 70 mm · $6 each or 2 for $10',available:true},
   {id:'metal-frame',cat:'frames',name:'Custom Metal Print Frame',price:48,badge:'Premium',colors:['#151311','#C8A770','#FFFDF7'],tint:'forest',render:'frame',tagline:'Coming soon',available:false},
   {id:'wood-frame',cat:'frames',name:'Custom Wooden Photo Frame',price:27.99,colors:['#C9A47A'],tint:'cream',render:'woodframe',image:'assets/wood-frame.png',tagline:'12 x 16 wood frame',available:true},
 ];
@@ -953,12 +955,14 @@ let artImg = null;
 function syncCanvasForProduct(product){
   const wrap = mugCanvas.closest('.mug-wrap');
   const isWoodFrame = product?.render === 'woodframe';
-  const nextWidth = 880;
-  const nextHeight = isWoodFrame ? 660 : 680;
+  const isMagnet = product?.render === 'magnet';
+  const nextWidth = isMagnet ? 500 : 880;
+  const nextHeight = isMagnet ? 700 : (isWoodFrame ? 660 : 680);
 
   if (mugCanvas.width !== nextWidth) mugCanvas.width = nextWidth;
   if (mugCanvas.height !== nextHeight) mugCanvas.height = nextHeight;
   if (wrap) wrap.classList.toggle('frame-mode', isWoodFrame);
+  if (wrap) wrap.classList.toggle('magnet-mode', isMagnet);
 }
 
 function drawPreview(){
@@ -968,12 +972,13 @@ function drawPreview(){
   if (kind === 'woodframe') return drawWoodFrame();
   if (kind === 'coaster')   return drawCoaster();
   if (kind === 'case')      return drawCase();
+  if (kind === 'magnet')    return drawMagnet();
   if (kind === 'frame')     return drawFrame();
   return drawMug();
 }
 
 function productNeedsCropControls(product){
-  return Boolean(product && (product.render === 'woodframe' || product.render === 'frame'));
+  return Boolean(product && (product.render === 'woodframe' || product.render === 'frame' || product.render === 'magnet'));
 }
 
 function productCanZoomArtwork(product){
@@ -1116,6 +1121,10 @@ function getWoodFrameBounds(width = mugCanvas.width, height = mugCanvas.height){
 
 function getCropRectForProduct(product, width = mugCanvas.width, height = mugCanvas.height){
   if (!productNeedsCropControls(product)) return null;
+  if (product.render === 'magnet') {
+    const inset = 18;
+    return { x: inset, y: inset, w: width - inset * 2, h: height - inset * 2 };
+  }
   if (product.render === 'woodframe') {
     const frame = getWoodFrameBounds(width, height);
     return {
@@ -1246,7 +1255,10 @@ function exportArtworkForProduct(product){
   if (!artImg) return state.artwork || null;
   if (!productNeedsCropControls(product)) return state.artwork || null;
   const exportCanvas = document.createElement('canvas');
-  if (product && product.render === 'woodframe') {
+  if (product && product.render === 'magnet') {
+    exportCanvas.width = 1000;
+    exportCanvas.height = 1400;
+  } else if (product && product.render === 'woodframe') {
     exportCanvas.width = 3000;
     exportCanvas.height = 2250;
   } else {
@@ -1387,6 +1399,39 @@ function drawFrame(){
   }
 }
 
+function drawMagnet(){
+  const w = mugCanvas.width, h = mugCanvas.height;
+  const edge = 18;
+  const radius = 24;
+  mctx.clearRect(0, 0, w, h);
+
+  mctx.save();
+  mctx.shadowColor = 'rgba(21,19,17,.22)';
+  mctx.shadowBlur = 18;
+  mctx.shadowOffsetY = 10;
+  mctx.beginPath();
+  mctx.roundRect(edge, edge, w - edge * 2, h - edge * 2, radius);
+  mctx.fillStyle = '#FFFFFF';
+  mctx.fill();
+  mctx.restore();
+
+  const crop = getCropRectForProduct({ render: 'magnet' }, w, h);
+  if (artImg && crop) {
+    mctx.save();
+    mctx.beginPath();
+    mctx.roundRect(crop.x, crop.y, crop.w, crop.h, radius - 6);
+    mctx.clip();
+    drawArtworkCover(crop.x, crop.y, crop.w, crop.h);
+    mctx.restore();
+  }
+
+  mctx.beginPath();
+  mctx.roundRect(edge, edge, w - edge * 2, h - edge * 2, radius);
+  mctx.strokeStyle = '#D8C9B2';
+  mctx.lineWidth = 2;
+  mctx.stroke();
+}
+
 function drawCase(){
   const w = mugCanvas.width, h = mugCanvas.height;
   mctx.clearRect(0,0,w,h);
@@ -1414,13 +1459,13 @@ function openCustomizer(productId){
   }
   state.activeProduct = p.id;
   state.color = p.colors[0];
-  state.size='md'; state.sizeLabel='Standard'; state.sizeMod=0;
+  state.size='md'; state.sizeLabel=p.render === 'magnet' ? '50 × 70 mm' : 'Standard'; state.sizeMod=0;
   state.qty=1; state.artwork=null; state.artworkName=null;
   state.artworkScale=getDefaultArtworkScale(p); state.artworkOffsetX=0; state.artworkOffsetY=0; artImg=null;
 
   $('#cust-title').textContent = `Customize your ${p.name.replace(/^Custom\s+/i, '').toLowerCase()}`;
   $('#cust-subtitle').textContent = p.tagline;
-  $('#previewDisclaimer').hidden = p.id === 'wood-frame';
+  $('#previewDisclaimer').hidden = p.id === 'wood-frame' || p.render === 'magnet';
   $('#uploadPreview').classList.remove('shown');
   $('#fileInput').value = '';
   $('#qtyInput').value = 1;
@@ -1435,10 +1480,20 @@ function openCustomizer(productId){
 function updatePrice(){
   syncCustomizerQuantity();
   const p = PRODUCTS.find(x=>x.id===state.activeProduct);
-  const unit = p.price + state.sizeMod;
+  const unit = getProductUnitPrice(p, state.qty) + state.sizeMod;
   const total = unit * state.qty;
   $('#livePrice').textContent = `$${total.toFixed(2)}`;
   $('#liveUnit').textContent = state.qty > 1 ? `/ ${state.qty} items · $${unit.toFixed(2)} ea` : '/ 1 item';
+}
+
+function getProductUnitPrice(product, quantity = 1){
+  if (product?.bulkPrice != null && quantity >= (product.bulkMinQty || 2)) return product.bulkPrice;
+  return product?.price || 0;
+}
+
+function syncCartItemPrice(item){
+  const product = PRODUCTS.find(product => product.id === item.productId);
+  if (product) item.price = getProductUnitPrice(product, item.qty);
 }
 
 function syncCustomizerQuantity(){
@@ -1519,7 +1574,7 @@ function addItemToCart(product, overrides = {}) {
     lineId: Date.now()+'-'+Math.random().toString(36).slice(2,6),
     productId: product.id,
     name: product.name,
-    price: (overrides.price ?? product.price + state.sizeMod),
+    price: (overrides.price ?? getProductUnitPrice(product, finalQty) + state.sizeMod),
     qty: finalQty,
     color: (overrides.color ?? state.color ?? '#FFFDF7'),
     sizeLabel: (overrides.sizeLabel ?? state.sizeLabel ?? 'Standard'),
@@ -1569,6 +1624,7 @@ function saveCart(){
 function renderCart(){
   const body = $('#cartBody');
   const totalsEl = $('#cartTotals');
+  state.cart.forEach(syncCartItemPrice);
   saveCart();
   if (state.cart.length === 0){
     body.innerHTML = `
@@ -1615,10 +1671,10 @@ function renderCart(){
   $('#openCheckout').disabled = false;
 
   body.querySelectorAll('[data-qu]').forEach(b => b.addEventListener('click', () => {
-    const it = state.cart.find(x=>x.lineId===b.dataset.qu); if(it && cartQuantity() < MAX_ORDER_QTY){ it.qty = normalizeQuantity(it.qty + 1); renderCart(); }
+    const it = state.cart.find(x=>x.lineId===b.dataset.qu); if(it && cartQuantity() < MAX_ORDER_QTY){ it.qty = normalizeQuantity(it.qty + 1); syncCartItemPrice(it); renderCart(); }
   }));
   body.querySelectorAll('[data-qd]').forEach(b => b.addEventListener('click', () => {
-    const it = state.cart.find(x=>x.lineId===b.dataset.qd); if(it){ it.qty -= 1; if (it.qty <= 0) state.cart = state.cart.filter(x=>x.lineId!==it.lineId); renderCart(); }
+    const it = state.cart.find(x=>x.lineId===b.dataset.qd); if(it){ it.qty -= 1; if (it.qty <= 0) state.cart = state.cart.filter(x=>x.lineId!==it.lineId); else syncCartItemPrice(it); renderCart(); }
   }));
   body.querySelectorAll('[data-rm]').forEach(b => b.addEventListener('click', () => {
     state.cart = state.cart.filter(x=>x.lineId!==b.dataset.rm); renderCart();
