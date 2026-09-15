@@ -32,6 +32,7 @@
 [hidden]{display:none!important}
 html{scroll-behavior:smooth}
 html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+html.modal-locked,body.modal-locked{overflow:hidden;overscroll-behavior:none}
 body{font-size:16px;line-height:1.5}
 img{max-width:100%;display:block}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
@@ -527,12 +528,12 @@ section[id]{scroll-margin-top:110px}
   .steps{gap:12px}
   .step-card{padding:16px}
 
-  .modal.customizer{height:100dvh;max-height:100dvh;grid-template-rows:minmax(0,1fr) auto;overflow:hidden}
+  .modal.customizer{height:100dvh;max-height:100dvh;grid-template-rows:minmax(0,1fr) auto;overflow:hidden;overscroll-behavior:none;touch-action:none}
   .modal.customizer > div:last-child{flex:0 0 auto;justify-content:flex-start;overflow:hidden}
   .preview{height:auto;min-height:210px;max-height:none;flex:1 1 auto}
   .preview-stage{flex:1;height:100%;padding:54px 18px 10px}
   .mug-wrap{width:min(78vw,320px)}
-  .mug-wrap.frame-mode{width:auto;height:min(168px,calc(100% - 8px));max-width:82vw}
+  .mug-wrap.frame-mode{width:auto;height:min(220px,calc(100% - 8px));max-width:92vw}
   .mug-wrap.magnet-mode{width:auto;height:min(168px,calc(100% - 8px));max-width:48vw}
   .form-pane{flex:0 0 auto;overflow:hidden;padding:12px 18px 4px}
   .form-pane h2{font-size:21px;line-height:1.05;margin-bottom:5px}
@@ -558,7 +559,7 @@ section[id]{scroll-margin-top:110px}
   .preview{height:auto;min-height:164px;max-height:none}
   .preview-stage{padding:46px 14px 8px}
   .mug-wrap{width:min(62vw,240px)}
-  .mug-wrap.frame-mode{height:104px}
+  .mug-wrap.frame-mode{height:130px}
   .mug-wrap.magnet-mode{height:108px}
   .form-pane{padding-top:8px}
   .form-pane h2{font-size:19px}
@@ -1779,14 +1780,20 @@ function lightColor(hex){
 }
 
 // ---- Modal/Drawer open/close ----
-function openModal(sel){ $('#overlay').classList.add('open'); $(sel).classList.add('open'); }
-function closeModal(sel){ $(sel).classList.remove('open'); if (!$('.modal.open') && !$('.drawer.open')) $('#overlay').classList.remove('open'); }
-function openDrawer(){ $('#overlay').classList.add('open'); $('#cartDrawer').classList.add('open'); }
-function closeDrawer(){ $('#cartDrawer').classList.remove('open'); if (!$('.modal.open') && !$('.drawer.open')) $('#overlay').classList.remove('open'); }
+function syncPageLock(){
+  const locked = Boolean($('.modal.open') || $('.drawer.open'));
+  document.documentElement.classList.toggle('modal-locked', locked);
+  document.body.classList.toggle('modal-locked', locked);
+}
+function openModal(sel){ $('#overlay').classList.add('open'); $(sel).classList.add('open'); syncPageLock(); }
+function closeModal(sel){ $(sel).classList.remove('open'); if (!$('.modal.open') && !$('.drawer.open')) $('#overlay').classList.remove('open'); syncPageLock(); }
+function openDrawer(){ $('#overlay').classList.add('open'); $('#cartDrawer').classList.add('open'); syncPageLock(); }
+function closeDrawer(){ $('#cartDrawer').classList.remove('open'); if (!$('.modal.open') && !$('.drawer.open')) $('#overlay').classList.remove('open'); syncPageLock(); }
 
 $('#overlay').addEventListener('click', () => {
   $$('.modal.open').forEach(m => m.classList.remove('open'));
   closeDrawer();
+  syncPageLock();
 });
 document.addEventListener('click', e => {
   const c = e.target.closest('[data-close]'); if (c){ const m = c.closest('.modal'); if (m) closeModal('#'+m.id); }
@@ -1816,6 +1823,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape'){
     $$('.modal.open').forEach(m => m.classList.remove('open'));
     closeDrawer();
+    syncPageLock();
   }
 });
 
