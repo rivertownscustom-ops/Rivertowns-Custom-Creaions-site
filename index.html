@@ -77,6 +77,7 @@ h1.hero-title em{font-style:italic;color:var(--terracotta);white-space:nowrap}
 .ph::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.45) 100%);z-index:1}
 .hero-grid .ph{position:relative;inset:auto;min-height:0}
 .hero-grid .ph::before{display:none}
+.magnet-product-image{width:auto;height:86%;aspect-ratio:5/7;object-fit:contain;display:block;margin:auto;position:relative;z-index:1;filter:drop-shadow(0 14px 18px rgba(0,0,0,.14))}
 .ph.terracotta,.ph.forest,.ph.amber,.ph.cream{background:var(--bg-2)}
 .ph svg{filter:drop-shadow(0 20px 24px rgba(0,0,0,.25));position:relative;z-index:0;width:62%;height:auto}
 .ph.wood-ph::before{display:none}
@@ -444,16 +445,33 @@ section[id]{scroll-margin-top:110px}
   .trust-card{border-radius:16px}
   .step-card{border-radius:16px}
   .modal.customizer{width:100vw;height:100dvh;max-height:100dvh;border-radius:0}
-  .modal-close{top:12px;right:12px}
-  .preview{height:36dvh;min-height:220px}
-  .preview-label{top:16px;left:16px}
+  .modal-close{top:10px;right:10px;width:34px;height:34px}
+  .preview{height:29dvh;min-height:180px;max-height:240px}
+  .preview-label{top:14px;left:14px;font-size:10px}
   .preview-disclaimer{left:12px;right:12px;bottom:10px;font-size:11px;border-radius:10px}
-  .preview-stage{padding:64px 10px 30px}
-  .frame-guide::before{font-size:9.5px;max-width:76vw;padding:5px 8px}
+  .preview-stage{padding:52px 18px 18px}
+  .mug-wrap{width:min(82vw,340px)}
+  .mug-wrap.frame-mode{width:min(86vw,360px)}
+  .frame-guide::before{display:none}
   .modal.checkout{height:100%;max-height:100%;border-radius:0}
   .drawer{width:100%}
-  .form-foot{padding:14px 20px 18px}
-  .form-pane{padding:20px 20px 12px}
+  .form-pane{padding:16px 18px 8px}
+  .form-pane h2{font-size:23px;line-height:1.08;margin-right:34px}
+  .form-pane .sub{font-size:12.5px;margin-bottom:14px}
+  .field{margin-bottom:14px}
+  .field label.ttl{margin-bottom:7px;font-size:10px}
+  .upload-zone{padding:14px 12px;border-radius:12px}
+  .upload-zone svg{width:20px;height:20px;margin-bottom:5px}
+  .upload-zone .main{font-size:13px}
+  .upload-zone .sub2{display:none}
+  .qty-box button{width:44px;height:40px}
+  .qty-box input{height:40px}
+  .form-foot{display:grid;grid-template-columns:auto minmax(170px,1fr);align-items:center;gap:12px;padding:10px 16px max(12px,env(safe-area-inset-bottom))}
+  .price-row{display:block;white-space:nowrap}
+  .price-row .lbl{display:block;font-size:9px;margin-bottom:1px}
+  .price-row .amount{font-size:25px}
+  .price-row .unit{display:none}
+  .form-foot .checkout-btn{min-height:46px;padding:12px 14px;border-radius:12px}
   .checkout-body{padding:26px 20px 10px}
   .checkout-foot{padding:16px 20px 20px}
   .form-pane input,.form-pane textarea,.form-pane select,.checkout-body input,.checkout-body textarea,.checkout-body select{font-size:16px}
@@ -533,10 +551,10 @@ section[id]{scroll-margin-top:110px}
     <div class="tile" data-open="fridge-magnet">
       <span class="tile-label">Coming soon</span>
       <div class="ph" style="background:var(--bg-2)">
-        <img src="assets/fridge-magnet-homepage.png" alt="Custom Fridge Magnets" style="width:92%;height:92%;object-fit:contain;display:block;margin:auto;position:relative;z-index:1;filter:drop-shadow(0 14px 18px rgba(0,0,0,.14))">
+        <img class="magnet-product-image" src="assets/fridge-magnet-homepage.png" alt="Custom Fridge or Locker Magnets">
       </div>
       <div class="tile-cta">
-        <div><h3>Custom Fridge Magnets</h3><span class="price">Coming soon</span></div>
+        <div><h3>Custom Fridge or Locker Magnets</h3><span class="price">50 × 70 mm</span></div>
       </div>
     </div>
 
@@ -823,7 +841,7 @@ const TWEAKS = {
 const PRODUCTS = [
   {id:'sig-mug',cat:'drinkware',name:'Custom Travel Mug',price:16.99,badge:'Best seller',colors:['#FFFFFF'],tint:'cream',render:'mug',image:'assets/mug-homepage.png',tagline:'12 oz with lid',available:true},
   {id:'cork-coast',cat:'coasters',name:'Custom Coaster',price:7,tiers:[{qty:1,price:7},{qty:2,price:12}],colors:['#FFFDF7'],tint:'cream',render:'coaster',image:'assets/coaster-homepage.png',tagline:'Coming soon',available:false},
-  {id:'fridge-magnet',cat:'magnets',name:'Custom Fridge Magnets',price:10,badge:'Coming soon',colors:['#FFFDF7'],tint:'cream',render:'frame',image:'assets/fridge-magnet-homepage.png',tagline:'Coming soon',available:false},
+  {id:'fridge-magnet',cat:'magnets',name:'Custom Fridge or Locker Magnets',price:10,badge:'Coming soon',colors:['#FFFDF7'],tint:'cream',render:'frame',image:'assets/fridge-magnet-homepage.png',tagline:'50 × 70 mm',available:false},
   {id:'metal-frame',cat:'frames',name:'Custom Metal Print Frame',price:48,badge:'Premium',colors:['#151311','#C8A770','#FFFDF7'],tint:'forest',render:'frame',tagline:'Coming soon',available:false},
   {id:'wood-frame',cat:'frames',name:'Custom Wooden Photo Frame',price:27.99,colors:['#C9A47A'],tint:'cream',render:'woodframe',image:'assets/wood-frame.png',tagline:'12 x 16 wood frame',available:true},
 ];
@@ -1400,7 +1418,7 @@ function openCustomizer(productId){
   state.qty=1; state.artwork=null; state.artworkName=null;
   state.artworkScale=getDefaultArtworkScale(p); state.artworkOffsetX=0; state.artworkOffsetY=0; artImg=null;
 
-  $('#cust-title').textContent = `Customize your ${p.name.toLowerCase()}`;
+  $('#cust-title').textContent = `Customize your ${p.name.replace(/^Custom\s+/i, '').toLowerCase()}`;
   $('#cust-subtitle').textContent = p.tagline;
   $('#previewDisclaimer').hidden = p.id === 'wood-frame';
   $('#uploadPreview').classList.remove('shown');
