@@ -479,6 +479,87 @@ section[id]{scroll-margin-top:110px}
   .form-pane input,.form-pane textarea,.form-pane select,.checkout-body input,.checkout-body textarea,.checkout-body select{font-size:16px}
   footer{margin-top:24px;padding:24px 16px;text-align:center;justify-content:center}
 }
+
+/* MOBILE REDESIGN TRIAL
+   Remove this block plus the two marked HTML blocks to restore the prior mobile design. */
+.mobile-purchase-strip,.mobile-shop-cta{display:none}
+:focus-visible{outline:3px solid rgba(217,79,42,.45);outline-offset:3px}
+.input-field:has(input[required]) label::after,.input-field:has(select[required]) label::after{content:" *";color:var(--terracotta)}
+.input-field.error select{border-color:var(--terracotta)}
+
+@media (max-width:640px){
+  html,body{max-width:100%;overflow-x:hidden}
+  .nav-inner{padding:8px 14px 7px;gap:6px 10px}
+  .logo{font-size:16px}
+  .logo-mark{width:40px;height:40px}
+  .nav-center{gap:8px;padding:0}
+  .nav-center a[href="#trust-start"],.nav-center a[href="#how-it-works"]{display:none}
+  .nav-btn{min-height:44px;padding:8px 13px;font-size:12px}
+  #openCart{min-width:0;padding:8px 11px}
+  #openCart > span:not(.cart-count){display:none}
+  .mobile-purchase-strip{display:flex;position:relative;z-index:3;justify-content:center;gap:0;background:var(--ink);color:#fff;font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+  .mobile-purchase-strip span{padding:8px 12px;text-align:center}
+  .mobile-purchase-strip span+span{border-left:1px solid rgba(255,255,255,.25)}
+
+  .drawer-head{padding:16px 18px}
+  .drawer-body{padding:6px 18px 16px}
+  .cart-item{grid-template-columns:64px minmax(0,1fr) auto;gap:10px;padding:14px 0}
+  .cart-item .thumb{width:64px;height:64px}
+  .cart-item .side .qty-mini button{width:44px;height:44px;font-size:18px}
+  .cart-item .side .qty-mini span{min-width:24px}
+  .cart-item .side .remove{display:inline-flex;align-items:center;min-height:32px}
+  .drawer-foot{padding:16px 18px max(18px,env(safe-area-inset-bottom))}
+  .drawer-foot .checkout-btn{min-height:50px;width:100%}
+
+  .checkout-body h2{font-size:25px}
+  .checkout-body .sub{margin-bottom:18px}
+  .input-field label{font-size:10px}
+  .input-field input,.input-field select{min-height:48px;padding:13px 14px}
+  .section-divider{margin:24px 0 18px}
+  .checkout-foot .checkout-btn{min-height:50px;width:100%}
+}
+
+@media (max-width:480px){
+  .hero{padding:24px 18px 20px}
+  .hero-head{gap:16px;margin-bottom:0}
+  .eyebrow{margin-bottom:12px;font-size:10px}
+  h1.hero-title{font-size:clamp(36px,11vw,48px);line-height:1.02;letter-spacing:-.025em;text-wrap:balance}
+  h1.hero-title .line{display:inline}
+  h1.hero-title .line+.line::before{content:" "}
+  .hero-sub{font-size:14px;line-height:1.55;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .mobile-shop-cta{display:inline-flex;align-items:center;justify-content:center;min-height:48px;margin-top:16px;padding:0 20px;border-radius:999px;background:var(--terracotta);color:#fff;font-size:14px;font-weight:600;text-decoration:none}
+
+  .section.compact-products{padding:8px 16px 24px}
+  .section-head{margin-bottom:14px;padding-bottom:12px}
+  .section-head h2{font-size:30px}
+  .hero-grid{grid-template-rows:none;gap:14px}
+  .hero-grid .tile{min-height:290px;grid-template-rows:auto minmax(170px,1fr) auto}
+  .tile-label{font-size:9px;margin:10px 10px 4px}
+  .tile-cta{padding:12px 13px 13px}
+  .tile-cta h3{font-size:19px}
+  .tile-cta .price{font-size:11px;line-height:1.35}
+  .tile[data-open="cork-coast"]{cursor:not-allowed;opacity:.68}
+  .tile[data-open="cork-coast"] .ph img{filter:grayscale(.35)}
+
+  .info-band{padding:12px 16px 20px}
+  .trust-block{gap:12px}
+  .trust-card{padding:16px}
+  .steps{gap:12px}
+  .step-card{padding:16px}
+
+  .upload-zone{min-height:112px;display:flex;flex-direction:column;justify-content:center}
+  .upload-zone .sub2{display:block;margin-top:4px;font-size:11px}
+  .upload-preview .remove{display:inline-flex;align-items:center;min-height:44px;padding:0 6px}
+  .qty-box button{min-width:48px;min-height:44px}
+  .qty-box input{min-height:44px;font-weight:700}
+
+  .modal.checkout{width:100vw;height:100dvh;max-height:100dvh}
+  .checkout-body{padding:22px 18px 12px}
+  .form-grid{gap:12px}
+  .checkout-foot{padding:14px 18px max(18px,env(safe-area-inset-bottom))}
+  .toast{max-width:calc(100vw - 32px);bottom:84px;text-align:center}
+}
+
 ::-webkit-scrollbar{width:8px;height:8px}
 ::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:4px}
 ::-webkit-scrollbar-thumb:hover{background:var(--muted)}
@@ -494,7 +575,7 @@ section[id]{scroll-margin-top:110px}
   <div class="nav-inner">
     <div class="logo"><img class="logo-mark" src="assets/rivertowns-logo-transparent.png" alt="" aria-hidden="true">Rivertowns Custom</div>
     <div class="nav-center">
-      <a class="nav-btn section-link" href="#products-start">Products</a>
+      <a class="nav-btn section-link" href="#products-start">Shop</a>
       <a class="nav-btn section-link" href="#trust-start">Trust</a>
       <a class="nav-btn section-link" href="#how-it-works">How it works</a>
       <a class="nav-btn" href="faq.html">FAQs</a>
@@ -508,6 +589,12 @@ section[id]{scroll-margin-top:110px}
   </div>
 </nav>
 
+<!-- MOBILE REDESIGN TRIAL: purchase information -->
+<div class="mobile-purchase-strip" aria-label="Order information">
+  <span>Production within 48 hours</span>
+  <span>$5 flat shipping</span>
+</div>
+
 <section class="hero">
   <div class="hero-head">
     <div>
@@ -516,6 +603,8 @@ section[id]{scroll-margin-top:110px}
     </div>
     <div class="hero-copy">
       <p class="hero-sub" id="heroSub">Rivertowns Custom is a youth-led local shop creating custom mugs, frames, and gifts in Hastings-on-Hudson. Upload your image, place your order securely, and we will take care of the rest.</p>
+      <!-- MOBILE REDESIGN TRIAL: primary action -->
+      <a class="mobile-shop-cta" href="#products-start">Shop custom products</a>
     </div>
   </div>
 </section>
