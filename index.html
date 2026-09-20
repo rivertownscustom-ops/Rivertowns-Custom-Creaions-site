@@ -189,10 +189,12 @@ section[id]{scroll-margin-top:110px}
 .mug-wrap{width:min(440px,100%);aspect-ratio:880/680;height:auto;position:relative;max-width:100%}
 .mug-wrap.frame-mode{width:min(560px,100%);aspect-ratio:16/12}
 .mug-wrap.magnet-mode{width:auto;height:min(100%,520px);max-width:82%;aspect-ratio:5/7}
+.mug-wrap.magnet-mode.magnet-landscape{width:min(100%,520px);height:auto;max-width:82%;aspect-ratio:7/5}
 #mugCanvas{width:100%;height:100%;display:block}
 
 @media (min-width:901px){
   .mug-wrap.magnet-mode{height:min(100%,440px);max-width:72%}
+  .mug-wrap.magnet-mode.magnet-landscape{width:min(100%,440px);height:auto;max-width:72%}
 }
 
 /* Form pane */
@@ -204,6 +206,11 @@ section[id]{scroll-margin-top:110px}
 .field .help{font-size:12px;color:var(--muted);margin-top:6px}
 .field .help a{color:inherit;font-weight:600;text-decoration:none}
 .field .help a:hover{text-decoration:underline}
+.orientation-field{display:none}
+.orientation-field.shown{display:block}
+.orientation-toggle{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:4px;background:var(--bg-2);border:1px solid var(--line);border-radius:12px}
+.orientation-option{min-height:40px;border-radius:8px;color:var(--muted);font-size:13px;font-weight:600;transition:background .15s,color .15s,box-shadow .15s}
+.orientation-option.active{background:#fff;color:var(--ink);box-shadow:0 2px 8px rgba(21,19,17,.08)}
 .size-picks{display:flex;gap:8px}
 .size-pick{flex:1;padding:12px;border:1px solid var(--line-2);border-radius:12px;text-align:center;transition:all .15s;background:#fff}
 .size-pick:hover{border-color:var(--ink-2)}
@@ -540,11 +547,13 @@ section[id]{scroll-margin-top:110px}
   .mug-wrap.mug-mode{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin:0}
   .mug-wrap.frame-mode{width:100%;height:auto;max-width:calc(100vw - 12px);max-height:none;aspect-ratio:16/12}
   .mug-wrap.magnet-mode{width:auto;height:min(320px,calc(100% - 40px));max-width:72vw}
+  .mug-wrap.magnet-mode.magnet-landscape{width:min(320px,72vw);height:auto;max-width:72vw}
   .form-pane{flex:0 0 auto;overflow:hidden;padding:12px 18px 4px}
   .form-pane h2{font-size:21px;line-height:1.05;margin-bottom:5px}
   .form-pane .sub{margin-bottom:10px}
   .field{margin-bottom:10px}
   .field label.ttl{margin-bottom:5px}
+  .orientation-option{min-height:36px;font-size:12px}
   .upload-zone{min-height:72px;padding:8px 12px;display:flex;flex-direction:column;justify-content:center}
   .upload-zone svg{margin-bottom:3px}
   .upload-zone .sub2{display:block;margin-top:4px;font-size:11px}
@@ -566,6 +575,7 @@ section[id]{scroll-margin-top:110px}
   .mug-wrap{width:min(82vw,330px)}
   .mug-wrap.frame-mode{width:100%;height:auto;max-width:100%;max-height:none;aspect-ratio:16/12}
   .mug-wrap.magnet-mode{height:min(220px,calc(100% - 40px));max-width:64vw}
+  .mug-wrap.magnet-mode.magnet-landscape{width:min(220px,64vw);height:auto;max-width:64vw}
   .form-pane{padding-top:8px}
   .form-pane h2{font-size:19px}
   .form-pane .sub{margin-bottom:7px}
@@ -761,6 +771,14 @@ section[id]{scroll-margin-top:110px}
     <div class="form-pane">
       <h2 id="cust-title">Customize your mug</h2>
       <div class="sub" id="cust-subtitle">Upload artwork, pick a finish, see it live.</div>
+
+      <div class="field orientation-field" id="magnetOrientationField">
+        <label class="ttl">Orientation</label>
+        <div class="orientation-toggle" role="group" aria-label="Magnet orientation">
+          <button class="orientation-option active" type="button" data-magnet-orientation="portrait" aria-pressed="true">Portrait</button>
+          <button class="orientation-option" type="button" data-magnet-orientation="landscape" aria-pressed="false">Landscape</button>
+        </div>
+      </div>
 
       <div class="field">
         <label class="ttl">Your artwork</label>
@@ -991,6 +1009,7 @@ let state = {
   size:'md',
   sizeLabel:'Standard',
   sizeMod:0,
+  magnetOrientation:'portrait',
   qty:1,
   artwork:null,
   artworkName:null,
@@ -1053,14 +1072,16 @@ function syncCanvasForProduct(product){
   const wrap = mugCanvas.closest('.mug-wrap');
   const isWoodFrame = product?.render === 'woodframe';
   const isMagnet = product?.render === 'magnet';
-  const nextWidth = isMagnet ? 500 : 880;
-  const nextHeight = isMagnet ? 700 : (isWoodFrame ? 660 : 680);
+  const isLandscapeMagnet = isMagnet && state.magnetOrientation === 'landscape';
+  const nextWidth = isMagnet ? (isLandscapeMagnet ? 700 : 500) : 880;
+  const nextHeight = isMagnet ? (isLandscapeMagnet ? 500 : 700) : (isWoodFrame ? 660 : 680);
 
   if (mugCanvas.width !== nextWidth) mugCanvas.width = nextWidth;
   if (mugCanvas.height !== nextHeight) mugCanvas.height = nextHeight;
   if (wrap) wrap.classList.toggle('mug-mode', !isWoodFrame && !isMagnet && product?.render === 'mug');
   if (wrap) wrap.classList.toggle('frame-mode', isWoodFrame);
   if (wrap) wrap.classList.toggle('magnet-mode', isMagnet);
+  if (wrap) wrap.classList.toggle('magnet-landscape', isLandscapeMagnet);
 }
 
 function drawPreview(){
@@ -1354,8 +1375,9 @@ function exportArtworkForProduct(product){
   if (!productNeedsCropControls(product)) return state.artwork || null;
   const exportCanvas = document.createElement('canvas');
   if (product && product.render === 'magnet') {
-    exportCanvas.width = 1000;
-    exportCanvas.height = 1400;
+    const isLandscape = state.magnetOrientation === 'landscape';
+    exportCanvas.width = isLandscape ? 1400 : 1000;
+    exportCanvas.height = isLandscape ? 1000 : 1400;
   } else if (product && product.render === 'woodframe') {
     exportCanvas.width = 3000;
     exportCanvas.height = 2250;
@@ -1557,13 +1579,20 @@ function openCustomizer(productId){
   }
   state.activeProduct = p.id;
   state.color = p.colors[0];
-  state.size='md'; state.sizeLabel=p.render === 'magnet' ? '50 × 70 mm' : 'Standard'; state.sizeMod=0;
+  state.magnetOrientation='portrait';
+  state.size='md'; state.sizeLabel=p.render === 'magnet' ? '50 × 70 mm · Portrait' : 'Standard'; state.sizeMod=0;
   state.qty=1; state.artwork=null; state.artworkName=null;
   state.artworkScale=getDefaultArtworkScale(p); state.artworkOffsetX=0; state.artworkOffsetY=0; artImg=null;
 
   $('#cust-title').textContent = `Customize your ${p.name.replace(/^Custom\s+/i, '').toLowerCase()}`;
   $('#cust-subtitle').textContent = p.tagline;
   $('#previewDisclaimer').hidden = p.id === 'wood-frame' || p.render === 'magnet';
+  $('#magnetOrientationField').classList.toggle('shown', p.render === 'magnet');
+  $$('[data-magnet-orientation]').forEach(option => {
+    const active = option.dataset.magnetOrientation === state.magnetOrientation;
+    option.classList.toggle('active', active);
+    option.setAttribute('aria-pressed', String(active));
+  });
   $('#uploadPreview').classList.remove('shown');
   $('#fileInput').value = '';
   $('#qtyInput').value = 1;
@@ -1609,6 +1638,22 @@ $$('#sizePicks .size-pick').forEach(sp => sp.addEventListener('click', () => {
   state.sizeLabel = sp.dataset.label;
   state.sizeMod = parseFloat(sp.dataset.price);
   updatePrice();
+}));
+
+$$('[data-magnet-orientation]').forEach(option => option.addEventListener('click', () => {
+  const product = PRODUCTS.find(x=>x.id===state.activeProduct);
+  if (product?.render !== 'magnet') return;
+  state.magnetOrientation = option.dataset.magnetOrientation === 'landscape' ? 'landscape' : 'portrait';
+  state.sizeLabel = state.magnetOrientation === 'landscape' ? '70 × 50 mm · Landscape' : '50 × 70 mm · Portrait';
+  $$('[data-magnet-orientation]').forEach(button => {
+    const active = button.dataset.magnetOrientation === state.magnetOrientation;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+  drawPreview();
+  const crop = getCropRectForProduct(product);
+  if (crop) clampArtworkOffsets(crop.w, crop.h);
+  syncCropControls();
 }));
 
 $('#qtyUp').addEventListener('click', () => { state.qty = normalizeQuantity(state.qty + 1); updatePrice(); });
